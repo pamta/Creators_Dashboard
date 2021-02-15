@@ -104,3 +104,4 @@ dist
 .tern-port
 
 config/default.json
+client/src/config/secrets.js

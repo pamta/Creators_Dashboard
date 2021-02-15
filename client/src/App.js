@@ -1,7 +1,17 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { fbSDKInit } from "./config/ApisConfig";
 
-function App() {
+const App = () => {
+  // use useEffect to execute when the component loads, just once
+  useEffect(() => {
+    fbSDKInit();
+    window.FB.getLoginStatus(function (response) {
+      console.log(response);
+    });
+  }, [fbSDKInit]);
+
   return (
     <div className="App">
       <header className="App-header">
@@ -18,8 +28,9 @@ function App() {
           Learn React
         </a>
       </header>
+      <body></body>
     </div>
   );
-}
+};
 
 export default App;
