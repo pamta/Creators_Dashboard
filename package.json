@@ -25,6 +25,7 @@
     "config": "^3.3.3",
     "express": "^4.17.1",
     "express-validator": "^6.9.2",
+    "https": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
     "mongoose": "^5.11.16",
