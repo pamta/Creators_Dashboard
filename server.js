@@ -1,5 +1,5 @@
 const express = require("express");
-//const connectDB = require("./config/db");
+const connectDB = require("./config/db");
 const https = require("https");
 const config = require("config");
 const app = express();
@@ -7,9 +7,8 @@ const serverKey = config.get("serverKey");
 const serverCert = config.get("serverCert");
 
 // Connect database
-//connectDB();
+connectDB();
 
-// Init Middleware
 // Ask the server to accept JSON objects in the body of the POST/GET requests
 app.use(express.json({ extended: false }));
 
