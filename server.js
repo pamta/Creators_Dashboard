@@ -17,10 +17,13 @@ const PORT = process.env.PORT || 5000;
 
 // When a GET response hits the endpoint "/" it will send a response with res.send(), you are prepering the response
 // And you can also get the parameters with req.params
-// Make a request to "http://localhost:5000" on postman and you'll see
+// Make a request to "https://localhost:5000" on postman and you'll see
 app.get("/", (req, res) => res.send("API Running"));
 
 // Define Routes
+// All the routes on ./routes/api/users are behind the main route /api/users
+app.use("/api/users", require("./routes/api/users"));
+
 
 https
   .createServer(
