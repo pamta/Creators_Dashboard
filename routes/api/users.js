@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const config = require("config");
 
 // Exporting two objects
-const { check, validationResult } = require("express-validator/check");
+const { check, validationResult } = require("express-validator");
 
 // Returns a moongose model of the user
 const User = require("../../models/User");
@@ -19,7 +19,7 @@ router.post(
     // Second parameter of check is a custom error message
     // Checks for the value of a json key called "name"
     check("name", "A name is required").not().isEmpty(),
-    check("user", "A user name is required").not().isEmpty(),
+    check("userName", "A user name is required").not().isEmpty(),
     check("email", "Please include a valid email").isEmail(),
     check("password", "Please enter a password with 8 or more characters"
     ).isLength({ min: 8 }),
@@ -30,6 +30,7 @@ router.post(
 
      // Finds the validation errors in this request and wraps them in an object with handy functions
     const errors = validationResult(req);
+    console.log("===============post received================")
     if (!errors.isEmpty()) {
       // 400 is for a bad request
       return res.status(400).json({
@@ -38,18 +39,20 @@ router.post(
     }
     
     //we get the alredy checked payload
-    const { name, user, email, password } = req.body;
+    const { name, userName, email, password } = req.body;
+    console.log(userName)
 
     try {
       // Check if there's a user with that email (since we put emails as unique)
-      let user = await User.findOne({ email });
-      if (user) {
+      let mailFound = await User.findOne({ email });
+      let userFound = await User.findOne({ userName });
+      if (userFound || mailFound) {
         return res
           .status(400)
           .json({ errors: [{ msg: "User already exists" }] });
       }
 
-    registrationDate = String(Date.now())
+      registrationDate = String(Date.now())
 
       user = new User({
         name,
@@ -63,9 +66,9 @@ router.post(
       // 10 is recommended in documentation, the bigger the number means more security
       const salt = await bcrypt.genSalt(10);
 
-      // Encrypt the password
+      // // Encrypt the password
       user.password = await bcrypt.hash(password, salt);
-      // Remember that User is a moongose model and we connected moongose with our database
+      // // Remember that User is a moongose model and we connected moongose with our database
       await user.save();
 
       const payload = {
@@ -74,7 +77,7 @@ router.post(
         },
       };
 
-      // Generate a JSON Web Token (encrypted payload with signature)
+      // // Generate a JSON Web Token (encrypted payload with signature)
       jwt.sign(
         payload,
         config.get("jwtSecret"), // encryption key
@@ -88,10 +91,10 @@ router.post(
           res.json({ token });
         }
       );
-
-      res.send("User registered");
+      console.log(res);
+      //res.send("User registered");
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
       res.status(500).send("Server error");
     }
 
