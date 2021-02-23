@@ -4,6 +4,23 @@ import store from "./store";
 import logo from "./logo.svg";
 import "./App.css";
 import { fbSDKInit } from "./config/ApisConfig";
+import {
+  setAuthToken,
+  setFacebookToken,
+  setInstagramToken,
+  setTwitterToken,
+} from "./utils/tokenSetter";
+import {
+  AUTH_TOKEN,
+  FACEBOOK_TOKEN,
+  INSTAGRAM_TOKEN,
+  TWITTER_TOKEN,
+} from "./utils/localStorageTypes";
+
+setAuthToken(localStorage[AUTH_TOKEN]);
+setFacebookToken(localStorage[FACEBOOK_TOKEN]);
+setInstagramToken(localStorage[INSTAGRAM_TOKEN]);
+setTwitterToken(localStorage[TWITTER_TOKEN]);
 
 const App = () => {
   // use useEffect to execute when the component loads, just once
