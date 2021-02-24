@@ -19,7 +19,7 @@ router.post(
     // Second parameter of check is a custom error message
     // Checks for the value of a json key called "name"
     check("name", "A name is required").not().isEmpty(),
-    check("userName", "A user name is required").not().isEmpty(),
+    check("userName", "A user name is required").not().isEmpty().not().isEmail(), //to prevent from erroniously use an email as user name
     check("email", "Please include a valid email").isEmail(),
     check("password", "Please enter a password with 8 or more characters"
     ).isLength({ min: 8 }),
@@ -30,7 +30,7 @@ router.post(
 
      // Finds the validation errors in this request and wraps them in an object with handy functions
     const errors = validationResult(req);
-    console.log("===============post received================")
+    
     if (!errors.isEmpty()) {
       // 400 is for a bad request
       return res.status(400).json({
@@ -40,10 +40,9 @@ router.post(
     
     //we get the alredy checked payload
     const { name, userName, email, password } = req.body;
-    console.log(userName)
 
     try {
-      // Check if there's a user with that email (since we put emails as unique)
+      // Check if there's a user with that email o that userName (since we put emails and usernames as unique)
       let mailFound = await User.findOne({ email });
       let userFound = await User.findOne({ userName });
       if (userFound || mailFound) {
@@ -52,6 +51,7 @@ router.post(
           .json({ errors: [{ msg: "User already exists" }] });
       }
 
+      //save current date in the created use. May use some other format so it is up to changes
       registrationDate = String(Date.now())
 
       user = new User({
@@ -91,14 +91,12 @@ router.post(
           res.json({ token });
         }
       );
-      console.log(res);
+      //console.log(res);
       //res.send("User registered");
     } catch (err) {
       console.error(err);
       res.status(500).send("Server error");
     }
-
-    //for debugging
     //res.send('POST request to register user')
   }
 );

@@ -21,8 +21,9 @@ const PORT = process.env.PORT || 5000;
 app.get("/", (req, res) => res.send("API Running"));
 
 // Define Routes
-// All the routes on ./routes/api/users are behind the main route /api/users
-app.use("/api/users", require("./routes/api/users"));
+// All the routes on ./routes/api/user are behind the main route /api/user
+app.use("/api/user", require("./routes/api/user"));
+app.use("/api/auth", require("./routes/api/auth"));
 
 
 https

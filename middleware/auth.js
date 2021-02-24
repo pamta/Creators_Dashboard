@@ -8,12 +8,14 @@ const config = require("config");
 module.exports = function (req, res, next) {
   // Get token from header
   const token = req.header("x-auth-token");
+  
   // Check if not token
   if (!token) {
     // 401 is not authorized
     return res.status(401).json({ msg: "No token, authorization denied" });
   }
-
+  console.log(token);
+  
   // Verify token
   try {
     // The previously encoded payload is decoded
