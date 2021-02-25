@@ -103,5 +103,9 @@ dist
 # TernJS port file
 .tern-port
 
+# Config files
 config/default.json
 client/src/config/secrets.js
+
+# Additional
+.DS_Store
