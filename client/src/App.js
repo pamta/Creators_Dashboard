@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import Content from './components/layout/Content'
 import Navbar from './components/layout/Navbar'
 import MobileNavbar from './components/layout/MobileNavbar'
 import { Provider } from 'react-redux'
