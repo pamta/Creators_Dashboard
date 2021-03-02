@@ -6,7 +6,7 @@ const NavbarLink = ({ name, link, icon, color }) => {
 			<div
 				className={
 					'flex flex-row justify-left items-center space-x-4 rounded-md p-2' +
-					` bg-${color}-200`
+					` bg-${color}`
 				}
 			>
 				{icon}
