@@ -1,3 +1,5 @@
+//This file contains all the redux actions related with user aunthentication
+//Those being: loadUser(), login(), logout(), register()
 import axios from "axios";
 import { setAlert } from "./alert";
 import {
@@ -6,6 +8,7 @@ import {
   LOGOUT,
   USER_LOADED,
   AUTH_ERROR,
+  REGISTER_SUCCESS,
 } from "./types";
 import {
   setAuthToken,
@@ -75,4 +78,34 @@ export const login = (userIdentifier, password) => async (dispatch) => {
 // Logout / Clear Profile
 export const logout = () => (dispatch) => {
   dispatch({ type: LOGOUT });
+};
+
+// Register User
+export const register = ({ name, userName, email, password }) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  const body = JSON.stringify({ name, userName, email, password });
+
+  try {
+    const res = await axios.post("/api/users", body, config);
+    dispatch({
+      type: REGISTER_SUCCESS,
+      payload: res.data,
+    });
+    // Get the info of the user in the state
+    dispatch(loadUser());
+  } catch (error) {
+    // Our backend send an array of errors when there is one or more. Show them all as alerts
+    const errors = error.response.data.errors;
+    if (errors) {
+      errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+    }
+    dispatch({
+      type: REGISTER_FAIL,
+    });
+  }
 };

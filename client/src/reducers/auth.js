@@ -4,6 +4,7 @@ import {
   LOGOUT,
   USER_LOADED,
   AUTH_ERROR,
+  REGISTER_SUCCESS,
 } from "../actions/types";
 import {
   AUTH_TOKEN,
@@ -45,7 +46,8 @@ export default function (state = initialState, action) {
         // The payload in this case is the info of the user
         user: payload,
       };
-
+    //For the moment there is no difference in state for a register or login
+    case REGISTER_SUCCESS:
     case LOGIN_SUCCESS:
       localStorage.setItem(AUTH_TOKEN, payload.token);
       return {
