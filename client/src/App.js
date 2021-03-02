@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react'
+import Content from './components/layout/Content'
+import Navbar from './components/layout/Navbar'
 import { Provider } from 'react-redux'
 import store from './store'
 import logo from './logo.svg'
@@ -30,23 +32,9 @@ const App = () => {
 
 	return (
 		<Provider store={store}>
-			{' '}
-			<div className='App'>
-				<header className='App-header'>
-					<img src={logo} className='App-logo' alt='logo' />
-					{/* This is an example of how to use Tailwind */}
-					<p className={'bg-white text-black'}>
-						Edit <code>src/App.js</code> and save to reload.
-					</p>
-				</header>{' '}
-				<a
-					className='App-link'
-					href='https://reactjs.org'
-					target='_blank'
-					rel='noopener noreferrer'
-				>
-					Learn React
-				</a>
+			<div className='flex flex-row h-screen bg-gray-100'>
+				<Navbar />
+				<Content />
 			</div>
 		</Provider>
 	)
