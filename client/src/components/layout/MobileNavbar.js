@@ -7,7 +7,7 @@ const MobileNavbar = () => {
 		<div className='flex flex-col'>
 			<div className='py-2'>
 				<button
-					className='float-right bg-gray-400 cursor-pointer inline-flex items-center justify-center p-2 rounded-md text-gray-100 hover:text-white hover:bg-gray-600 focus:outline-none'
+					className='float-right bg-gray-400 cursor-pointer inline-flex items-center justify-center p-2 rounded-md text-gray-100 hover:text-white hover:bg-gray-600 focus:outline-none mr-2'
 					onClick={() => setIsOpen(!isOpen) /* toggles mobile menu */}
 				>
 					<span className='sr-only'>Open main menu</span>

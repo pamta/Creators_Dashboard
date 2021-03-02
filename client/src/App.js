@@ -35,12 +35,12 @@ const App = () => {
 	const isMobile = useWindowSize().width <= 768
 
 	const getLayoutStyle = () => {
-		return isMobile ? 'flex flex-col' : 'flex flex-row h-screen'
+		return isMobile ? 'flex flex-col' : 'flex flex-row'
 	}
 
 	return (
 		<Provider store={store}>
-			<div className={getLayoutStyle() + ' bg-gray-100'}>
+			<div className={getLayoutStyle() + ' bg-gray-100 h-full'}>
 				{!isMobile ? <Navbar /> : <MobileNavbar />}
 				<Content isMobile={isMobile} />
 			</div>

@@ -1,8 +1,6 @@
 const Content = ({ isMobile }) => {
-	console.log('is mobile inside content ? ' + (isMobile ? 'yes' : 'no'))
-
 	const getLayoutStyle = () => {
-		return isMobile ? 'h-screen' : 'flex-1 min-w-0'
+		return isMobile ? 'h-full' : 'h-full w-full'
 	}
 
 	return (
