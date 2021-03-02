@@ -42,7 +42,13 @@ const App = () => {
 		<Provider store={store}>
 			<div className={getLayoutStyle() + ' bg-gray-100 h-full'}>
 				{!isMobile ? <Navbar /> : <MobileNavbar />}
-				<Content isMobile={isMobile} />
+				<div
+					className={
+						'h-full w-full bg-white rounded-tl-xl border shadow-xl p-4'
+					}
+				>
+					content
+				</div>
 			</div>
 		</Provider>
 	)
