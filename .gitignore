@@ -109,3 +109,4 @@ client/src/config/secrets.js
 
 # Additional
 .DS_Store
+client/yarn.lock
