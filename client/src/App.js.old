@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Provider } from 'react-redux'
 import store from './store'
 import logo from './logo.svg'
@@ -16,7 +16,6 @@ import {
 	INSTAGRAM_TOKEN,
 	TWITTER_TOKEN,
 } from './utils/localStorageTypes'
-import Login from './components/auth/Login'
 
 setAuthToken(localStorage[AUTH_TOKEN])
 setFacebookToken(localStorage[FACEBOOK_TOKEN])
@@ -29,10 +28,6 @@ const App = () => {
 		fbSDKInit()
 	}, [fbSDKInit])
 
-    const [token, setToken] = useState();
-    if (!token) {
-        return <Login setToken={setToken} />
-    }
 	return (
 		<Provider store={store}>
 			{' '}

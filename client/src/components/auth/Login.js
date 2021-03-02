@@ -1,7 +1,32 @@
 import PropTypes from 'prop-types'
+import { useState } from 'react'
 import background from '../../assets/img/background.jfif'
 
-const Login = ({title}) => {
+
+async function loginUser(credentials) {
+    return fetch('/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(credentials)
+    })
+    .then(data => data.json())
+}
+
+const Login = ({title, setToken}) => {
+    const [username, setUserName] = useState();
+    const [password, setPassword] = useState();
+
+    const handleSubmit = async e => {
+        e.preventDefault();
+        const token = await loginUser({
+            username,
+            password
+        });
+        setToken(token);
+    }
+
     return (
         <>
             <main>
@@ -25,18 +50,18 @@ const Login = ({title}) => {
                                     <div className="pt-4 text-gray-500 text-center mb-3 font-bold">
                                     <small>Log in with credentials</small>
                                     </div>
-                                <form>
+                                <form onSubmit={handleSubmit}>
                                     <div className="relative w-full mb-3">
                                         <label
                                         className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                                        htmlFor="grid-password"
                                         >
                                         Username
                                         </label>
                                         <input
-                                        type="email"
+                                        type="text"
                                         className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full"
                                         placeholder="Username"
+                                        onChange={e => setUserName(e.target.value)}
                                         style={{ transition: "all .15s ease" }}
                                         />
                                     </div>
@@ -44,7 +69,6 @@ const Login = ({title}) => {
                                     <div className="relative w-full mb-3">
                                         <label
                                         className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                                        htmlFor="grid-password"
                                         >
                                         Password
                                         </label>
@@ -52,27 +76,14 @@ const Login = ({title}) => {
                                         type="password"
                                         className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full"
                                         placeholder="Password"
+                                        onChange={e => setPassword(e.target.value)}
                                         style={{ transition: "all .15s ease" }}
                                         />
                                     </div>
-                                    <div>
-                                        <label className="inline-flex items-center cursor-pointer">
-                                        <input
-                                            id="customCheckLogin"
-                                            type="checkbox"
-                                            className="form-checkbox text-gray-800 ml-1 w-5 h-5"
-                                            style={{ transition: "all .15s ease" }}
-                                        />
-                                        <span className="ml-2 text-sm font-semibold text-gray-700">
-                                            Remember me
-                                        </span>
-                                        </label>
-                                    </div>
-
                                     <div className="text-center mt-6">
                                         <button
                                         className="bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
-                                        type="button"
+                                        type="submit"
                                         style={{ transition: "all .15s ease" }}
                                         >
                                         Log In
@@ -119,6 +130,7 @@ Login.defaultProps = {
 
 Login.propTypes = {
     title: PropTypes.string,
+    setToken: PropTypes.func.isRequired,
 }
 
 export default Login
