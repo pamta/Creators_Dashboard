@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
 import Content from './components/layout/Content'
 import Navbar from './components/layout/Navbar'
+import MobileNavbar from './components/layout/MobileNavbar'
 import { Provider } from 'react-redux'
 import store from './store'
-import logo from './logo.svg'
 import './App.css'
 import { fbSDKInit } from './config/ApisConfig'
 import {
@@ -18,6 +18,7 @@ import {
 	INSTAGRAM_TOKEN,
 	TWITTER_TOKEN,
 } from './utils/localStorageTypes'
+import useWindowSize from './lib/useWindowSize'
 
 setAuthToken(localStorage[AUTH_TOKEN])
 setFacebookToken(localStorage[FACEBOOK_TOKEN])
@@ -30,11 +31,18 @@ const App = () => {
 		fbSDKInit()
 	}, [fbSDKInit])
 
+	// Constantly update isMobile variable
+	const isMobile = useWindowSize().width <= 768
+
+	const getLayoutStyle = () => {
+		return isMobile ? 'flex flex-col' : 'flex flex-row h-screen'
+	}
+
 	return (
 		<Provider store={store}>
-			<div className='flex flex-row h-screen bg-gray-100'>
-				<Navbar />
-				<Content />
+			<div className={getLayoutStyle() + ' bg-gray-100'}>
+				{!isMobile ? <Navbar /> : <MobileNavbar />}
+				<Content isMobile={isMobile} />
 			</div>
 		</Provider>
 	)
