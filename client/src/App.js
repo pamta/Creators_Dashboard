@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Provider } from "react-redux";
 import store from "./store";
 import logo from "./logo.svg";
 import "./App.css";
-import { fbSDKInit } from "./config/ApisConfig";
 import { loadUser } from "./actions/auth";
+import { fbSDKInit } from "./config/ApisConfig";
 import {
   setAuthToken,
   setFacebookToken,
@@ -17,6 +17,7 @@ import {
   INSTAGRAM_TOKEN,
   TWITTER_TOKEN,
 } from "./utils/localStorageTypes";
+import Login from "./components/auth/Login";
 
 setAuthToken(localStorage[AUTH_TOKEN]);
 setFacebookToken(localStorage[FACEBOOK_TOKEN]);
@@ -30,6 +31,10 @@ const App = () => {
     store.dispatch(loadUser());
   }, [fbSDKInit, loadUser]);
 
+  const [token, setToken] = useState();
+  if (!token) {
+    return <Login setToken={setToken} />;
+  }
   return (
     <Provider store={store}>
       {" "}
