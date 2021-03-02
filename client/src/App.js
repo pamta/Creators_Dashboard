@@ -1,6 +1,11 @@
 import React, { useEffect } from 'react'
 import Navbar from './components/layout/Navbar'
 import MobileNavbar from './components/layout/MobileNavbar'
+import LandingPage from './components/pages/LandingPage'
+import PostsPage from './components/pages/PostsPage'
+import NotesPage from './components/pages/NotesPage'
+import AnalyticsPage from './components/pages/AnalyticsPage'
+import SettingsPage from './components/pages/SettingsPage'
 import { Provider } from 'react-redux'
 import store from './store'
 import './App.css'
@@ -18,6 +23,7 @@ import {
 	TWITTER_TOKEN,
 } from './utils/localStorageTypes'
 import useWindowSize from './lib/useWindowSize'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 setAuthToken(localStorage[AUTH_TOKEN])
 setFacebookToken(localStorage[FACEBOOK_TOKEN])
@@ -39,16 +45,34 @@ const App = () => {
 
 	return (
 		<Provider store={store}>
-			<div className={getLayoutStyle() + ' bg-gray-100 h-full'}>
-				{!isMobile ? <Navbar /> : <MobileNavbar />}
-				<div
-					className={
-						'h-full w-full bg-white rounded-tl-xl border shadow-xl p-4'
-					}
-				>
-					content
+			<Router>
+				<div className={getLayoutStyle() + ' bg-gray-100 h-full'}>
+					{!isMobile ? <Navbar /> : <MobileNavbar />}
+					<div
+						className={
+							'h-full w-full bg-white rounded-tl-xl border shadow-xl p-4'
+						}
+					>
+						<Switch>
+							<Route exact path='/'>
+								<LandingPage />
+							</Route>
+							<Route path='/posts'>
+								<PostsPage />
+							</Route>
+							<Route path='/notes'>
+								<NotesPage />
+							</Route>
+							<Route path='/analytics'>
+								<AnalyticsPage />
+							</Route>
+							<Route path='/settings'>
+								<SettingsPage />
+							</Route>
+						</Switch>
+					</div>
 				</div>
-			</div>
+			</Router>
 		</Provider>
 	)
 }
