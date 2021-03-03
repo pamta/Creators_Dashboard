@@ -9,6 +9,7 @@ import {
   USER_LOADED,
   AUTH_ERROR,
   REGISTER_SUCCESS,
+  REGISTER_FAIL,
 } from "./types";
 import {
   setAuthToken,
@@ -81,7 +82,9 @@ export const logout = () => (dispatch) => {
 };
 
 // Register User
-export const register = ({ name, userName, email, password }) => async (dispatch) => {
+export const register = ({ name, userName, email, password }) => async (
+  dispatch
+) => {
   const config = {
     headers: {
       "Content-Type": "application/json",
