@@ -1,11 +1,42 @@
+import { useState } from 'react'
 import NavbarLink from './NavbarLink'
 import { Link } from 'react-router-dom'
 
-const Navbar = () => {
+const MobileNavbar = () => {
+	const [isOpen, setIsOpen] = useState(false)
+
 	return (
-		<div className='w-72 p-4 bg-gray-100'>
-			<div className='flex flex-col justify-between h-full'>
-				<div className='flex flex-col space-y-2'>
+		<div className='flex flex-col'>
+			<div className='py-2'>
+				<button
+					className='float-right bg-gray-400 cursor-pointer inline-flex items-center justify-center p-2 rounded-md text-gray-100 hover:text-white hover:bg-gray-600 focus:outline-none mr-2'
+					onClick={() => setIsOpen(!isOpen) /* toggles mobile menu */}
+				>
+					<span className='sr-only'>Open main menu</span>
+					<svg
+						className='block h-6 w-6'
+						xmlns='http://www.w3.org/2000/svg'
+						fill='none'
+						viewBox='0 0 24 24'
+						stroke='currentColor'
+						aria-hidden='true'
+					>
+						<path d='M4 6h16M4 12h16M4 18h16' />
+					</svg>
+					<svg
+						className='hidden h-6 w-6'
+						xmlns='http://www.w3.org/2000/svg'
+						fill='none'
+						viewBox='0 0 24 24'
+						stroke='currentColor'
+						aria-hidden='true'
+					>
+						<path d='M6 18L18 6M6 6l12 12' />
+					</svg>
+				</button>
+			</div>
+			{isOpen ? (
+				<div className='flex flex-col space-y-1 p-4'>
 					<h1 className='font-semibold text-xl text-center mb-4'>
 						<Link to='/'>Creator's Dashboard</Link>
 					</h1>
@@ -45,7 +76,7 @@ const Navbar = () => {
 						link='/notes'
 						icon={
 							<svg
-								class='w-6 h-6'
+								class='w-5 h-5'
 								fill='currentColor'
 								viewBox='0 0 20 20'
 								xmlns='http://www.w3.org/2000/svg'
@@ -55,8 +86,6 @@ const Navbar = () => {
 						}
 						color='yellow-200'
 					/>
-				</div>
-				<div className='space-y-2'>
 					<NavbarLink
 						name='Settings'
 						link='/settings'
@@ -76,33 +105,33 @@ const Navbar = () => {
 						}
 						color='gray-400'
 					/>
-					<div>
-						<a href='#'>
-							<div
-								className={
-									'flex flex-row justify-left items-center space-x-4 rounded-md p-2 bg-gray-800 text-gray-100'
-								}
+					<a href='#'>
+						<div
+							className={
+								'flex flex-row justify-left items-center space-x-4 rounded-md p-2 bg-gray-800 text-gray-100'
+							}
+						>
+							<svg
+								class='w-6 h-6'
+								fill='currentColor'
+								viewBox='0 0 20 20'
+								xmlns='http://www.w3.org/2000/svg'
 							>
-								<svg
-									class='w-6 h-6'
-									fill='currentColor'
-									viewBox='0 0 20 20'
-									xmlns='http://www.w3.org/2000/svg'
-								>
-									<path
-										fill-rule='evenodd'
-										d='M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z'
-										clip-rule='evenodd'
-									></path>
-								</svg>
-								<h2>Logout</h2>
-							</div>
-						</a>
-					</div>
+								<path
+									fill-rule='evenodd'
+									d='M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z'
+									clip-rule='evenodd'
+								></path>
+							</svg>
+							<h2>Logout</h2>
+						</div>
+					</a>
 				</div>
-			</div>
+			) : (
+				<></>
+			)}
 		</div>
 	)
 }
 
-export default Navbar
+export default MobileNavbar
