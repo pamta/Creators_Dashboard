@@ -64,7 +64,7 @@ const App = () => {
             }
           >
             <Switch>
-              <Route exact path="/" component={LandingPage} />
+              <PrivateRoute exact path="/" component={LandingPage} />
               <PrivateRoute path="/posts" component={PostsPage} />
               <PrivateRoute path="/notes" component={NotesPage} />
               <PrivateRoute path="/analytics" component={AnalyticsPage} />
