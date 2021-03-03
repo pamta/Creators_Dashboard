@@ -1,3 +1,4 @@
+import background from "../../assets/img/background.jfif";
 const onChange = (e) => {
 
 };
@@ -9,7 +10,9 @@ const Register = ({title}) => {
                 <div
                     className="absolute top-0 w-full h-full bg-gray-900"
                     style={{
-                    background: "linear-gradient(rgba(0,2,34, 0.7), rgba(0,2,34, 0.7))",
+                    background: "linear-gradient(rgba(0,2,34, 0.7), rgba(0,2,34, 0.7)), url(" +
+                    background +
+                    ")",
                     backgroundSize: "100%",
                     backgroundRepeat: "no-repeat"
                     }}
