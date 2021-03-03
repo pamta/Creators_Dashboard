@@ -45,6 +45,7 @@ router.post(
   }
 
   const { userIdentifier, password } = req.body;
+  
   console.log(userIdentifier, "-> ", password);
 
   try {

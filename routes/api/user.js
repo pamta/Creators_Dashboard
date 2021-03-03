@@ -44,8 +44,8 @@ router.post(
     try {
       // Check if there's a user with that email o that userName (since we put emails and usernames as unique)
       let mailFound = await User.findOne({ email });
-      let userFound = await User.findOne({ userName });
-      if (userFound || mailFound) {
+      let userNameFound = await User.findOne({ userName });
+      if (userNameFound || mailFound) {
         return res
           .status(400)
           .json({ errors: [{ msg: "User already exists" }] });
