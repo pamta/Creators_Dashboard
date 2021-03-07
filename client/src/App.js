@@ -1,7 +1,16 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { Provider } from "react-redux";
+import { fbSDKInit } from "./config/ApisConfig";
+import useWindowSize from "./lib/useWindowSize";
+//Assets
 import logo from "./logo.svg";
+//Redux
+import { Provider } from "react-redux";
+import store from "./store";
+import { loadUser } from "./actions/auth";
+//Style
+import "./App.css";
+//Components
 import Navbar from "./components/layout/Navbar";
 import MobileNavbar from "./components/layout/MobileNavbar";
 import LandingPage from "./components/pages/LandingPage";
@@ -10,13 +19,9 @@ import NotesPage from "./components/pages/NotesPage";
 import AnalyticsPage from "./components/pages/AnalyticsPage";
 import SettingsPage from "./components/pages/SettingsPage";
 import PrivateRoute from "./components/routing/PrivateRoute";
-import store from "./store";
-import "./App.css";
-import { fbSDKInit } from "./config/ApisConfig";
-import { loadUser } from "./actions/auth";
-import useWindowSize from "./lib/useWindowSize";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
+//
 import {
   setAuthToken,
   setFacebookToken,

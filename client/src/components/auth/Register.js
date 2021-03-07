@@ -1,14 +1,26 @@
 import { Link, Redirect } from "react-router-dom";
-import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { useState } from "react";
 import background from "../../assets/img/background.jfif";
+import { register } from "../../actions/auth";
+import { connect } from "react-redux";
 
-const onChange = (e) => {};
-const Register = ({ title, isAuthenticated }) => {
+const Register = ({ title, register, isAuthenticated }) => {
+  const [name, setName] = useState();
+  const [username, setUserName] = useState();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    register(name, username, email, password);
+  };
+
   //Redirect if logged in
   if (isAuthenticated) {
     return <Redirect to="/" />;
   }
+
   return (
     <main>
       <section className="absolute w-full h-full">
@@ -34,7 +46,20 @@ const Register = ({ title, isAuthenticated }) => {
                   Sign Up
                 </div>
                 <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
-                  <form>
+                  <form onSubmit={handleSubmit}>
+                    <div className="relative w-full mb-3">
+                      <label className="block uppercase text-gray-700 text-xs font-bold mb-2">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full"
+                        placeholder="Full Name"
+                        name="name"
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                      />
+                    </div>
                     <div className="relative w-full mb-3">
                       <label className="block uppercase text-gray-700 text-xs font-bold mb-2">
                         Email Address
@@ -44,6 +69,7 @@ const Register = ({ title, isAuthenticated }) => {
                         className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full"
                         placeholder="Email Address"
                         name="email"
+                        onChange={(e) => setEmail(e.target.value)}
                         required
                       />
                     </div>
@@ -52,9 +78,11 @@ const Register = ({ title, isAuthenticated }) => {
                         Username
                       </label>
                       <input
+                        type="text"
                         placeholder="Username"
                         name="username"
                         className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full"
+                        onChange={(e) => setUserName(e.target.value)}
                         required
                       />
                     </div>
@@ -66,8 +94,9 @@ const Register = ({ title, isAuthenticated }) => {
                         type="password"
                         placeholder="Password"
                         className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full"
-                        name="paswword"
-                        minLength="6"
+                        name="password"
+                        minLength="8"
+                        onChange={(e) => setPassword(e.target.value)}
                         required
                       />
                     </div>
@@ -80,8 +109,9 @@ const Register = ({ title, isAuthenticated }) => {
                         placeholder="Confirm Password"
                         name="password2"
                         className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full"
-                        minLength="6"
-                        required
+                        minLength="8"
+                        onChange={(e) => setPassword(e.target.value)}
+                        
                       />
                     </div>
                     <div className="text-center mt-6">
@@ -110,6 +140,7 @@ Register.defaultProps = {
 
 Register.propTypes = {
   title: PropTypes.string,
+  register: PropTypes.func.isRequired,
   isAuthenticated: PropTypes.bool,
 };
 
@@ -117,4 +148,4 @@ const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
 });
 
-export default connect(mapStateToProps, null)(Register);
+export default connect(mapStateToProps, { register })(Register);

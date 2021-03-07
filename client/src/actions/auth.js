@@ -82,9 +82,7 @@ export const logout = () => (dispatch) => {
 };
 
 // Register User
-export const register = ({ name, userName, email, password }) => async (
-  dispatch
-) => {
+export const register = ( name, userName, email, password ) => async (dispatch) => {
   const config = {
     headers: {
       "Content-Type": "application/json",
@@ -93,8 +91,11 @@ export const register = ({ name, userName, email, password }) => async (
 
   const body = JSON.stringify({ name, userName, email, password });
 
+  console.log("register action executed =>");
+  console.log("registering from client: ", body);
+
   try {
-    const res = await axios.post("/api/users", body, config);
+    const res = await axios.post("/api/user", body, config);
     dispatch({
       type: REGISTER_SUCCESS,
       payload: res.data,

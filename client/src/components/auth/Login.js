@@ -47,12 +47,13 @@ const Login = ({ title, login, isAuthenticated }) => {
                     <form onSubmit={handleSubmit}>
                       <div className="relative w-full mb-3">
                         <label className="block uppercase text-gray-700 text-xs font-bold mb-2">
-                          Username
+                          Username (or email)
                         </label>
                         <input
                           type="text"
+                          name="name"
                           className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full"
-                          placeholder="Username"
+                          placeholder="Username (or email)"
                           onChange={(e) => setUserName(e.target.value)}
                           style={{ transition: "all .15s ease" }}
                         />
