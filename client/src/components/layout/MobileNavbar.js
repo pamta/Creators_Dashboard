@@ -57,7 +57,7 @@ const MobileNavbar = ({ logout }) => {
 								<path d='M5 3a2 2 0 00-2 2v6a2 2 0 002 2V5h8a2 2 0 00-2-2H5z'></path>
 							</svg>
 						}
-						color='green-200'
+						color='green'
 					/>
 					<NavbarLink
 						name='Analytics'
@@ -72,7 +72,7 @@ const MobileNavbar = ({ logout }) => {
 								<path d='M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z'></path>
 							</svg>
 						}
-						color='blue-200'
+						color='blue'
 					/>
 					<NavbarLink
 						name='Notes'
@@ -87,7 +87,7 @@ const MobileNavbar = ({ logout }) => {
 								<path d='M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z'></path>
 							</svg>
 						}
-						color='yellow-200'
+						color='yellow'
 					/>
 					<NavbarLink
 						name='Settings'
@@ -106,7 +106,7 @@ const MobileNavbar = ({ logout }) => {
 								></path>
 							</svg>
 						}
-						color='gray-400'
+						color='gray'
 					/>
 					<a onClick={logout} href='#!'>
 						<div
