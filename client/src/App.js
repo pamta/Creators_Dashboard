@@ -13,6 +13,7 @@ import "./App.css";
 //Components
 import Navbar from "./components/layout/Navbar";
 import MobileNavbar from "./components/layout/MobileNavbar";
+import Alert from "./components/layout/Alert";
 import LandingPage from "./components/pages/LandingPage";
 import PostsPage from "./components/pages/PostsPage";
 import NotesPage from "./components/pages/NotesPage";
@@ -57,6 +58,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <Router>
+        <Alert />
         <Switch>
           <Route exact path="/login" component={Login} />
           <Route exact path="/signup" component={Register} />
