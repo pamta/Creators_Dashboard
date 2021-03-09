@@ -1,6 +1,7 @@
 import useWindowSize from '../../lib/useWindowSize'
 
-const SimpleSettingsField = ({ fieldName, inputTag }) => {
+const SimpleSettingsField = ({type, fieldName, value, inputTag, updateState}) => { 
+
 	const isTablet = useWindowSize().width <= 1080
 	const getLayoutStyle = () => {
 		return isTablet
@@ -18,11 +19,12 @@ const SimpleSettingsField = ({ fieldName, inputTag }) => {
 				}
 			>
 				<input
-					type='text'
+					type={type}
 					name={inputTag}
 					id={inputTag}
+					defaultValue={value}
 					className='focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md h-8 p-2'
-					placeholder='placeholder'
+					onChange={(e) => updateState(e.target.value)}
 				/>
 				<div className='absolute flex items-left h-8 w-full'>
 					<label htmlFor={inputTag} className='sr-only'>
@@ -33,5 +35,10 @@ const SimpleSettingsField = ({ fieldName, inputTag }) => {
 		</div>
 	)
 }
+
+SimpleSettingsField.defaultProps = {
+	type: "text",
+	value: ""
+};
 
 export default SimpleSettingsField

@@ -14,7 +14,6 @@ module.exports = function (req, res, next) {
     // 401 is not authorized
     return res.status(401).json({ msg: "No token, authorization denied" });
   }
-  console.log(token);
   
   // Verify token
   try {

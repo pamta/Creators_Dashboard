@@ -10,6 +10,8 @@ import {
   AUTH_ERROR,
   REGISTER_SUCCESS,
   REGISTER_FAIL,
+  USER_UPDATE_SUCCESS,
+  USER_UPDATE_FAIL
 } from "./types";
 import {
   setAuthToken,
@@ -110,6 +112,30 @@ export const register = ( name, userName, email, password ) => async (dispatch) 
     }
     dispatch({
       type: REGISTER_FAIL,
+    });
+  }
+};
+
+// Update User data
+export const updateUserData = ( name, userName, email ) => async (dispatch) => {
+
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  const body = JSON.stringify({ name, userName, email });
+
+  try {
+    const res = await axios.post("/api/user/update", body, config);
+    dispatch({
+      type: USER_UPDATE_SUCCESS
+    });
+    // reload updated user data to the state
+    dispatch(loadUser());
+  } catch (error) {
+    dispatch({
+      type: USER_UPDATE_FAIL,
     });
   }
 };
