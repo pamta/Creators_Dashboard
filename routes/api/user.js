@@ -71,7 +71,7 @@ router.post(
       // // Encrypt the password
       user.password = await bcrypt.hash(password, salt);
       // // Remember that User is a moongose model and we connected moongose with our database
-      await user.save().exec();
+      await user.save();
 
       const payload = {
         user: {

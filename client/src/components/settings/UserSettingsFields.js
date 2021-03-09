@@ -24,9 +24,9 @@ const UserFields = () => {
 		if(!loading){
 			dispatch(updateUserData(name, userName, email));
 		}
-		console.log(userName); 
-		console.log(name); 
-		console.log(email);
+		// console.log(userName); 
+		// console.log(name); 
+		// console.log(email);
 	  };
 
 	return (

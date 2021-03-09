@@ -64,7 +64,7 @@ const App = () => {
           <Route exact path="/signup" component={Register} />
         </Switch>
         <div className={getLayoutStyle() + " bg-gray-100 h-full"}>
-          {!isMobile ? <Navbar /> : <MobileNavbar />}
+          {!isMobile ? <PrivateRoute path="/" component={Navbar} /> : <PrivateRoute path="/" component={MobileNavbar} />}
           <div
             className={
               "h-full w-full bg-white rounded-tl-xl border shadow-xl p-4"
