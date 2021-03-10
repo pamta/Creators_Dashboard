@@ -12,8 +12,17 @@ const connectDB = async () => {
       useCreateIndex: true,
       useFindAndModify: false,
       useUnifiedTopology: true,
-    });
+    }).then(() => {
+      console.log('\nConnected to DB: ' + mongoose.connection.host + ":" + mongoose.connection.port);
+      console.log("\tname: " + mongoose.connection.name);
+      console.log('\tWith collections: ');
+        for (e in mongoose.connection.collections){
+            console.log('\t\t' + e);
+        }
+      });
+
     console.log("MongoDB Connected...");
+
   } catch (err) {
     console.error(err.message);
     // Exit process with failure

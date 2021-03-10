@@ -25,7 +25,7 @@ const initialState = {
   token: localStorage.getItem(AUTH_TOKEN),
   isAuthenticated: null,
   loading: true,
-  user: null,
+  user: {},
   // Auth from social networks
   socialAuth: {
     facebook: buildSocialObj(localStorage.getItem(FACEBOOK_TOKEN), null),

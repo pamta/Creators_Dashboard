@@ -21,8 +21,8 @@ const UserSchema = new mongoose.Schema({
     },
     registrationDate: {
         type: String,
-        default: Date.now
+        default: String(Date.now())
     }
 });
 
-module.exports = User = mongoose.model("user", UserSchema)
+module.exports = User = mongoose.model("user", UserSchema);

@@ -9,7 +9,7 @@ const { check, validationResult } = require("express-validator");
 
 // @route  GET api/auth
 // @desct  Test route
-// @access Public/non-authentication/no-token
+// @access Prrivate/requires token
 // Passing the 'auth' middleware will execute the middleware function that will be executed before the callback.
 // Given a JSON web token, it returns a user if the token is valid
 router.get("/", auth, async (req, res) => {
@@ -86,11 +86,11 @@ router.post(
       { expiresIn: 360000 },
       // Callback
       (err, token) => {
-      // If there's an error, throw it
-      if (err) throw err;
-      // Else, set in the json of the response this web token with
-      // the user id that can be used for authentication after sign up
-      res.json({ token });
+        // If there's an error, throw it
+        if (err) throw err;
+        // Else, set in the json of the response this web token with
+        // the user id that can be used for authentication after sign up
+        res.json({ token });
       }
     );
     

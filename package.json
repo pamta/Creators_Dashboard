@@ -7,7 +7,7 @@
     "start": "node server",
     "server": "nodemon server",
     "client": "set HTTPS=true&&npm start --prefix client",
-    "dev": "concurrently \"nodemon server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "repository": {
     "type": "git",
@@ -20,11 +20,13 @@
   },
   "homepage": "https://github.com/pamta/Creators_Dashboard#readme",
   "dependencies": {
+    "@google-cloud/local-auth": "^1.0.1",
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.3",
     "express": "^4.17.1",
     "express-validator": "^6.9.2",
+    "googleapis": "^67.1.1",
     "https": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",

@@ -10,6 +10,8 @@ import {
   AUTH_ERROR,
   REGISTER_SUCCESS,
   REGISTER_FAIL,
+  USER_UPDATE_SUCCESS,
+  USER_UPDATE_FAIL
 } from "./types";
 import {
   setAuthToken,
@@ -82,9 +84,7 @@ export const logout = () => (dispatch) => {
 };
 
 // Register User
-export const register = ({ name, userName, email, password }) => async (
-  dispatch
-) => {
+export const register = ( name, userName, email, password ) => async (dispatch) => {
   const config = {
     headers: {
       "Content-Type": "application/json",
@@ -93,8 +93,11 @@ export const register = ({ name, userName, email, password }) => async (
 
   const body = JSON.stringify({ name, userName, email, password });
 
+  console.log("register action executed =>");
+  console.log("registering from client: ", body);
+
   try {
-    const res = await axios.post("/api/users", body, config);
+    const res = await axios.post("/api/user", body, config);
     dispatch({
       type: REGISTER_SUCCESS,
       payload: res.data,
@@ -109,6 +112,30 @@ export const register = ({ name, userName, email, password }) => async (
     }
     dispatch({
       type: REGISTER_FAIL,
+    });
+  }
+};
+
+// Update User data
+export const updateUserData = ( name, userName, email ) => async (dispatch) => {
+
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  const body = JSON.stringify({ name, userName, email });
+
+  try {
+    const res = await axios.post("/api/user/update", body, config);
+    dispatch({
+      type: USER_UPDATE_SUCCESS
+    });
+    // reload updated user data to the state
+    dispatch(loadUser());
+  } catch (error) {
+    dispatch({
+      type: USER_UPDATE_FAIL,
     });
   }
 };

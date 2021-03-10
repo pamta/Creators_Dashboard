@@ -1,10 +1,11 @@
+import { Link, Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import background from "../../assets/img/background.jfif";
 import { login } from "../../actions/auth";
 import { connect } from "react-redux";
 
-const Login = ({ title, login }) => {
+const Login = ({ title, login, isAuthenticated }) => {
   const [username, setUserName] = useState();
   const [password, setPassword] = useState();
 
@@ -12,6 +13,10 @@ const Login = ({ title, login }) => {
     e.preventDefault();
     login(username, password);
   };
+
+  if (isAuthenticated) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <>
@@ -42,12 +47,13 @@ const Login = ({ title, login }) => {
                     <form onSubmit={handleSubmit}>
                       <div className="relative w-full mb-3">
                         <label className="block uppercase text-gray-700 text-xs font-bold mb-2">
-                          Username
+                          Username (or email)
                         </label>
                         <input
                           type="text"
+                          name="name"
                           className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full"
-                          placeholder="Username"
+                          placeholder="Username (or email)"
                           onChange={(e) => setUserName(e.target.value)}
                           style={{ transition: "all .15s ease" }}
                         />
@@ -92,7 +98,7 @@ const Login = ({ title, login }) => {
                           onClick={(e) => e.preventDefault()}
                           className="font-bold text-sm text-blue-500 hover:text-blue-800"
                         >
-                          Create new account
+                          <Link to="/signup">Create new account</Link>
                         </a>
                       </div>
                     </div>
@@ -114,6 +120,11 @@ Login.defaultProps = {
 Login.propTypes = {
   title: PropTypes.string,
   login: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool,
 };
 
-export default connect(null, { login })(Login);
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
+
+export default connect(mapStateToProps, { login })(Login);
