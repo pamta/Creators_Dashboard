@@ -12,11 +12,11 @@ function getAlertFunctionByType(alertType) {
       alertFunction = (message) => {
         return (
           <div
-            class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md"
+            className="relative m-2 bg-teal-100 border border-teal-400 text-teal-800 px-4 py-3 rounded shadow-md"
             role="alert"
           >
-            <div class="flex">
-              <div class="py-1">
+            <div className="flex">
+              <div className="py-1">
                 <svg
                   class="fill-current h-6 w-6 text-teal-500 mr-4"
                   xmlns="http://www.w3.org/2000/svg"
@@ -26,8 +26,8 @@ function getAlertFunctionByType(alertType) {
                 </svg>
               </div>
               <div>
-                <p class="font-bold">Success!</p>
-                <p class="text-sm">{message}</p>
+                <p className="font-bold">Success!</p>
+                <p className="text-sm">{message}</p>
               </div>
             </div>
           </div>
@@ -38,14 +38,14 @@ function getAlertFunctionByType(alertType) {
       alertFunction = (message) => {
         return (
           <div
-            class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+            className=" relative m-2 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-md"
             role="alert"
           >
-            <strong class="font-bold">Oh no!{"  "}</strong>
-            <span class="block sm:inline">{message}</span>
-            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+            <strong className="font-bold">Oh no!{"  "}</strong>
+            <span className="block sm:inline mr-9">{message}</span>
+            <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
               <svg
-                class="fill-current h-6 w-6 text-red-500"
+                className="fill-current h-6 w-6 text-red-500"
                 role="button"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
@@ -62,11 +62,11 @@ function getAlertFunctionByType(alertType) {
       alertFunction = (message) => {
         return (
           <div
-            class="flex items-center bg-blue-500 text-white text-sm font-bold px-4 py-3"
+            className="flex items-center bg-blue-500 text-white text-sm font-bold px-4 py-3"
             role="alert"
           >
             <svg
-              class="fill-current w-4 h-4 mr-2"
+              className="fill-current w-4 h-4 mr-2"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
             >
@@ -84,6 +84,7 @@ function getAlertFunctionByType(alertType) {
 const Alert = ({ alerts }) =>
   alerts !== null &&
   alerts.length > 0 &&
+  
   alerts.map((alert) => (
     // Gotta have a unique key for a list of JSX here
     <div key={alert.id}>

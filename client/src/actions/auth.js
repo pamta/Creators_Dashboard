@@ -131,9 +131,15 @@ export const updateUserData = ( name, userName, email ) => async (dispatch) => {
     dispatch({
       type: USER_UPDATE_SUCCESS
     });
+    
+    dispatch(setAlert("User data succesfully updated", "success"));
     // reload updated user data to the state
     dispatch(loadUser());
   } catch (error) {
+    const errors = error.response.data.errors;
+    if (errors) {
+      errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+    }
     dispatch({
       type: USER_UPDATE_FAIL,
     });

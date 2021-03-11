@@ -3,17 +3,25 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import background from "../../assets/img/background.jfif";
 import { register } from "../../actions/auth";
+import { setAlert } from "../../actions/alert"
 import { connect } from "react-redux";
 
-const Register = ({ title, register, isAuthenticated }) => {
+const Register = ({ title, register, setAlert, isAuthenticated }) => {
   const [name, setName] = useState();
   const [username, setUserName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [password2, setPassword2] = useState();
 
   const handleSubmit = (e) => {
+
     e.preventDefault();
-    register(name, username, email, password);
+    if (password == password2){
+      register(name, username, email, password);
+    }else{
+      console.log("password error");
+      setAlert("Please use the same password in both fields", "danger");
+    }
   };
 
   //Redirect if logged in
@@ -107,10 +115,10 @@ const Register = ({ title, register, isAuthenticated }) => {
                       <input
                         type="password"
                         placeholder="Confirm Password"
-                        name="password2"
+                        name="password"
                         className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full"
                         minLength="8"
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e) => setPassword2(e.target.value)}
                         
                       />
                     </div>
@@ -124,6 +132,17 @@ const Register = ({ title, register, isAuthenticated }) => {
                       </button>
                     </div>
                   </form>
+                  <div className="flex flex-wrap mt-3">
+                    <div className="w-1/2">
+                      <a
+                        href="#login"
+                        onClick={(e) => e.preventDefault()}
+                        className="font-bold text-sm text-blue-500 hover:text-blue-800"
+                      >
+                        <Link to="/login">I already have an account</Link>
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -141,6 +160,7 @@ Register.defaultProps = {
 Register.propTypes = {
   title: PropTypes.string,
   register: PropTypes.func.isRequired,
+  setAlert: PropTypes.func.isRequired,
   isAuthenticated: PropTypes.bool,
 };
 
@@ -148,4 +168,4 @@ const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
 });
 
-export default connect(mapStateToProps, { register })(Register);
+export default connect(mapStateToProps, { register, setAlert })(Register);
