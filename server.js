@@ -1,11 +1,13 @@
 const express = require("express");
 const connectDB = require("./config/db");
+const cors = require("cors");
 const https = require("https");
 const config = require("config");
 const app = express();
 const serverKey = config.get("serverKey");
 const serverCert = config.get("serverCert");
 
+app.use(cors());
 // Connect database
 connectDB();
 
@@ -24,7 +26,6 @@ app.get("/", (req, res) => res.send("API Running"));
 // All the routes on ./routes/api/user are behind the main route /api/user
 app.use("/api/user", require("./routes/api/user"));
 app.use("/api/auth", require("./routes/api/auth"));
-
 
 https
   .createServer(

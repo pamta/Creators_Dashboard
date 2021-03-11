@@ -24,6 +24,7 @@
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.3",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-validator": "^6.9.2",
     "googleapis": "^67.1.1",
