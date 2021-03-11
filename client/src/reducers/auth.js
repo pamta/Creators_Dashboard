@@ -5,6 +5,10 @@ import {
   USER_LOADED,
   AUTH_ERROR,
   REGISTER_SUCCESS,
+  USER_UPDATE_SUCCESS,
+  USER_UPDATE_FAIL,
+  USER_DELETE_SUCCESS,
+  USER_DELETE_FAIL
 } from "../actions/types";
 import {
   AUTH_TOKEN,

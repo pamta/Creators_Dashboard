@@ -11,7 +11,9 @@ import {
   REGISTER_SUCCESS,
   REGISTER_FAIL,
   USER_UPDATE_SUCCESS,
-  USER_UPDATE_FAIL
+  USER_UPDATE_FAIL,
+  USER_DELETE_SUCCESS,
+  USER_DELETE_FAIL
 } from "./types";
 import {
   setAuthToken,
@@ -142,6 +144,35 @@ export const updateUserData = ( name, userName, email ) => async (dispatch) => {
     }
     dispatch({
       type: USER_UPDATE_FAIL,
+    });
+  }
+};
+
+// Delete User permanently
+export const deleteUser = () => async (dispatch) => {
+
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  try {
+    const res = await axios.post("/api/user/delete", {}, config);
+    dispatch({
+      type: USER_DELETE_SUCCESS
+    });
+    
+    dispatch(setAlert("User succesfully deleted", "success"));
+    // reload updated user data to the state
+    dispatch(logout());
+  } catch (error) {
+    const errors = error.response.data.errors;
+    if (errors) {
+      errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+    }
+    dispatch({
+      type: USER_DELETE_FAIL,
     });
   }
 };

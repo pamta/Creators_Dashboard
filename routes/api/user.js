@@ -106,7 +106,7 @@ router.post(
 
 // @route  POST api/user/update
 // @desct  Update existing user's data
-// @access Prrivate/requires token
+// @access Private/requires token
 // Passing the 'auth' middleware will execute the middleware function that will be executed before the callback.
 // Given a JSON web token, it updates a user if the token is valid and corresponds to the user id
 router.post(
@@ -166,5 +166,45 @@ router.post(
   }
 );
   
+
+// @route  POST api/user/delete
+// @desct  Delete existing user profile
+// @access Private/requires token
+// Passing the 'auth' middleware will execute the middleware function that will be executed before the callback.
+// Given a JSON web token, will delete a user if the token is valid and corresponds to the user id
+router.post(
+  "/delete", auth,
+  async (req, res) => {
+
+    try{
+      // Get token from header and get user id from it
+      const token = req.header("x-auth-token");
+      const decoded = jwt.verify(token, config.get("jwtSecret"));
+      tokenUser = decoded.user;
+
+      // Check if there's a user with that id
+      let userFound = await User.findById(tokenUser.id).exec();
+
+      if (!userFound) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "User non existent" }] });
+      }
+
+      await User.remove({ _id: tokenUser.id }, (err, doc) => {
+        if(err){
+          console.error(err.message);
+          res.status(500).send("DB error");
+        }
+      }).exec();
+      
+      res.send("User deleted");
+
+    } catch(err) {
+      console.error(err);
+      res.status(500).send("Server error");
+    }
+  }
+);
 
 module.exports = router;

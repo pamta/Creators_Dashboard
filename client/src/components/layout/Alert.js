@@ -18,7 +18,7 @@ function getAlertFunctionByType(alertType) {
             <div className="flex">
               <div className="py-1">
                 <svg
-                  class="fill-current h-6 w-6 text-teal-500 mr-4"
+                  className="fill-current h-6 w-6 text-teal-500 mr-4"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                 >
