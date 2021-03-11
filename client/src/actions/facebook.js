@@ -10,53 +10,6 @@ import {
 } from "./types";
 import { fbAppId, fbAppSecret } from "../config/secrets";
 
-const getUserPages = () => async (dispatch, getState) => {
-  const access_token = getState().facebook.user.longLivedToken;
-  const userId = getState().facebook.user.id;
-  console.log(getState().facebook);
-
-  if (!access_token || !userId) {
-    dispatch({
-      type: FB_PAGES_RETRIVED_FAIL,
-    });
-    console.log("No token to get pages");
-    return;
-  }
-
-  const config = {
-    params: {
-      access_token,
-    },
-  };
-
-  try {
-    const res = await axios.get(
-      `https://graph.facebook.com/v10.0/${userId}/accounts`,
-      config
-    );
-    console.log("pages");
-    console.log(res.data);
-    const pages = [];
-    res.data.forEach((page) => {
-      pages.push({
-        longLivedToken: page.access_token,
-        handler: page.name,
-        id: page.id,
-      });
-    });
-
-    dispatch({
-      type: FB_PAGES_RETRIVED_SUCCESS,
-      payload: pages,
-    });
-  } catch (error) {
-    console.log(error);
-    dispatch({
-      type: FB_PAGES_RETRIVED_FAIL,
-    });
-  }
-};
-
 export const setFbUserInfo = (shortLivedToken) => async (
   dispatch,
   getState
