@@ -1,25 +1,45 @@
 import SettingsField from "./SettingsField";
 import { useState } from "react";
 import PropTypes from "prop-types";
-import { setFbUserInfo } from "../../actions/facebook";
+import { setFbUserInfo, selectFbPage } from "../../actions/facebook";
 import { connect } from "react-redux";
+import BasicModal from "../layout/BasicModal";
 
-const UserAuthFields = ({ setFbUserInfo }) => {
-  const [showFbPagesPopup, setFbPagesPopup] = useState();
+const UserAuthFields = ({ setFbUserInfo, fbUserPages, selectFbPage }) => {
+  const [showFbPagesModal, setFbPagesModal] = useState(false);
 
-  const genFbPopupBody = () => {};
+  const genFbModalBody = () =>
+    fbUserPages.map((page) => (
+      <div key={page.id}>
+        <p>{page.handler}</p>{" "}
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={() => {
+            selectFbPage(page.id);
+            setFbPagesModal(false);
+          }}
+        >
+          select
+        </button>
+      </div>
+    ));
 
   const fbLogin = () => {
+    const actionFlow = (token) => {
+      setFbUserInfo(token);
+      setFbPagesModal(true);
+    };
+
     window.FB.getLoginStatus(function (response) {
       const isConnected = response.status == "connected";
       if (isConnected) {
-        setFbUserInfo(response.authResponse.accessToken);
+        actionFlow(response.authResponse.accessToken);
       } else {
         window.FB.login(function (res) {
           const couldDoLogin = res.status == "connected";
           if (couldDoLogin) {
             console.log(res);
-            setFbUserInfo(res.authResponse.accessToken);
+            actionFlow(res.authResponse.accessToken);
           }
         });
       }
@@ -28,6 +48,13 @@ const UserAuthFields = ({ setFbUserInfo }) => {
 
   return (
     <div className="flex flex-col space-y-4">
+      {showFbPagesModal && (
+        <BasicModal
+          title={"Select your page"}
+          body={genFbModalBody()}
+          closeFunction={() => setFbPagesModal(false)}
+        ></BasicModal>
+      )}
       <div className="space-y-4">
         <SettingsField
           fieldName="Twitter"
@@ -110,6 +137,14 @@ const UserAuthFields = ({ setFbUserInfo }) => {
 
 UserAuthFields.propTypes = {
   setFbUserInfo: PropTypes.func.isRequired,
+  selectFbPage: PropTypes.func.isRequired,
+  fbUserPages: PropTypes.array.isRequired,
 };
 
-export default connect(null, { setFbUserInfo })(UserAuthFields);
+const mapStateToProps = (state) => ({
+  fbUserPages: state.facebook.pages.allUserPages,
+});
+
+export default connect(mapStateToProps, { setFbUserInfo, selectFbPage })(
+  UserAuthFields
+);
