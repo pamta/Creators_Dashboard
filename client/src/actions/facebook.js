@@ -23,7 +23,6 @@ export const setFbUserInfo = (shortLivedToken) => async (
       fb_exchange_token: shortLivedToken,
     },
   };
-  console.log(userLongLivedTokenConfig);
 
   try {
     let res = await execWithoutHeaders(() =>
@@ -109,5 +108,19 @@ export const setFbUserInfo = (shortLivedToken) => async (
   } catch (error) {
     console.log(error);
     dispatch({ type: FB_AUTH_USER_FAIL });
+  }
+};
+
+export const selectFbPage = (pageId) => (dispatch, getState) => {
+  let elem = getState().facebook.pages.allUserPages.filter(
+    (page) => page.id == pageId
+  );
+  if (elem["length"] == 0) {
+    dispatch({ type: FB_SELECT_PAGE_FAIL });
+  } else {
+    dispatch({
+      type: FB_SELECT_PAGE_SUCCESS,
+      payload: elem[0],
+    });
   }
 };

@@ -3,6 +3,8 @@ import {
   FB_AUTH_USER_FAIL,
   FB_PAGES_RETRIVED_SUCCESS,
   FB_PAGES_RETRIVED_FAIL,
+  FB_SELECT_PAGE_SUCCESS,
+  FB_SELECT_PAGE_FAIL,
 } from "../actions/types";
 
 const initialState = {
@@ -46,6 +48,18 @@ export default function (state = initialState, action) {
       return {
         ...state,
         pages: { ...state.pages, allUserPages: [] },
+      };
+
+    case FB_SELECT_PAGE_SUCCESS:
+      return {
+        ...state,
+        pages: { ...state.pages, selectedPageInfo: payload },
+      };
+
+    case FB_SELECT_PAGE_FAIL:
+      return {
+        ...state,
+        pages: { ...state.pages, selectedPageInfo: null },
       };
     default:
       return state;
