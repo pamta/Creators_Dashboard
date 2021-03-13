@@ -35,6 +35,7 @@ import {
   INSTAGRAM_TOKEN,
   TWITTER_TOKEN,
 } from "./utils/localStorageTypes";
+import { loadFbDataFromStorage } from "./actions/facebook";
 
 setAuthToken(localStorage[AUTH_TOKEN]);
 setFacebookToken(localStorage[FACEBOOK_TOKEN]);
@@ -45,8 +46,9 @@ const App = () => {
   // use useEffect to execute when the component loads, just once
   useEffect(() => {
     fbSDKInit();
+    store.dispatch(loadFbDataFromStorage());
     store.dispatch(loadUser());
-  }, [fbSDKInit, loadUser]);
+  }, [fbSDKInit, loadUser, loadFbDataFromStorage]);
 
   // Constantly update isMobile variable
   const isMobile = useWindowSize().width <= 768;
@@ -64,7 +66,11 @@ const App = () => {
           <Route exact path="/signup" component={Register} />
         </Switch>
         <div className={getLayoutStyle() + " bg-gray-100 h-full"}>
-          {!isMobile ? <PrivateRoute path="/" component={Navbar} /> : <PrivateRoute path="/" component={MobileNavbar} />}
+          {!isMobile ? (
+            <PrivateRoute path="/" component={Navbar} />
+          ) : (
+            <PrivateRoute path="/" component={MobileNavbar} />
+          )}
           <div
             className={
               "h-full w-full bg-white rounded-tl-xl border shadow-xl p-4"

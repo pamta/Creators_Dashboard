@@ -7,8 +7,10 @@ import {
   FB_PAGES_RETRIVED_FAIL,
   FB_SELECT_PAGE_SUCCESS,
   FB_SELECT_PAGE_FAIL,
+  FB_LOAD_STORED_DATA_SUCCESS,
 } from "./types";
 import { fbAppId, fbAppSecret } from "../config/secrets";
+import { FB_STRINGIFIED } from "../utils/localStorageTypes";
 
 export const setFbUserInfo = (shortLivedToken) => async (
   dispatch,
@@ -57,6 +59,8 @@ export const setFbUserInfo = (shortLivedToken) => async (
       payload,
     });
 
+    localStorage.setItem(FB_STRINGIFIED, JSON.stringify(getState().facebook));
+
     try {
       const access_token = getState().facebook.user.longLivedToken;
       const userId = getState().facebook.user.id;
@@ -96,6 +100,11 @@ export const setFbUserInfo = (shortLivedToken) => async (
           type: FB_PAGES_RETRIVED_SUCCESS,
           payload: pages,
         });
+
+        localStorage.setItem(
+          FB_STRINGIFIED,
+          JSON.stringify(getState().facebook)
+        );
       } catch (error) {
         console.log(error);
         dispatch({
@@ -121,6 +130,19 @@ export const selectFbPage = (pageId) => (dispatch, getState) => {
     dispatch({
       type: FB_SELECT_PAGE_SUCCESS,
       payload: elem[0],
+    });
+    localStorage.setItem(FB_STRINGIFIED, JSON.stringify(getState().facebook));
+  }
+};
+
+export const loadFbDataFromStorage = () => (dispatch) => {
+  const fbData = localStorage.getItem(FB_STRINGIFIED);
+  if (fbData) {
+    localStorage.setItem(FB_STRINGIFIED, JSON.stringify(JSON.parse(fbData)));
+
+    dispatch({
+      type: FB_LOAD_STORED_DATA_SUCCESS,
+      payload: JSON.parse(fbData),
     });
   }
 };

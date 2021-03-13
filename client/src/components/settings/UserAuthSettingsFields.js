@@ -4,8 +4,12 @@ import PropTypes from "prop-types";
 import { setFbUserInfo, selectFbPage } from "../../actions/facebook";
 import { connect } from "react-redux";
 import BasicModal from "../layout/BasicModal";
-
-const UserAuthFields = ({ setFbUserInfo, fbUserPages, selectFbPage }) => {
+const UserAuthFields = ({
+  setFbUserInfo,
+  fbUserPages,
+  selectFbPage,
+  fbPageHandler,
+}) => {
   const [showFbPagesModal, setFbPagesModal] = useState(false);
 
   const genFbModalBody = () =>
@@ -74,6 +78,7 @@ const UserAuthFields = ({ setFbUserInfo, fbUserPages, selectFbPage }) => {
         <SettingsField
           fieldName="Facebook"
           inputTag="facebook-handler"
+          textValue={fbPageHandler}
           icon={
             <button onClick={fbLogin}>
               <svg
@@ -143,8 +148,12 @@ UserAuthFields.propTypes = {
 
 const mapStateToProps = (state) => ({
   fbUserPages: state.facebook.pages.allUserPages,
+  fbPageHandler: state.facebook.pages.selectedPageInfo
+    ? state.facebook.pages.selectedPageInfo.handler
+    : "",
 });
 
-export default connect(mapStateToProps, { setFbUserInfo, selectFbPage })(
-  UserAuthFields
-);
+export default connect(mapStateToProps, {
+  setFbUserInfo,
+  selectFbPage,
+})(UserAuthFields);

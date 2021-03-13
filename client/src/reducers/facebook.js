@@ -5,6 +5,7 @@ import {
   FB_PAGES_RETRIVED_FAIL,
   FB_SELECT_PAGE_SUCCESS,
   FB_SELECT_PAGE_FAIL,
+  FB_LOAD_STORED_DATA_SUCCESS,
 } from "../actions/types";
 
 const initialState = {
@@ -61,6 +62,9 @@ export default function (state = initialState, action) {
         ...state,
         pages: { ...state.pages, selectedPageInfo: null },
       };
+
+    case FB_LOAD_STORED_DATA_SUCCESS:
+      return payload;
     default:
       return state;
   }
