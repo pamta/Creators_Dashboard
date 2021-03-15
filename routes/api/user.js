@@ -153,7 +153,7 @@ router.post(
       await User.findByIdAndUpdate(tokenUser.id, {name: name, email: email, userName: userName}, (err, doc)=>{
           if(err){
             console.error(err.message);
-            res.status(500).send("DB error");
+            res.status(500).send(`DB error: ${err}`);
           }
         }).exec();
       

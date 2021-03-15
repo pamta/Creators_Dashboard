@@ -9,13 +9,14 @@ const PublicationSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    content: {
-        type: String,
+    video: {
+        URL: String,
+        name: String
     },
-    videoURL: {
-        type: String
-    },
-    imagesURLs: [String],
+    images: [{
+        URL: String,
+        name: String
+    }],
     text: {
         type: String
     },

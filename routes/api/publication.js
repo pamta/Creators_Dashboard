@@ -8,9 +8,6 @@ const { v4: uuid } = require('uuid');
 const mime = require('mime-types');
 const multer = require('multer');
 
-// import uuid from 'uuid/v4';
-// import mime from 'mime-types';
-// import multer from 'multer';
 //Multer
 const {uploadSingle} = require('../../config/multer-setup');
 
@@ -23,7 +20,7 @@ const Publication = require("../../models/Publication");
 
 // route to create a new publication
 // @route  POST api/publication
-// @access 
+// @access private, requires a user token
 router.post(
     "/", auth,
     [
@@ -80,27 +77,92 @@ router.post(
   );
 
 
-
+// route to add media to a publication
+// @route  POST api/publication/upload
+// @access private, requires a user token
 router.post(
-  "/upload", /*auth,*/ uploadSingle('file','/uploads'),
-  // [
-  //   // Second parameter of check is a custom error message
-  //   check("post_id", "A post is required").not().isEmpty(),
-  // ],
+  "/upload/video", /*auth,*/ multer().single('file'), //aut not yet activated because of testing (easier to post without headder)
+  [
+    // Second parameter of check is a custom error message
+    check("publication_id", "A publication is required").not().isEmpty(),
+  ],
   async (req, res) => {
+    // Finds the validation errors in this request and wraps them in an object with handy functions
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ // 400 is for a bad request
+        errors: errors.array(),
+      });
+    }
+    
+    //we get the alredy checked payload
+    const { publication_id } = req.body;
 
     try{
-      if(req.file){
-        const storedPath = req.file.path;
-        console.log(`File saved at: ${String(storedPath)}`);
-        res.send(`File saved at: ${String(storedPath)}`);
-      }else{
-        res.send("post succesful, but file not saved");
+      //VERIFICATIONS of user, publication and content
+
+      // // Get token from header and get user id from it
+      // const token = req.header("x-auth-token");
+      // const decoded = jwt.verify(token, config.get("jwtSecret"));
+      // tokenUser = decoded.user;
+
+      if(!req.file){
+        return res.send("No file sent");
       }
+
+      let publicationFound = await Publication.findById(publication_id).exec();
+      if (!publicationFound) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Publication does not exist" }] });
+      }
+
+      let oldVideo = publicationFound.video;
+
+      //FILE UPLOAD
+
+      const type = mime.lookup(req.file.originalname);
+      const blob = mediaBucket.file(`${uuid()}.${mime.extensions[type][0]}`);
+
+      const stream = blob.createWriteStream({
+        resumable: true,
+        contentType: type,
+        //predefinedAcl: 'publicRead', //posible error
+      });
+    
+      stream.on('error', err => {
+        console.log(err);
+        return res.status(500).send(err);
+      });
+
+      publicURL = `https://storage.googleapis.com/${mediaBucket.name}/${blob.name}`;
+    
+      stream.on('finish', () => { //idk if needed
+        console.log("File finished upload");
+      });
+    
+      stream.end(req.file.buffer);
+
+      //PUBLICATION UPDATE
+
+      await Publication.findByIdAndUpdate(publication_id, {video: {URL: publicURL, name: blob.name} }, (err, doc)=>{
+        if(err){
+          console.error(err.message);
+          return res.status(500).send(`DB error: ${err}`);
+        }
+      }).exec();
+    
+      res.send(`Publication updated, video uploaded: ${publicURL}`);
       
+      //No error handling if video was not deleted. idk were to put error handling for this, as this is not of concert for the user
+      if(oldVideo){
+        await mediaBucket.file(oldVideo.name).delete();
+        console.log(`gs://${mediaBucket.name}/${oldVideo.name} deleted.`);
+      }
+
     } catch (err) {
       console.error(err);
-      res.status(500).send("Server error");
+      return res.status(500).send("Server error");
     }
   }
 );

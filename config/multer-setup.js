@@ -46,16 +46,17 @@ const  uploadSingle = (name, url) => {
       upload.storage = storage;
 
       return upload.single(name);
+
     } catch (err) {
+      console.log("Error at Multer");
       console.log(err);
-      //res.status(500).contentType("text/plain").end("Oops! Something went wrong!");
     }
 }
 
 const  uploadMultiple = (name, url) => {
   var upload = multer();
 
-  const targetPath = path.join('../public/', url);
+  const targetPath = path.join('./public/', url);
 
   const storage = multer.diskStorage({
       destination: targetPath,
