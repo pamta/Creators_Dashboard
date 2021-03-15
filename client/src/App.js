@@ -15,7 +15,7 @@ import Navbar from "./components/layout/Navbar";
 import MobileNavbar from "./components/layout/MobileNavbar";
 import Alert from "./components/layout/Alert";
 import LandingPage from "./components/pages/LandingPage";
-import PostsPage from "./components/pages/PostsPageTest";
+import PostsPage from "./components/pages/PostsPage";
 import NotesPage from "./components/pages/NotesPage";
 import AnalyticsPage from "./components/pages/AnalyticsPage";
 import SettingsPage from "./components/pages/SettingsPage";

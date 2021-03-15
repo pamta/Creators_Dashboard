@@ -54,14 +54,16 @@ router.post(
       }
 
       //save current date in the created use. May use some other format so it is up to changes
-      registrationDate = String(Date.now())
+      const registrationDate = Date.now();
+      const updateDate = registrationDate;
 
       user = new User({
         name,
         email,
         userName,
         password,
-        registrationDate
+        registrationDate,
+        updateDate
       });
 
 
@@ -136,10 +138,8 @@ router.post(
     const {name, userName, email } = req.body;
 
     try{
-      // Get token from header and get user id from it
-      const token = req.header("x-auth-token");
-      const decoded = jwt.verify(token, config.get("jwtSecret"));
-      tokenUser = decoded.user;
+      //user exist in req because of the auth middleware
+      const tokenUser = req.user;
 
       // Check if there's a user with that id
       let userFound = await User.findById(tokenUser.id).exec();
@@ -150,7 +150,9 @@ router.post(
           .json({ errors: [{ msg: "User non existent" }] });
       }
 
-      await User.findByIdAndUpdate(tokenUser.id, {name: name, email: email, userName: userName}, (err, doc)=>{
+      const updateDate = Date.now();
+
+      await User.findByIdAndUpdate(tokenUser.id, {name: name, email: email, userName: userName, updateDate: updateDate}, (err, doc)=>{
           if(err){
             console.error(err.message);
             res.status(500).send(`DB error: ${err}`);
@@ -172,15 +174,13 @@ router.post(
 // @access Private/requires token
 // Passing the 'auth' middleware will execute the middleware function that will be executed before the callback.
 // Given a JSON web token, will delete a user if the token is valid and corresponds to the user id
-router.post(
+router.delete(
   "/delete", auth,
   async (req, res) => {
 
     try{
-      // Get token from header and get user id from it
-      const token = req.header("x-auth-token");
-      const decoded = jwt.verify(token, config.get("jwtSecret"));
-      tokenUser = decoded.user;
+      //user exist in req because of the auth middleware
+      const tokenUser = req.user;
 
       // Check if there's a user with that id
       let userFound = await User.findById(tokenUser.id).exec();

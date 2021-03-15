@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const jwt = require("jsonwebtoken");
+//const jwt = require("jsonwebtoken");
 const config = require("config");
 const auth = require("../../middleware/auth");
 
@@ -37,7 +37,7 @@ router.get("/all", auth, async (req, res) => {
 router.get("/", auth, async (req, res) => {
   try {
     const publication_id = req.header("publication_id");
-    const publication = await Publication.findOne({_id: publication_id, user_id: req.user.id});
+    const publication = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec();
     res.json(publication);
   } catch (err) {
     console.error(err.message);
@@ -67,11 +67,8 @@ router.post(
       const { name } = req.body;
   
       try {
-        // Get token from header and get user id from it
-        const token = req.header("x-auth-token");
-        const decoded = jwt.verify(token, config.get("jwtSecret"));
-        tokenUser = decoded.user;
-        user_id = tokenUser.id
+        //user exist in req because of the auth middleware
+        const user_id = req.user.id;
 
         // All publications must be related to a user, so we check if there's a user with that id.
         let userFound = await User.findById(user_id).exec();
@@ -83,12 +80,14 @@ router.post(
         }
 
         //save current date in the created publication
-        creationDate = Date.now();
+        const registrationDate = Date.now();
+        const updateDate = registrationDate;
 
         publication = new Publication({
           user_id,
           name,
-          creationDate
+          creationDate,
+          updateDate
         });
 
         await publication.save( (err, doc) => {
@@ -103,6 +102,59 @@ router.post(
     }
   );
 
+// route to add text content to a publication
+// @route  POST api/publication/upload/text
+// @access private, requires a user token
+router.post(
+  "/upload/text", auth,
+  [
+    // Second parameter of check is a custom error message
+    check("text", "Text content is required").not().isEmpty(),
+    check("publication_id", "A publication is required").not().isEmpty(),
+  ],
+  async (req, res) => {
+
+    // Finds the validation errors in this request and wraps them in an object with handy functions
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ // 400 is for a bad request
+        errors: errors.array(),
+      });
+    }
+    
+    //we get the alredy checked payload
+    const { publication_id, text } = req.body;
+
+    try{
+      const publicationFound = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec();
+      if (!publicationFound) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Publication does not exist" }] });
+      }
+
+      //UPDATE PUBLICATION
+      publicationFound.text = text;
+      publicationFound.updateDate = Date.now();
+
+      publicationFound.save((err)=>{
+        if(err){
+          console.error(err.message);
+          return res.status(500).send(`DB error: ${err}`);
+        }
+
+        return res.send(`Publication updated, text uploaded`);
+      });
+
+    } catch (err) {
+      console.error(err);
+      return res.status(500).send("Server error");
+    }
+  });
+
+// route to add multiple images to a publication
+// @route  POST api/publication/upload/images
+// @access private, requires a user token     //aut not yet activated
 router.post(
   "/upload/images", /*auth,*/ multer().array('file', 4), //aut not yet activated because of testing (easier to post without headder)
   [
@@ -127,7 +179,10 @@ router.post(
           .json({ errors: [{ msg: "No images sent" }] });
     }  
     try{
+      //use this instead when activating the auth middleware
+      //const publicationFound = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec();
       let publicationFound = await Publication.findById(publication_id).exec();
+
       if (!publicationFound) {
         return res
           .status(400)
@@ -144,9 +199,8 @@ router.post(
           .status(400)
           .json({ errors: [{ msg: "Please select fewer images or remove existing ones" }] });
       }
+      //FILE TYPE VERIFICATION
       for (file of req.files){
-        console.log(file.originalname);
-        //FILE TYPE VERIFICATION
         const type = mime.lookup(file.originalname);
         const regexImage = /image/g;
         if(type.search(regexImage) == -1){
@@ -182,6 +236,7 @@ router.post(
   
         //PUBLICATION UPDATE
         publicationFound.images.push({URL: publicURL, name: blob.name});
+        publicationFound.updateDate = Date.now();
       }
 
       const imagesFinished = publicationFound.images;
@@ -202,9 +257,9 @@ router.post(
   });
 
 
-// route to add media to a publication
-// @route  POST api/publication/upload
-// @access private, requires a user token
+// route to add video media to a publication
+// @route  POST api/publication/upload/video
+// @access private, requires a user token       //aut not yet activated b
 router.post(
   "/upload/video", /*auth,*/ multer().single('file'), //aut not yet activated because of testing (easier to post without headder)
   [
@@ -232,12 +287,10 @@ router.post(
     try{
       //VERIFICATIONS of user, publication and content
 
-      // // Get token from header and get user id from it
-      // const token = req.header("x-auth-token");
-      // const decoded = jwt.verify(token, config.get("jwtSecret"));
-      // tokenUser = decoded.user;
-
+      //use this instead when activating the auth middleware
+      //const publicationFound = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec();
       let publicationFound = await Publication.findById(publication_id).exec();
+
       if (!publicationFound) {
         return res
           .status(400)
@@ -277,9 +330,10 @@ router.post(
     
       stream.end(req.file.buffer);
 
-      //PUBLICATION UPDATE
+      //PUBLICATION UPDATE TODO: Dont use findByIdAndUpdate, but update existing publicationFound and save()
 
-      await Publication.findByIdAndUpdate(publication_id, {video: {URL: publicURL, name: blob.name} }, (err, doc)=>{
+      const updateDate = Date.now();
+      await Publication.findByIdAndUpdate(publication_id, {video: {URL: publicURL, name: blob.name}, updateDate: updateDate }, (err, doc)=>{
         if(err){
           console.error(err.message);
           return res.status(500).send(`DB error: ${err}`);
