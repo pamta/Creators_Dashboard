@@ -18,6 +18,33 @@ const { check, validationResult } = require("express-validator");
 const User = require("../../models/User");
 const Publication = require("../../models/Publication");
 
+// @route  GET api/publication/all
+// @access Private/requires token
+// Given a JSON web token , it returns all the user's publications
+router.get("/all", auth, async (req, res) => {
+  try {
+    const publications = await Publication.find({user_id: req.user.id});
+    res.json(publications);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// @route  GET api/publication
+// @access Private/requires token
+// Given a JSON web token , it returns all the user's publications
+router.get("/", auth, async (req, res) => {
+  try {
+    const publication_id = req.header("publication_id");
+    const publication = await Publication.findOne({_id: publication_id, user_id: req.user.id});
+    res.json(publication);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 // route to create a new publication
 // @route  POST api/publication
 // @access private, requires a user token
