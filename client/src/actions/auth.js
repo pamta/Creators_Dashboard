@@ -158,7 +158,7 @@ export const deleteUser = () => async (dispatch) => {
   };
 
   try {
-    const res = await axios.delete("/api/user/delete", config);
+    const res = await axios.delete("/api/user/", config);
     dispatch({
       type: USER_DELETE_SUCCESS
     });

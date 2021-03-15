@@ -175,7 +175,7 @@ router.post(
 // Passing the 'auth' middleware will execute the middleware function that will be executed before the callback.
 // Given a JSON web token, will delete a user if the token is valid and corresponds to the user id
 router.delete(
-  "/delete", auth,
+  "/", auth,
   async (req, res) => {
 
     try{

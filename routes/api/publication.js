@@ -80,8 +80,8 @@ router.post(
         }
 
         //save current date in the created publication
-        const registrationDate = Date.now();
-        const updateDate = registrationDate;
+        const creationDate = Date.now();
+        const updateDate = creationDate;
 
         publication = new Publication({
           user_id,
@@ -91,7 +91,11 @@ router.post(
         });
 
         await publication.save( (err, doc) => {
-          res.json({ _id: doc.id });
+          if(err){
+            console.error(err.message);
+            return res.status(500).send(`DB error: ${err}`);
+          }
+          return res.json({ _id: doc.id });
         });
 
       } catch (err) {
@@ -358,5 +362,154 @@ router.post(
     }
   }
 );
+
+
+//DELETE ROUTES
+
+// @route  DELETE api/publication
+// @desct  Delete existing publication 
+// @access Private/requires token and publication_id in headder
+router.delete(
+  "/", auth,
+  async (req, res) => {
+    try{
+      const publication_id = req.header("publication_id");
+      const publication = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec();
+
+      if (!publication) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Publication non existent" }] });
+      }
+
+      await Publication.remove({_id: publication_id, user_id: req.user.id}, (err, doc) => {
+        if(err){
+          console.error(err.message);
+          res.status(500).send("DB error");
+        }
+      }).exec();
+      
+      return res.send("Publication  deleted");
+
+    } catch(err) {
+      console.error(err);
+      res.status(500).send("Server error");
+    }
+  });
+
+
+  //delete video from publication
+  router.delete(
+    "/video", auth,
+    async (req, res) => {
+      try{
+        const publication_id = req.header("publication_id");
+        const publication = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec();
+  
+        if (!publication) {
+          return res
+            .status(400)
+            .json({ errors: [{ msg: "Publication non existent" }] });
+        }
+
+        //DELETE IN CLOUD
+        const oldVideo = publication.video;
+        if(oldVideo){
+          try{
+            await mediaBucket.file(oldVideo.name).delete();
+            console.log(`gs://${mediaBucket.name}/${oldVideo.name} deleted.`);
+          }catch (e){
+            console.log(`could not delete file ${oldVideo.name}, maybe it does not exists`);
+          }
+
+          //DELETE IN DB
+          publication.video = undefined;
+          publication.save((err)=>{
+            if(err){
+              console.error(err.message);
+              return res.status(500).send(`DB error: ${err}`);
+            }
+            return res.send("Video  deleted");
+          });
+        }else{
+          return res.send("No Video to delete");
+        }
+        
+      } catch(err) {
+        console.error(err);
+        res.status(500).send("Server error");
+      }
+    });
+
+//delete text from publication
+router.delete(
+  "/text", auth,
+  async (req, res) => {
+    try{
+      const publication_id = req.header("publication_id");
+      const publication = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec();
+
+      if (!publication) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Publication non existent" }] });
+      }
+
+      const oldtext = publication.text;
+      if(oldtext){
+        //DELETE IN DB
+        publication.text = undefined;
+        publication.save((err)=>{
+          if(err){
+            console.error(err.message);
+            return res.status(500).send(`DB error: ${err}`);
+          }
+          return res.send("Text  deleted");
+        });
+      }else{
+        return res.send("No Text to delete");
+      }
+      
+    } catch(err) {
+      console.error(err);
+      res.status(500).send("Server error");
+    }
+  });
+
+//delete all images from publication
+router.delete(
+  "/images", auth,
+  async (req, res) => {
+    try{
+      const publication_id = req.header("publication_id");
+      const publication = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec();
+
+      if (!publication) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Publication non existent" }] });
+      }
+
+      const oldImages = publication.images;
+
+      if(!(oldImages === undefined || oldImages.length == 0)){
+        //DELETE IN DB
+        publication.images = [];
+        publication.save((err)=>{
+          if(err){
+            console.error(err.message);
+            return res.status(500).send(`DB error: ${err}`);
+          }
+          return res.send("Images  deleted");
+        });
+      }else{
+        return res.send("No Images to delete");
+      }
+      
+    } catch(err) {
+      console.error(err);
+      res.status(500).send("Server error");
+    }
+  });
 
 module.exports = router;
