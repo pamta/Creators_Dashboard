@@ -5,7 +5,7 @@ const google = config.get("google");
 
 const connectGoogleCloud = async () => {
     gc = new Storage({
-        keyFilename: path.join(__dirname, "./creatorsdashboard-c8454d3b6f90.json"),
+        keyFilename: path.join(__dirname, "./creatorsdashboard.json"),
         projectId: google.projectId 
     });
       
