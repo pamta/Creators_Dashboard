@@ -106,6 +106,7 @@ dist
 # Config files
 config/default.json
 client/src/config/secrets.js
+config/creatorsdashboard-bc85cd76cfe2.json
 
 # Additional
 .DS_Store

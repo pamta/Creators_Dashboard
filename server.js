@@ -1,5 +1,6 @@
 const express = require("express");
 const connectDB = require("./config/db");
+const connectGoogleCloud = require("./config/googleCloud");
 const https = require("https");
 const config = require("config");
 const app = express();
@@ -8,6 +9,8 @@ const serverCert = config.get("serverCert");
 
 // Connect database
 connectDB();
+
+global.mediaBucket = connectGoogleCloud();
 
 // Ask the server to accept JSON objects in the body of the POST/GET requests
 app.use(express.json({ extended: false }));
@@ -24,7 +27,7 @@ app.get("/", (req, res) => res.send("API Running"));
 // All the routes on ./routes/api/user are behind the main route /api/user
 app.use("/api/user", require("./routes/api/user"));
 app.use("/api/auth", require("./routes/api/auth"));
-
+app.use("/api/publication", require("./routes/api/publication"));
 
 https
   .createServer(

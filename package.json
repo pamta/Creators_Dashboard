@@ -21,6 +21,7 @@
   "homepage": "https://github.com/pamta/Creators_Dashboard#readme",
   "dependencies": {
     "@google-cloud/local-auth": "^1.0.1",
+    "@google-cloud/storage": "^5.8.1",
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.3",
@@ -29,8 +30,10 @@
     "googleapis": "^67.1.1",
     "https": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
+    "mime-types": "^2.1.29",
     "moment": "^2.29.1",
     "mongoose": "^5.11.16",
+    "multer": "^1.4.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-moment": "^1.1.1",
