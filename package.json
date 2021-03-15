@@ -22,6 +22,7 @@
   "dependencies": {
     "@google-cloud/local-auth": "^1.0.1",
     "@google-cloud/storage": "^5.8.1",
+    "@tailwindcss/forms": "^0.2.1",
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.3",

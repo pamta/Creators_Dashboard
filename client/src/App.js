@@ -35,6 +35,7 @@ import {
   INSTAGRAM_TOKEN,
   TWITTER_TOKEN,
 } from "./utils/localStorageTypes";
+import NewPostPage from "./components/pages/NewPostPage";
 
 setAuthToken(localStorage[AUTH_TOKEN]);
 setFacebookToken(localStorage[FACEBOOK_TOKEN]);
@@ -75,6 +76,7 @@ const App = () => {
             <Switch>
               <PrivateRoute exact path="/" component={LandingPage} />
               <PrivateRoute path="/posts" component={PostsPage} />
+              <PrivateRoute path="/newpost" component={NewPostPage} />
               <PrivateRoute path="/notes" component={NotesPage} />
               <PrivateRoute path="/analytics" component={AnalyticsPage} />
               <PrivateRoute path="/settings" component={SettingsPage} />
