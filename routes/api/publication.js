@@ -76,6 +76,104 @@ router.post(
     }
   );
 
+router.post(
+  "/upload/images", /*auth,*/ multer().array('file', 4), //aut not yet activated because of testing (easier to post without headder)
+  [
+    // Second parameter of check is a custom error message
+    check("publication_id", "A publication is required").not().isEmpty(),
+  ],
+  async (req, res) => {
+    // Finds the validation errors in this request and wraps them in an object with handy functions
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ // 400 is for a bad request
+        errors: errors.array(),
+      });
+    }
+    
+    //we get the alredy checked payload
+    const { publication_id } = req.body;
+
+    if(!req.files){
+      return res
+          .status(400)
+          .json({ errors: [{ msg: "No images sent" }] });
+    }  
+    try{
+      let publicationFound = await Publication.findById(publication_id).exec();
+      if (!publicationFound) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Publication does not exist" }] });
+      }
+      //user should be allowed to upload images up to 4
+      if(publicationFound.images.length == 4){
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Already reached max number of images" }] });
+      }
+      if(publicationFound.images.length + req.files.length > 4){
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Please select fewer images or remove existing ones" }] });
+      }
+      for (file of req.files){
+        console.log(file.originalname);
+        //FILE TYPE VERIFICATION
+        const type = mime.lookup(file.originalname);
+        const regexImage = /image/g;
+        if(type.search(regexImage) == -1){
+          return res
+            .status(400)
+            .json({ errors: [{ msg: "Media type not allowed, please upload only images" }] });
+        }
+      }
+
+      for (file of req.files){
+        //FILE UPLOAD
+        const type = mime.lookup(file.originalname);
+        const blob = mediaBucket.file(`${uuid()}.${mime.extensions[type][0]}`);
+  
+        const stream = blob.createWriteStream({
+          resumable: true,
+          contentType: type,
+          //predefinedAcl: 'publicRead', //posible error
+        });
+      
+        stream.on('error', err => {
+          console.log(err);
+          return res.status(500).send(err);
+        });
+  
+        publicURL = `https://storage.googleapis.com/${mediaBucket.name}/${blob.name}`;
+      
+        stream.on('finish', () => { //idk if needed
+          console.log("File finished upload");
+        });
+      
+        stream.end(file.buffer);
+  
+        //PUBLICATION UPDATE
+        publicationFound.images.push({URL: publicURL, name: blob.name});
+      }
+
+      const imagesFinished = publicationFound.images;
+      publicationFound.save((err)=>{
+          if(err){
+            console.error(err.message);
+            return res.status(500).send(`DB error: ${err}`);
+          }
+        });
+      
+      res.send(`Publication updated, images uploaded: ${imagesFinished}`);
+
+    } catch (err) {
+      console.error(err);
+      return res.status(500).send("Server error");
+    }
+    
+  });
+
 
 // route to add media to a publication
 // @route  POST api/publication/upload
@@ -98,6 +196,12 @@ router.post(
     //we get the alredy checked payload
     const { publication_id } = req.body;
 
+    if(!req.file){
+      return res
+          .status(400)
+          .json({ errors: [{ msg: "No video sent" }] });
+    }
+
     try{
       //VERIFICATIONS of user, publication and content
 
@@ -105,10 +209,6 @@ router.post(
       // const token = req.header("x-auth-token");
       // const decoded = jwt.verify(token, config.get("jwtSecret"));
       // tokenUser = decoded.user;
-
-      if(!req.file){
-        return res.send("No file sent");
-      }
 
       let publicationFound = await Publication.findById(publication_id).exec();
       if (!publicationFound) {
@@ -120,8 +220,15 @@ router.post(
       let oldVideo = publicationFound.video;
 
       //FILE UPLOAD
-
       const type = mime.lookup(req.file.originalname);
+      console.log(type);
+      const regexVideo = /video/g;
+      if(type.search(regexVideo) == -1){
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Media type not allowed, please upload a video" }] });
+      }
+
       const blob = mediaBucket.file(`${uuid()}.${mime.extensions[type][0]}`);
 
       const stream = blob.createWriteStream({
@@ -156,8 +263,12 @@ router.post(
       
       //No error handling if video was not deleted. idk were to put error handling for this, as this is not of concert for the user
       if(oldVideo){
-        await mediaBucket.file(oldVideo.name).delete();
-        console.log(`gs://${mediaBucket.name}/${oldVideo.name} deleted.`);
+        try{
+          await mediaBucket.file(oldVideo.name).delete();
+          console.log(`gs://${mediaBucket.name}/${oldVideo.name} deleted.`);
+        }catch (e){
+          console.log(`could not delete file ${oldVideo.name}, maybe it does not exists`);
+        }
       }
 
     } catch (err) {
