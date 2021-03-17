@@ -41,6 +41,7 @@ app.use("/api/user", require("./routes/api/user"));
 app.use("/api/auth", require("./routes/api/auth"));
 app.use("/api/publication", require("./routes/api/publication"));
 app.use('/youtube/analytics', require('./routes/youtube/analytics'))
+app.use('/youtube/upload', require('./routes/youtube/upload'))
 
 https
 	.createServer(
