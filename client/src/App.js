@@ -61,7 +61,9 @@ const App = () => {
   return (
     <Provider store={store}>
       <Router>
-        <Alert />
+        <div  className="absolute w-screen z-10">
+          <Alert />
+        </div>
         <Switch>
           <Route exact path="/login" component={Login} />
           <Route exact path="/signup" component={Register} />

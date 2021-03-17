@@ -20,8 +20,12 @@ const UserSchema = new mongoose.Schema({
         required: true
     },
     registrationDate: {
-        type: String,
-        default: String(Date.now())
+        type: Date,
+        default: Date.now()
+    },
+    updateDate: {
+        type: Date,
+        default: Date.now()
     }
 });
 
