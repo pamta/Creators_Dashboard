@@ -1,6 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const auth = require('../../middleware/auth')
 const path = require('path')
 const { google } = require('googleapis')
 const { authenticate } = require('@google-cloud/local-auth')
@@ -8,39 +7,53 @@ const { authenticate } = require('@google-cloud/local-auth')
 // Initialize the Youtube API library
 const youtube = google.youtube('v3')
 
-// @route  GET youtube/analytics/videos
-// @desct  Get all user's videos analytics
-// @access Private/requires token
-router.get('/videos', auth, async (req, res) => {
+// @route  POST youtube/upload
+// @desct  Upload a user's video to YouTube
+// @access Public/non-authentication/no-token
+router.post('/', async (req, res) => {
 	try {
+		const { title, description, privacyStatus } = req.body
 		// Obtain user credentials to use for the request
 		const auth = await authenticate({
-			keyfilePath: path.join(__dirname, '../../oauth2.keys.json'),
+			keyfilePath: path.join(__dirname, './oauth2.keys.json'),
 			scopes: [
-				'https://www.googleapis.com/auth/yt-analytics.readonly',
-				'https://www.googleapis.com/auth/youtube.readonly',
+				'https://www.googleapis.com/auth/youtube.upload',
+				'https://www.googleapis.com/auth/youtube',
 			],
 		})
 		google.options({ auth })
 
-		const response = await youtube.channels.list({
-			// Setting the "mine" request parameter's value to "true" indicates that
-			// you want to retrieve the currently authenticated user's channel.
-			mine: true,
-			part: 'id,contentDetails',
-		})
-
-		// We need the channel's channel ID to make calls to the Analytics API.
-		// The channel ID value has the form "UCdLFeWKpkLhkguiMZUp8lWA".
-		// let channelId = res.data.items[0].id
-
-		// Retrieve the playlist ID that uniquely identifies the playlist of
-		// videos uploaded to the authenticated user's channel. This value has
-		// the form "UUdLFeWKpkLhkguiMZUp8lWA".
-		let uploadsListId =
-			response.data.items[0].contentDetails.relatedPlaylists.uploads
-		// Use the playlist ID to retrieve the list of uploaded videos.
-		await getPlaylistItems(uploadsListId)
+		const fileSize = fs.statSync(fileName).size
+		const res = await youtube.videos.insert(
+			{
+				part: 'id,snippet,status',
+				notifySubscribers: false,
+				requestBody: {
+					snippet: {
+						title,
+						description,
+					},
+					status: {
+						privacyStatus,
+					},
+				},
+				media: {
+					body: fs.createReadStream(fileName),
+				},
+			},
+			{
+				// Use the `onUploadProgress` event from Axios to track the
+				// number of bytes uploaded to this point.
+				onUploadProgress: (evt) => {
+					const progress = (evt.bytesRead / fileSize) * 100
+					readline.clearLine(process.stdout, 0)
+					readline.cursorTo(process.stdout, 0, null)
+					process.stdout.write(`${Math.round(progress)}% complete`)
+				},
+			}
+		)
+		console.log('\n\n')
+		console.log(res.data)
 		res.send('success')
 	} catch (err) {
 		console.error(err.message)
