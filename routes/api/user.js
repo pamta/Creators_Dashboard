@@ -169,7 +169,7 @@ router.post(
 );
   
 
-// @route  POST api/user/delete
+// @route  POST api/user/
 // @desct  Delete existing user profile
 // @access Private/requires token
 // Passing the 'auth' middleware will execute the middleware function that will be executed before the callback.

@@ -32,7 +32,7 @@ const UserFields = () => {
 
 	const handleDeleteUser = (e) => {
 		if(!loading){
-			if (confirm(`Are you shure you want to delete this account? :\n(There is no way to recover your account or your data)\n\nUser: ${user.userName}\nEmail: ${user.email}`)){
+			if (window.confirm(`Are you shure you want to delete this account? :\n(There is no way to recover your account or your data)\n\nUser: ${user.userName}\nEmail: ${user.email}`)){
 				console.log("Delete user action");
 				dispatch(deleteUser());
 			}

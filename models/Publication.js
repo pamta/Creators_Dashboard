@@ -11,11 +11,13 @@ const PublicationSchema = new mongoose.Schema({
     },
     video: {
         URL: String,
-        name: String
+        name: String,
+        isLoading: Boolean
     },
     images: [{
         URL: String,
-        name: String
+        name: String,
+        isLoading: Boolean
     }],
     text: {
         type: String
