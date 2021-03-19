@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 const express = require("express");
 const connectDB = require("./config/db");
 const cors = require("cors");
@@ -9,6 +10,8 @@ const app = express();
 const serverKey = config.get("serverKey");
 const serverCert = config.get("serverCert");
 =======
+=======
+>>>>>>> 52aee2815465dc79bc6ab08e2aa675f2bf778fec
 const express = require('express')
 const connectDB = require('./config/db')
 const https = require('https')
@@ -16,13 +19,19 @@ const config = require('config')
 const app = express()
 const serverKey = config.get('serverKey')
 const serverCert = config.get('serverCert')
+<<<<<<< HEAD
 >>>>>>> Add YouTube analytics route
+=======
+>>>>>>> 52aee2815465dc79bc6ab08e2aa675f2bf778fec
 
 app.use(cors());
 // Connect database
 connectDB()
+<<<<<<< HEAD
 
 global.mediaBucket = connectGoogleCloud();
+=======
+>>>>>>> 52aee2815465dc79bc6ab08e2aa675f2bf778fec
 
 // Ask the server to accept JSON objects in the body of the POST/GET requests
 app.use(express.json({ extended: false }))
