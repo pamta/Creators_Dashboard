@@ -1,9 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const auth = require('../../middleware/auth')
-const path = require('path')
 const { google } = require('googleapis')
-const { authenticate } = require('@google-cloud/local-auth')
+// const { authenticate } = require('@google-cloud/local-auth')
 
 // Initialize the Youtube API library
 const youtube = google.youtube('v3')
@@ -11,17 +10,17 @@ const youtube = google.youtube('v3')
 // @route  GET youtube/analytics/videos
 // @desct  Get all user's videos analytics
 // @access Private/requires token
-router.get('/videos', auth, async (req, res) => {
+router.get('/videos', async (req, res) => {
 	try {
 		// Obtain user credentials to use for the request
-		const auth = await authenticate({
-			keyfilePath: path.join(__dirname, '../../oauth2.keys.json'),
-			scopes: [
-				'https://www.googleapis.com/auth/yt-analytics.readonly',
-				'https://www.googleapis.com/auth/youtube.readonly',
-			],
-		})
-		google.options({ auth })
+		// const auth = await authenticate({
+		// 	keyfilePath: path.join(__dirname, '../../oauth2.keys.json'),
+		// 	scopes: [
+		// 		'https://www.googleapis.com/auth/yt-analytics.readonly',
+		// 		'https://www.googleapis.com/auth/youtube.readonly',
+		// 	],
+		// })
+		// google.options({ auth })
 
 		const response = await youtube.channels.list({
 			// Setting the "mine" request parameter's value to "true" indicates that
@@ -40,8 +39,8 @@ router.get('/videos', auth, async (req, res) => {
 		let uploadsListId =
 			response.data.items[0].contentDetails.relatedPlaylists.uploads
 		// Use the playlist ID to retrieve the list of uploaded videos.
-		await getPlaylistItems(uploadsListId)
-		res.send('success')
+		const videoAnalytics = await getPlaylistItems(uploadsListId)
+		res.send(videoAnalytics)
 	} catch (err) {
 		console.error(err.message)
 		res.status(500).send('Server Error')
@@ -63,7 +62,7 @@ async function getPlaylistItems(listId) {
 
 	// Now that we know the IDs of all the videos in the uploads list,
 	// we can retrieve information about each video.
-	await getVideoMetadata(videoIds)
+	return await getVideoMetadata(videoIds)
 }
 
 // Given an array of video IDs, this function obtains metadata about each
@@ -79,7 +78,7 @@ async function getVideoMetadata(videoIds) {
 	if (res.data.items.length == 0) {
 		console.log(`This channel doesn't have any videos`)
 	} else {
-		const videAnalytics = res.data.items.map(({ id, snippet, statistics }) => {
+		const videoAnalytics = res.data.items.map(({ id, snippet, statistics }) => {
 			return {
 				videoID: id,
 				title: snippet.title,
@@ -92,8 +91,9 @@ async function getVideoMetadata(videoIds) {
 			}
 		})
 
-		console.log('---> Analytics')
-		console.log(videAnalytics)
+		console.log('Successfully retrieved all YouTube video analytics')
+		console.log(videoAnalytics)
+		return videoAnalytics
 	}
 }
 
