@@ -1,37 +1,18 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-const express = require("express");
-const connectDB = require("./config/db");
-const cors = require("cors");
-const connectGoogleCloud = require("./config/googleCloud");
-const https = require("https");
-const config = require("config");
-const app = express();
-const serverKey = config.get("serverKey");
-const serverCert = config.get("serverCert");
-=======
-=======
->>>>>>> 52aee2815465dc79bc6ab08e2aa675f2bf778fec
 const express = require('express')
 const connectDB = require('./config/db')
+const cors = require('cors')
+const connectGoogleCloud = require('./config/googleCloud')
 const https = require('https')
 const config = require('config')
 const app = express()
 const serverKey = config.get('serverKey')
 const serverCert = config.get('serverCert')
-<<<<<<< HEAD
->>>>>>> Add YouTube analytics route
-=======
->>>>>>> 52aee2815465dc79bc6ab08e2aa675f2bf778fec
 
-app.use(cors());
+app.use(cors())
 // Connect database
 connectDB()
-<<<<<<< HEAD
 
-global.mediaBucket = connectGoogleCloud();
-=======
->>>>>>> 52aee2815465dc79bc6ab08e2aa675f2bf778fec
+global.mediaBucket = connectGoogleCloud()
 
 // Ask the server to accept JSON objects in the body of the POST/GET requests
 app.use(express.json({ extended: false }))
@@ -46,9 +27,9 @@ app.get('/', (req, res) => res.send('API Running'))
 
 // Define Routes
 // All the routes on ./routes/api/user are behind the main route /api/user
-app.use("/api/user", require("./routes/api/user"));
-app.use("/api/auth", require("./routes/api/auth"));
-app.use("/api/publication", require("./routes/api/publication"));
+app.use('/api/user', require('./routes/api/user'))
+app.use('/api/auth', require('./routes/api/auth'))
+app.use('/api/publication', require('./routes/api/publication'))
 app.use('/youtube/analytics', require('./routes/youtube/analytics'))
 app.use('/youtube/upload', require('./routes/youtube/upload'))
 
