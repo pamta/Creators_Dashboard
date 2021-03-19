@@ -46,6 +46,7 @@ router.get('/videos', async (req, res) => {
 		res.status(500).send('Server Error')
 	}
 })
+
 // Call the Data API to retrieve the items in a particular playlist. In this
 // example, we are retrieving a playlist of the currently authenticated user's
 // uploaded videos. By default, the list returns the most recent videos first.
