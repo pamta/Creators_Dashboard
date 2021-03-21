@@ -12,6 +12,8 @@ const destroyer = require('server-destroy')
 const scopes = [
 	'https://www.googleapis.com/auth/yt-analytics.readonly',
 	'https://www.googleapis.com/auth/youtube.readonly',
+	'https://www.googleapis.com/auth/youtube.upload',
+	'https://www.googleapis.com/auth/youtube',
 ]
 
 // @route  POST youtube/auth/
