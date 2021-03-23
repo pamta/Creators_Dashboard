@@ -33,7 +33,7 @@ router.get("/all", auth, async (req, res) => {
 
 // @route  GET api/publication
 // @access Private/requires token
-// Given a JSON web token , it returns all the user's publications
+// Given a JSON web token , it returns a given  user's publications
 router.get("/", auth, async (req, res) => {
   try {
     const publication_id = req.header("publication_id");
@@ -337,15 +337,17 @@ router.post(
       //PUBLICATION UPDATE TODO: Dont use findByIdAndUpdate, but update existing publicationFound and save()
 
       const updateDate = Date.now();
-      await Publication.findByIdAndUpdate(publication_id, {video: {URL: publicURL, name: blob.name}, updateDate: updateDate }, (err, doc)=>{
+      publicationFound.video = {URL: publicURL, name: blob.name};
+      publicationFound.updateDate = updateDate;
+      
+      publicationFound.save((err)=>{
         if(err){
           console.error(err.message);
           return res.status(500).send(`DB error: ${err}`);
         }
-      }).exec();
+        res.send(`Publication updated, video uploaded: ${publicURL}`);
+      });
     
-      res.send(`Publication updated, video uploaded: ${publicURL}`);
-      
       //No error handling if video was not deleted. idk were to put error handling for this, as this is not of concert for the user
       if(oldVideo){
         try{
@@ -493,6 +495,16 @@ router.delete(
       const oldImages = publication.images;
 
       if(!(oldImages === undefined || oldImages.length == 0)){
+        //DELETE IN CLOUD
+        for (image in oldImages){
+          try{
+            await mediaBucket.file(image.name).delete();
+            console.log(`gs://${mediaBucket.name}/${image.name} deleted.`);
+          }catch (e){
+            console.log(`could not delete file ${image.name}, maybe it does not exists`);
+          }
+        }
+
         //DELETE IN DB
         publication.images = [];
         publication.save((err)=>{
