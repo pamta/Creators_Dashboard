@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const PublicationSchema = new mongoose.Schema({
+const NoteSchema = new mongoose.Schema({
     user_id: {
         type: String,
         required: true
@@ -9,16 +9,6 @@ const PublicationSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    video: {
-        URL: String,
-        name: String,
-        isLoading: Boolean
-    },
-    images: [{
-        URL: String,
-        name: String,
-        isLoading: Boolean
-    }],
     text: {
         type: String
     },
@@ -32,4 +22,4 @@ const PublicationSchema = new mongoose.Schema({
     }
 });
 
-module.exports = Publication = mongoose.model("publication", PublicationSchema);
+module.exports = Note = mongoose.model("note", NoteSchema);
