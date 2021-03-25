@@ -23,11 +23,15 @@ const SettingsField = ({
 				{icon}
 				<p>{fieldName}</p>
 			</div>
-			<div className={'flex flex-row space-x-4 items-center'}>
+			<div
+				className={
+					'flex flex-row space-x-4 items-center ' + (isTablet ? 'mt-2' : 'mr-2')
+				}
+			>
 				<div
 					className={
 						'relative rounded-md shadow-sm h-8' +
-						(isTablet ? ' w-full mt-2' : ' w-64')
+						(isTablet ? ' w-full' : ' w-full')
 					}
 				>
 					<div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>

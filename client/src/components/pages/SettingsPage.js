@@ -2,25 +2,25 @@ import useWindowSize from '../../lib/useWindowSize'
 import UserSettingsFields from '../settings/UserSettingsFields'
 import UserAuthSettingsFields from '../settings/UserAuthSettingsFields'
 
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react'
 //redux
 // import { useDispatch, useSelector } from "react-redux";
 // import { loadUser } from "../../actions/auth";
 
 const SettingsPage = () => {
-	const isMobile = useWindowSize().width <= 768
-	
+	const isTablet = useWindowSize().width <= 1080
+
 	// const dispatch = useDispatch();
 
 	const getLayoutStyle = () => {
-		return isMobile
+		return isTablet
 			? 'flex flex-col space-y-8 w-full'
 			: 'flex flex-row space-x-8'
 	}
 	const getComponentsStyle = () => {
 		return (
 			'flex flex-col justify-left rounded-md p-2 bg-gray-200 p-6' +
-			(isMobile ? ' w-full' : ' w-1/2')
+			(isTablet ? ' w-full' : ' w-1/2')
 		)
 	}
 
