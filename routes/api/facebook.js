@@ -9,6 +9,15 @@ const fbAppId = config.get("fbAppId");
 const { check, validationResult } = require("express-validator");
 
 const Publication = require("../../models/Publication");
+const SocialNetwork = require("../../models/SocialNetwork");
+
+let facebook = null;
+const getFacebook = async () => {
+  if (!facebook) {
+    facebook = await SocialNetwork.findOne({ name: "Facebook" });
+  }
+  return facebook;
+};
 
 // @route  POST api/facebook
 // @access Private/requires token
@@ -59,7 +68,14 @@ router.post(
         }
         const requestLink = `https://graph-video.facebook.com/v10.0/${fbAppId}/videos?access_token=${pageAccessToken}&file_url=${publication.video.URL}`;
         const answer = await axios.post(requestLink);
-        return res.send(answer.data);
+
+        const fb = await getFacebook();
+        publication.socialNetworkReferences.push({
+          socialNetwork: fb._id,
+          reference: answer.data.id,
+        });
+        await publication.save();
+        return res.send(publication);
       }
 
       const { images, text } = publication;
@@ -82,7 +98,13 @@ router.post(
         }
 
         const answer = await axios.post(requestLink);
-        res.send(answer.data);
+        const fb = await getFacebook();
+        publication.socialNetworkReferences.push({
+          socialNetwork: fb._id,
+          reference: answer.data.id,
+        });
+        await publication.save();
+        res.send(publication);
       }
     } catch (err) {
       console.error(err.message);
