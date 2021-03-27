@@ -39,6 +39,13 @@ router.post(
       }
     };
 
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        errors: errors.array(),
+      });
+    }
+
     try {
       const { publication_id, pageAccessToken, use_video } = req.body;
       const publication = await Publication.findOne({
@@ -63,17 +70,14 @@ router.post(
         const message = text ? text : "";
         let requestLink = `https://graph.facebook.com/${fbAppId}/feed?message=${message}&access_token=${pageAccessToken}`;
         if (thereAreImages) {
-          // Use Promise.all to await each element of the map
-          const imagesId = await Promise.all(
+          // Use Promise.all to await for every element in the map
+          const attached_media = await Promise.all(
             images.map(async (image) => {
-              const resp = await uploadImage(image.URL, pageAccessToken);
-              return resp;
+              const imageId = await uploadImage(image.URL, pageAccessToken);
+              return { media_fbid: imageId };
             })
           );
 
-          const attached_media = imagesId.map((imageId) => {
-            return { media_fbid: imageId };
-          });
           requestLink += `&attached_media=${JSON.stringify(attached_media)}`;
         }
 
