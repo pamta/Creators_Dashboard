@@ -47,14 +47,14 @@ router.post(
       }).exec();
 
       if (use_video) {
-        /*
-        const config = {
-          params: {}
+        if (!publication.video || !publication.video.URL) {
+          return res.status(400).json({ errors: ["No video found"] });
         }
-        const res = await axios.post(`https://graph-video.facebook.com/v10.0/${fbAppId}/videos`, config)
-        */
-        return res.send("Video yet to be supported");
+        const requestLink = `https://graph-video.facebook.com/v10.0/${fbAppId}/videos?access_token=${pageAccessToken}&file_url=${publication.video.URL}`;
+        const answer = await axios.post(requestLink);
+        return res.send(answer.data);
       }
+
       const { images, text } = publication;
       const thereAreImages = images && images.length > 0;
       if (!thereAreImages && !text) {
