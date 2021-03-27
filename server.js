@@ -34,6 +34,7 @@ app.use("/youtube/auth", require("./routes/youtube/auth"));
 app.use("/youtube/analytics", require("./routes/youtube/analytics"));
 app.use("/youtube/upload", require("./routes/youtube/upload"));
 app.use("/api/facebook", require("./routes/api/facebook"));
+app.use("/admin/socialnetworks", require("./routes/admin/socialnetworks"));
 
 https
   .createServer(
