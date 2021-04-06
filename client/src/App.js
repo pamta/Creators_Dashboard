@@ -11,18 +11,19 @@ import { loadUser } from './actions/auth'
 //Style
 import './App.css'
 //Components
-import Navbar from './components/layout/Navbar'
-import MobileNavbar from './components/layout/MobileNavbar'
-import Alert from './components/layout/Alert'
-import LandingPage from './components/pages/LandingPage'
-import PostsPage from './components/pages/PostsPage'
-import PostsPageTest from './components/pages/PostsPageTest'
-import NotesPage from './components/pages/NotesPage'
-import AnalyticsPage from './components/pages/AnalyticsPage'
-import SettingsPage from './components/pages/SettingsPage'
-import PrivateRoute from './components/routing/PrivateRoute'
-import Login from './components/auth/Login'
-import Register from './components/auth/Register'
+import Navbar from "./components/layout/Navbar";
+import MobileNavbar from "./components/layout/MobileNavbar";
+import Alert from "./components/layout/Alert";
+import LandingPage from "./components/pages/LandingPage";
+import PostsPage from "./components/pages/PostsPage";
+import PostsPageTest from "./components/pages/PostsPageTest";
+import ViewPostPage from "./components/pages/ViewPost";
+import NotesPage from "./components/pages/NotesPage";
+import AnalyticsPage from "./components/pages/AnalyticsPage";
+import SettingsPage from "./components/pages/SettingsPage";
+import PrivateRoute from "./components/routing/PrivateRoute";
+import Login from "./components/auth/Login";
+import Register from "./components/auth/Register";
 //
 import {
 	setAuthToken,
@@ -59,37 +60,42 @@ const App = () => {
 		return isMobile ? 'flex flex-col ' : 'flex flex-row border shadow-xl '
 	}
 
-	return (
-		<Provider store={store}>
-			<Router>
-				<div className='absolute w-screen z-10'>
-					<Alert />
-				</div>
-				<Switch>
-					<Route exact path='/login' component={Login} />
-					<Route exact path='/signup' component={Register} />
-				</Switch>
-				<div className={getLayoutStyle() + ' bg-gray-100 h-full'}>
-					{!isMobile ? (
-						<PrivateRoute path='/' component={Navbar} />
-					) : (
-						<PrivateRoute path='/' component={MobileNavbar} />
-					)}
-					<div className={'h-full w-full bg-white rounded-tl-xl p-4'}>
-						<Switch>
-							<PrivateRoute exact path='/' component={LandingPage} />
-							<PrivateRoute path='/posts' component={PostsPage} />
-							<PrivateRoute path='/newpost' component={NewPostPage} />
-							<PrivateRoute path='/notes' component={NotesPage} />
-							<PrivateRoute path='/analytics' component={AnalyticsPage} />
-							<PrivateRoute path='/settings' component={SettingsPage} />
-							<PrivateRoute path='/test' component={PostsPageTest} />
-						</Switch>
-					</div>
-				</div>
-			</Router>
-		</Provider>
-	)
-}
+  return (
+    <Provider store={store}>
+      <Router>
+        <div  className="absolute w-screen z-10">
+          <Alert />
+        </div>
+        <Switch>
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/signup" component={Register} />
+        </Switch>
+        <div className={getLayoutStyle() + " bg-gray-100 h-full"}>
+          {!isMobile ? (
+            <PrivateRoute path="/" component={Navbar} />
+          ) : (
+            <PrivateRoute path="/" component={MobileNavbar} />
+          )}
+          <div
+            className={
+              "h-full w-full bg-white rounded-tl-xl border shadow-xl p-4"
+            }
+          >
+            <Switch>
+              <PrivateRoute exact path="/" component={LandingPage} />
+              <PrivateRoute path="/posts" component={PostsPage} />
+              <PrivateRoute path="/newpost" component={NewPostPage} />
+              <PrivateRoute path="/notes" component={NotesPage} />
+              <PrivateRoute path="/analytics" component={AnalyticsPage} />
+              <PrivateRoute path="/settings" component={SettingsPage} />
+              <PrivateRoute path="/test" component={PostsPageTest} />
+              <PrivateRoute path="/view" component={ViewPostPage} />
+            </Switch>
+          </div>
+        </div>
+      </Router>
+    </Provider>
+  );
+};
 
 export default App

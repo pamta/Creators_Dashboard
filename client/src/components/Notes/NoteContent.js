@@ -45,8 +45,7 @@ const NoteContent = ( ) => {
             <div className="pt-10 px-5 text-gray-900 h-full">
                     <div className="relative mb-3">
                         <input 
-                            onChange={(e) => setName(e.target.value)}
-                            required 
+                            onChange={(e) => setName(e.target.value)} 
                             type="text"
                             className="border-0 border-solid border-b-2 border-red-500 w-full text-3xl md:text-4xl xl:text-5xl"
                             placeholder="Title"
@@ -56,7 +55,6 @@ const NoteContent = ( ) => {
                     <div className="relative mb-3 h-4/5">
                         <textarea
                             onChange={(e) => setText(e.target.value)}
-                            required
                             className="resize-none h-full w-full text-xl md:text-2xl p-3"
                             rows="20"
                             cols="28"
