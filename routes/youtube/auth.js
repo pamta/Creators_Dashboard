@@ -38,13 +38,17 @@ router.post('/', async (req, res) => {
 	 */
 	google.options({ auth: oauth2Client })
 
-	authenticate(scopes, oauth2Client)
-		.then((client) =>
-			console.log('Successfully retrieved YouTube client ', client)
-		)
+	let authenticatedClient
+
+	await authenticate(scopes, oauth2Client)
+		.then((client) => {
+			console.log('Successfully retrieved YouTube client ', client.credentials)
+			authenticatedClient = client.credentials
+		})
 		.catch((e) => console.log(e))
 
-	res.send('Successfully authenticaded YouTube client')
+	// res.send('Successfully authenticaded YouTube client')
+	res.send(authenticatedClient)
 })
 
 /**
