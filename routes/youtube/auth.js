@@ -102,7 +102,7 @@ router.get('/channelName', async (req, res) => {
 			part: 'snippet',
 		})
 
-		const name = response.data.items[0].snippet.title ?? ''
+		const name = response.data.items[0].snippet.title ?? '-'
 		res.send(name)
 	} catch (err) {
 		console.error(err.message)

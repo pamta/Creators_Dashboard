@@ -16,6 +16,7 @@ export const setYTUserInfo = () => async (dispatch, getState) => {
 
 	try {
 		const res = await axios.post('/youtube/auth', config)
+		const nameResponse = await axios.get('/youtube/auth/channelName', config)
 
 		const credentials = res.data
 
@@ -23,6 +24,7 @@ export const setYTUserInfo = () => async (dispatch, getState) => {
 			accessToken: credentials.access_token,
 			refreshToken: credentials.refresh_token,
 			expiryDate: credentials.expiry_date,
+			channelName: nameResponse.data,
 		}
 		dispatch({
 			type: YT_AUTH_USER_SUCCESS,

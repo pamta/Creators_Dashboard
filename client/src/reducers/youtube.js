@@ -9,6 +9,7 @@ const initialState = {
 		accessToken: null,
 		refreshToken: null,
 		expiryDate: null,
+		channelName: null,
 	},
 }
 
@@ -28,6 +29,7 @@ export default function (state = initialState, action) {
 					accessToken: null,
 					refreshToken: null,
 					expiryDate: null,
+					channelName: null,
 				},
 			}
 
