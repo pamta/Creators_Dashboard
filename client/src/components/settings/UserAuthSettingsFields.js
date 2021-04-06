@@ -2,6 +2,8 @@ import SettingsField from './SettingsField'
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { setFbUserInfo, selectFbPage } from '../../actions/facebook'
+import { setYTUserInfo } from '../../actions/youtube'
+
 import { connect } from 'react-redux'
 import BasicModal from '../layout/BasicModal'
 const UserAuthFields = ({
@@ -9,6 +11,7 @@ const UserAuthFields = ({
 	fbUserPages,
 	selectFbPage,
 	fbPageHandler,
+	setYTUserInfo,
 }) => {
 	const [showFbPagesModal, setFbPagesModal] = useState(false)
 
@@ -35,21 +38,20 @@ const UserAuthFields = ({
 		}
 
 		window.FB.getLoginStatus(function (response) {
-			const isConnected = response.status == 'connected';
+			const isConnected = response.status == 'connected'
 			if (isConnected) {
-				actionFlow(response.authResponse.accessToken);
+				actionFlow(response.authResponse.accessToken)
 			} else {
 				window.FB.login(function (res) {
-					const couldDoLogin = res.status == 'connected';
+					const couldDoLogin = res.status == 'connected'
 					if (couldDoLogin) {
-						console.log(res);
-						actionFlow(res.authResponse.accessToken);
+						console.log(res)
+						actionFlow(res.authResponse.accessToken)
 					}
 				})
 			}
 		})
 	}
-
 
 	return (
 		<div className='flex flex-col space-y-4'>
@@ -96,6 +98,7 @@ const UserAuthFields = ({
 				<SettingsField
 					fieldName='YouTube'
 					inputTag='youtube-handler'
+					authenticate={() => setYTUserInfo()}
 					icon={
 						<svg
 							className='w-5 h-5'
@@ -117,6 +120,7 @@ UserAuthFields.propTypes = {
 	setFbUserInfo: PropTypes.func.isRequired,
 	selectFbPage: PropTypes.func.isRequired,
 	fbUserPages: PropTypes.array.isRequired,
+	setYTUserInfo: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = (state) => ({
@@ -129,4 +133,5 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, {
 	setFbUserInfo,
 	selectFbPage,
+	setYTUserInfo,
 })(UserAuthFields)
