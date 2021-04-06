@@ -26,7 +26,7 @@ const NewPostPage = () => {
 	const getFieldStyle = () => {
 		return isTablet
 			? 'flex flex-col w-full space-y-2'
-			: 'flex flex-row justify-between space-x-8'
+			: 'flex flex-col w-full space-y-2'
 	}
 
 	return (
@@ -37,14 +37,9 @@ const NewPostPage = () => {
 					'w-full flex flex-col space-y-8 justify-between rounded-md bg-gray-200 p-6'
 				}
 			>
-				<div className={getFieldStyle() + (isTablet ? '' : ' items-center')}>
+				<div className={getFieldStyle()}>
 					<p>Title</p>
-					<div
-						className={
-							'relative rounded-md shadow-sm h-8' +
-							(isTablet ? ' w-full' : ' w-2/3')
-						}
-					>
+					<div className={'relative rounded-md shadow-sm h-8 w-full'}>
 						<input
 							name={'Title'}
 							id={'title'}
@@ -59,12 +54,7 @@ const NewPostPage = () => {
 				</div>
 				<div className={getFieldStyle()}>
 					<p>Content</p>
-					<div
-						className={
-							'relative rounded-md shadow-sm' +
-							(isTablet ? ' w-full' : ' w-2/3')
-						}
-					>
+					<div className={'relative rounded-md shadow-sm w-full'}>
 						<textarea
 							name={'Content'}
 							id={'content'}
