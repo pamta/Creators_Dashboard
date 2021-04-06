@@ -2,8 +2,10 @@
 //React
 import { useState } from "react";
 import React,  { useCallback, useEffect } from "react";
-import useWindowSize from '../../lib/useWindowSize'
-import NoteContent from '../Notes/NoteContent'
+import useWindowSize from '../../lib/useWindowSize';
+import NoteContent from '../Notes/NoteContent';
+import AddSVG from '../layout/AddSVG';
+
 //redux
 import {useSelector, useDispatch} from "react-redux";
 import {createNote, setCurrentNote} from "../../actions/note"
@@ -46,7 +48,7 @@ const NotesPage = () => {
                                 "flex flex-row p-2 border-0 border-b border-gray-400 border-opacity-50 hover:bg-yellow-300 hover:bg-opacity-40 cursor-pointer" 
                                 + selectedNoteBG(note._id)
                             }  
-                            key={index}>
+                            key={note._id}>
 
                             <div className="flex-1 ">{note.name}</div>
                             <div className="flex-1 text-yellow-900 text-opacity-90 text-right text-sm ">{note.creationDate.substring(0,10)}</div>
@@ -71,22 +73,8 @@ const NotesPage = () => {
                         "flex flex-row justify-center items-center space-x-1 rounded-md p-2  text-white w-full" +
                         ` bg-red-400` +
                         ` hover:bg-red-600`
-                    }>{
-                        <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                        >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                        ></path>
-                        </svg>
-                    }
+                    }>
+                    <AddSVG></AddSVG>
                     {!isLarge && <h2>New Note</h2>}
                     </button>
                 </div>

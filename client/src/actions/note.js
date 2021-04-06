@@ -1,5 +1,3 @@
-//This file contains all the redux actions related with user aunthentication
-//Those being: loadUser(), login(), logout(), register()
 import axios from "axios";
 import { setAlert } from "./alert";
 import {
@@ -45,9 +43,6 @@ export const loadNotes = () => async (dispatch) => {
     },
   };
   try {
-    dispatch({
-        type: LOAD_NOTES
-      });
     const res = await axios.get("/api/note/all", config);
 
     dispatch({
@@ -111,7 +106,7 @@ export const updateNote = (note_id, name, text) => async (dispatch) => {
 };
 
 
-// Update Note
+// Delete Note
 export const deleteNote = (note_id) => async (dispatch) => {
   const config = {
     headers: {

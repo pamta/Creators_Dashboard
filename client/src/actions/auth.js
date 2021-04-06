@@ -3,6 +3,8 @@
 import axios from "axios";
 import { setAlert } from "./alert";
 import { loadNotes } from "./note";
+import { loadPosts } from "./post";
+
 import {
   LOGIN_SUCCESS,
   LOGIN_FAIL,
@@ -47,6 +49,7 @@ export const loadUser = () => async (dispatch) => {
     });
     //load other user related data
     dispatch(loadNotes());
+    dispatch(loadPosts());
 
   } catch (error) {
     dispatch({

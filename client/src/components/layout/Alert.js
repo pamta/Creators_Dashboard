@@ -12,7 +12,7 @@ function getAlertFunctionByType(alertType) {
       alertFunction = (message) => {
         return (
           <div
-            className="relative m-2 ml-16 mr-16 bg-teal-100 border border-teal-400 text-teal-800 px-4 py-3 rounded shadow-md"
+            className="relative m-2 md:ml-16 md:mr-16 lg:ml-80 lg:mr-80 bg-teal-100 border border-teal-400 text-teal-800 px-4 py-3 rounded shadow-md"
             role="alert"
           >
             <div className="flex">
@@ -38,7 +38,7 @@ function getAlertFunctionByType(alertType) {
       alertFunction = (message) => {
         return (
           <div
-            className=" relative m-2 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-md"
+            className=" relative m-2 md:ml-16 md:mr-16 lg:ml-80 lg:mr-80 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-md"
             role="alert"
           >
             <strong className="font-bold">Oh no!{"  "}</strong>

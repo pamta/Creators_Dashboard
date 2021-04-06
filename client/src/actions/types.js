@@ -30,3 +30,12 @@ export const NOTE_CREATE = "NOTE_CREATE";
 export const NOTE_UPDATE = "NOTE_UPDATE";
 export const NOTE_DELETE = "NOTE_DELETE";
 export const NOTE_FAIL = "NOTE_FAIL";
+//Post types
+export const LOAD_POSTS = "LOAD_POSTS";
+export const SET_CURRENT_POST = "SET_CURRENT_POST";
+export const POST_CREATE = "POST_CREATE";
+export const POST_UPLOAD_IMAGES = "POST_UPLOAD_IMAGES";
+export const POST_UPLOAD_VIDEO = "POST_UPLOAD_VIDEO";
+export const POST_UPDATE_TEXT = "POST_UPDATE_TEXT";
+export const POST_DELETE = "POST_DELETE";
+export const POST_FAIL = "NOTE_FAIL";
