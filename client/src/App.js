@@ -37,7 +37,7 @@ import {
 	TWITTER_TOKEN,
 } from './utils/localStorageTypes'
 import { loadFbDataFromStorage } from './actions/facebook'
-import NewPostPage from './components/pages/NewPostPage'
+import NewPostPage from './components/posts/NewPostPage'
 
 setAuthToken(localStorage[AUTH_TOKEN])
 setFacebookToken(localStorage[FACEBOOK_TOKEN])
