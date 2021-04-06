@@ -1,5 +1,6 @@
 import useWindowSize from '../../lib/useWindowSize'
 import { useState } from 'react'
+import Switch from 'react-switch'
 import styles from './newPost.module.css'
 
 const NewPostPage = () => {
@@ -24,6 +25,7 @@ const NewPostPage = () => {
 	const [isYoutubeSelected, setYoutubeSelected] = useState(false)
 	const [isFacebookSelected, setFacebookSelected] = useState(false)
 	const [isTwitterSelected, setTwitterSelected] = useState(false)
+	const [isPublicYoutube, setIsPublicYoutube] = useState(false)
 
 	console.log('is ? ' + (isYoutubeSelected ? 'yes' : 'no'))
 
@@ -300,7 +302,21 @@ const NewPostPage = () => {
 							</svg>
 							<p>YouTube</p>
 						</div>
-						{isYoutubeSelected ? <p>selected</p> : <></>}
+						{isYoutubeSelected ? (
+							<div className='flex flex-row space-x-2 items-center'>
+								<Switch
+									onChange={() => setIsPublicYoutube(!isPublicYoutube)}
+									checked={isPublicYoutube}
+									width={38}
+									height={20}
+									checkedIcon={false}
+									uncheckedIcon={false}
+								/>
+								{isPublicYoutube ? <p>Public</p> : <p>Private</p>}
+							</div>
+						) : (
+							<></>
+						)}
 					</div>
 				</div>
 			</div>
