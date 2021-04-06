@@ -2,6 +2,7 @@
 //Those being: loadUser(), login(), logout(), register()
 import axios from "axios";
 import { setAlert } from "./alert";
+import { loadNotes } from "./note";
 import {
   LOGIN_SUCCESS,
   LOGIN_FAIL,
@@ -44,6 +45,9 @@ export const loadUser = () => async (dispatch) => {
       // User info
       payload: res.data,
     });
+    //load other user related data
+    dispatch(loadNotes());
+
   } catch (error) {
     dispatch({
       type: AUTH_ERROR,

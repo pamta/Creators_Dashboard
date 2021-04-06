@@ -419,9 +419,11 @@ router.delete(
         if(oldVideo){
           try{
             await mediaBucket.file(oldVideo.name).delete();
-            console.log(`gs://${mediaBucket.name}/${oldVideo.name} deleted.`);
-          }catch (e){
+            console.log(`${oldVideo.URL} deleted.`);
+          }catch (err){
             console.log(`could not delete file ${oldVideo.name}, maybe it does not exists`);
+            console.error(err.message);
+            return res.status(500).send(`Storage error: ${err}`);
           }
 
           //DELETE IN DB
@@ -491,17 +493,18 @@ router.delete(
           .status(400)
           .json({ errors: [{ msg: "Publication non existent" }] });
       }
-
+      
       const oldImages = publication.images;
-
       if(!(oldImages === undefined || oldImages.length == 0)){
         //DELETE IN CLOUD
-        for (image in oldImages){
+        for (let image of oldImages){
           try{
             await mediaBucket.file(image.name).delete();
-            console.log(`gs://${mediaBucket.name}/${image.name} deleted.`);
-          }catch (e){
+            console.log(`${image.URL}  deleted.`);
+          }catch (err){
             console.log(`could not delete file ${image.name}, maybe it does not exists`);
+            console.error(err.message);
+            return res.status(500).send(`Storage error: ${err}`);
           }
         }
 

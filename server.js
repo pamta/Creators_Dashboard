@@ -30,6 +30,7 @@ app.get("/", (req, res) => res.send("API Running"));
 app.use("/api/user", require("./routes/api/user"));
 app.use("/api/auth", require("./routes/api/auth"));
 app.use("/api/publication", require("./routes/api/publication"));
+app.use("/api/note", require("./routes/api/note"));
 
 https
   .createServer(

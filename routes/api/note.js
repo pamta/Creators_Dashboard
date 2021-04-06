@@ -14,36 +14,39 @@ const { check, validationResult } = require("express-validator");
 const User = require("../../models/User");
 const Note = require("../../models/Note");
 
+
+
+// Given a JSON web token , it returns all the user's notes
 // @route  GET api/note/all
 // @access Private/requires token
-// Given a JSON web token , it returns all the user's notes
 router.get("/all", auth, async (req, res) => {
   try {
     const notes = await Note.find({user_id: req.user.id});
-    res.json(notes);
+    return res.json(notes);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).json({ errors: [{ msg: "Server Error" }] });
   }
 });
 
+// Given a JSON web token , it returns a given user's note
 // @route  GET api/note
 // @access Private/requires token
-// Given a JSON web token , it returns a given user's note
 router.get("/", auth, async (req, res) => {
   try {
     const note_id = req.header("note_id");
     const note = await Note.findOne({_id: note_id, user_id: req.user.id}).exec();
-    res.json(note);
+    return res.json(note);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).json({ errors: [{ msg: "Server Error" }] });
   }
 });
 
 // route to create a new note
 // @route  POST api/note
 // @access private, requires a user token
+// responds with the newly created note object
 router.post(
     "/", auth,
     [
@@ -88,31 +91,32 @@ router.post(
           updateDate
         });
 
-        await Note.save( (err, doc) => {
+        note.save( (err, note) => {
           if(err){
             console.error(err.message);
-            return res.status(500).send(`DB error: ${err}`);
+            return res.status(500).json({ errors: [{ msg: `DB error ${err}` }] });
           }
-          return res.json({ _id: doc.id });
+          return res.json(note);
         });
 
       } catch (err) {
-        console.error(err);
-        res.status(500).send("Server error");
+        console.error(err.message);
+        return res.status(500).json({ errors: [{ msg: "Server Error" }] });
       }
-      //res.send('POST request to create new note');
     }
   );
 
 // route to update text content of a note
 // @route  POST api/note/text
 // @access private, requires a user token
+// responds with updated note object
 router.post(
-  "/text", auth,
+  "/update", auth,
   [
     // Second parameter of check is a custom error message
-    check("text", "Text content is required").not().isEmpty(),
     check("note_id", "A note is required").not().isEmpty(),
+    check("name", "Text content is required").not().isEmpty(),
+    check("text", "Text content is required").not().isEmpty(),
   ],
   async (req, res) => {
 
@@ -125,7 +129,7 @@ router.post(
     }
     
     //we get the alredy checked payload
-    const { note_id, text } = req.body;
+    const { note_id, name, text } = req.body;
 
     try{
       const noteFound = await Note.findOne({_id: note_id, user_id: req.user.id}).exec();
@@ -136,21 +140,23 @@ router.post(
       }
 
       //UPDATE NOTE
+      noteFound.name = name;
       noteFound.text = text;
       noteFound.updateDate = Date.now();
 
-      noteFound.save((err)=>{
+      noteFound.save((err, note)=>{
         if(err){
           console.error(err.message);
-          return res.status(500).send(`DB error: ${err}`);
+          return res.status(500).json({ errors: [{ msg: `DB error ${err}` }] });
         }
 
-        return res.send(`Note updated, text uploaded`);
+        //responds with the updated note object
+        return res.json(note);
       });
 
     } catch (err) {
-      console.error(err);
-      return res.status(500).send("Server error");
+      console.error(err.message);
+      return res.status(500).json({ errors: [{ msg: "Server Error" }] });
     }
   });
 
@@ -176,15 +182,16 @@ router.delete(
       await Note.remove({_id: note_id, user_id: req.user.id}, (err, doc) => {
         if(err){
           console.error(err.message);
-          res.status(500).send("DB error");
+          res.status(500).json({ errors: [{ msg: `DB error ${err}` }] });
         }
       }).exec();
       
-      return res.send("Note  deleted");
+      //responds with the id of the deleted note
+      return res.json({_id: note_id});
 
     } catch(err) {
-      console.error(err);
-      res.status(500).send("Server error");
+      console.error(err.message);
+      return res.status(500).json({ errors: [{ msg: "Server Error" }] });
     }
   });
 
