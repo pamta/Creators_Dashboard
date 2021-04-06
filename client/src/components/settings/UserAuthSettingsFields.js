@@ -42,7 +42,6 @@ const UserAuthFields = ({
         window.FB.login(function (res) {
           const couldDoLogin = res.status == "connected";
           if (couldDoLogin) {
-            console.log(res);
             actionFlow(res.authResponse.accessToken);
           }
         });

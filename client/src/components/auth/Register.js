@@ -19,7 +19,6 @@ const Register = ({ title, register, setAlert, isAuthenticated }) => {
     if (password == password2){
       register(name, username, email, password);
     }else{
-      console.log("password error");
       setAlert("Please use the same password in both fields", "danger");
     }
   };

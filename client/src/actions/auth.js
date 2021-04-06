@@ -99,9 +99,6 @@ export const register = ( name, userName, email, password ) => async (dispatch) 
 
   const body = JSON.stringify({ name, userName, email, password });
 
-  console.log("register action executed =>");
-  console.log("registering from client: ", body);
-
   try {
     const res = await axios.post("/api/user", body, config);
     dispatch({

@@ -8,10 +8,16 @@ module.exports = {
 			colors: {
 				teal: colors.teal, //you can add extended colors from tailwind https://tailwindcss.com/docs/customizing-colors
 			},
+			borderRadius: {
+				DEFAULT: '0.25rem',
+				md: '0.375rem'
+			}
 		},
 	},
 	variants: {
-		extend: {},
+		scrollbar: ['rounded'],
 	},
-	plugins: [],
+	plugins: [
+		require('tailwind-scrollbar'),
+	],
 }

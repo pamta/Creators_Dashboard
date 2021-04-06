@@ -25,7 +25,6 @@ const NotesPage = () => {
 	};
 
     const selectNote = (e) => {
-        console.log(`selected ID ==> ${e}`);
         dispatch(setCurrentNote(e));
 	};
 
@@ -41,7 +40,6 @@ const NotesPage = () => {
 	// }, []); //we need to update the component state when user is updated from the store
 
     const elementsList = (list) => {
-        console.log(list)
         if(list){
             return list.map((note, index) => {
                 return  <div onClick={(e) => selectNote(note._id) } className={
@@ -51,7 +49,7 @@ const NotesPage = () => {
                             key={index}>
 
                             <div className="flex-1 ">{note.name}</div>
-                            <div className="flex-1 text-right">{note.creationDate.substring(0,10)}</div>
+                            <div className="flex-1 text-yellow-900 text-opacity-90 text-right text-sm ">{note.creationDate.substring(0,10)}</div>
                         </div>
             })
         }
@@ -60,7 +58,7 @@ const NotesPage = () => {
 	return (
         <div className= "flex h-full">
             <div className="relative flex flex-col w-1/4 bg-yellow-100 p-6">
-                <div className={    " flex py-4 px-2 text-center text-gray-900 text-3xl md:text-4xl xl:text-5xl" +
+                <div className={    " flex py-4 px-2 text-center text-gray-900 text-3xl md:text-4xl xl:" +
                                     ` border-0 border-b-2 border-red-400`}>
                     Notes
                 </div>
@@ -92,7 +90,7 @@ const NotesPage = () => {
                     {!isLarge && <h2>New Note</h2>}
                     </button>
                 </div>
-                <div className="flex-row h-full overflow-x-hidden overflow-y-auto">
+                <div className="flex-row h-full overflow-x-hidden overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-yellow-400 pr-2">
                     {elementsList(notes.notes)}
                 </div>
             </div>

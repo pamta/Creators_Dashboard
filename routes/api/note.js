@@ -1,11 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const config = require("config");
 const auth = require("../../middleware/auth");
-
-const { v4: uuid } = require('uuid');
-const mime = require('mime-types');
-const multer = require('multer');
 
 // Exporting two objects
 const { check, validationResult } = require("express-validator");
@@ -14,7 +9,14 @@ const { check, validationResult } = require("express-validator");
 const User = require("../../models/User");
 const Note = require("../../models/Note");
 
+const handleError = (res, status, msg, err = null) => {
+  if (err) {
+    console.error(err.message)
+  };
+  return res.status(status).json({ errors: [{ msg: msg }] });
+};
 
+// ######## ROUTES ########
 
 // Given a JSON web token , it returns all the user's notes
 // @route  GET api/note/all
@@ -24,8 +26,7 @@ router.get("/all", auth, async (req, res) => {
     const notes = await Note.find({user_id: req.user.id});
     return res.json(notes);
   } catch (err) {
-    console.error(err.message);
-    return res.status(500).json({ errors: [{ msg: "Server Error" }] });
+    return handleError(res, 500, "Server Error", err);
   }
 });
 
@@ -38,8 +39,7 @@ router.get("/", auth, async (req, res) => {
     const note = await Note.findOne({_id: note_id, user_id: req.user.id}).exec();
     return res.json(note);
   } catch (err) {
-    console.error(err.message);
-    return res.status(500).json({ errors: [{ msg: "Server Error" }] });
+    return handleError(res, 500, "Server Error", err);
   }
 });
 
@@ -51,18 +51,19 @@ router.post(
     "/", auth,
     [
       // Second parameter of check is a custom error message
-      check("name", "A name is required").not().isEmpty(),
+      check("name", "A Title is required").not().isEmpty(),
       check("text", "Some text is required").not().isEmpty(),
     ],
     async (req, res) => {
       // Finds the validation errors in this request and wraps them in an object with handy functions
       const errors = validationResult(req);
-      
+    
       if (!errors.isEmpty()) {
         return res.status(400).json({ // 400 is for a bad request
           errors: errors.array(),
         });
       }
+
       //we get the alredy checked payload
       const { name, text } = req.body;
   
@@ -74,9 +75,7 @@ router.post(
         let userFound = await User.findById(user_id).exec();
 
         if (!userFound) {
-          return res
-            .status(400)
-            .json({ errors: [{ msg: "User non existent" }] });
+          return handleError(res, 400, "User non existent");
         }
 
         //save current date in the created note
@@ -93,15 +92,13 @@ router.post(
 
         note.save( (err, note) => {
           if(err){
-            console.error(err.message);
-            return res.status(500).json({ errors: [{ msg: `DB error ${err}` }] });
+            return handleError(res, 500, `DB error ${err}`, err); 
           }
           return res.json(note);
         });
 
       } catch (err) {
-        console.error(err.message);
-        return res.status(500).json({ errors: [{ msg: "Server Error" }] });
+        return handleError(res, 500, "Server Error", err);
       }
     }
   );
@@ -115,7 +112,7 @@ router.post(
   [
     // Second parameter of check is a custom error message
     check("note_id", "A note is required").not().isEmpty(),
-    check("name", "Text content is required").not().isEmpty(),
+    check("name", "A Title is required").not().isEmpty(),
     check("text", "Text content is required").not().isEmpty(),
   ],
   async (req, res) => {
@@ -134,9 +131,7 @@ router.post(
     try{
       const noteFound = await Note.findOne({_id: note_id, user_id: req.user.id}).exec();
       if (!noteFound) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: "Note does not exist" }] });
+        return handleError(res, 400, "Note does not exist");
       }
 
       //UPDATE NOTE
@@ -146,17 +141,14 @@ router.post(
 
       noteFound.save((err, note)=>{
         if(err){
-          console.error(err.message);
-          return res.status(500).json({ errors: [{ msg: `DB error ${err}` }] });
+          return handleError(res, 500, `DB error ${err}`, err); 
         }
-
         //responds with the updated note object
         return res.json(note);
       });
 
     } catch (err) {
-      console.error(err.message);
-      return res.status(500).json({ errors: [{ msg: "Server Error" }] });
+      return handleError(res, 500, "Server Error", err);
     }
   });
 
@@ -174,15 +166,12 @@ router.delete(
       const note = await Note.findOne({_id: note_id, user_id: req.user.id}).exec();
 
       if (!note) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: "Note non existent" }] });
+        return handleError(res, 400, err, "Note does not exist");
       }
 
       await Note.remove({_id: note_id, user_id: req.user.id}, (err, doc) => {
         if(err){
-          console.error(err.message);
-          res.status(500).json({ errors: [{ msg: `DB error ${err}` }] });
+          return handleError(res, 500, `DB error ${err}`, err); 
         }
       }).exec();
       
@@ -190,8 +179,7 @@ router.delete(
       return res.json({_id: note_id});
 
     } catch(err) {
-      console.error(err.message);
-      return res.status(500).json({ errors: [{ msg: "Server Error" }] });
+      return handleError(res, 500, "Server Error", err);
     }
   });
 
