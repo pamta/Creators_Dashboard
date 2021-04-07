@@ -16,6 +16,9 @@ const scopes = [
 	'https://www.googleapis.com/auth/youtube',
 ]
 
+// Initialize the Youtube API library
+const youtube = google.youtube('v3')
+
 // @route  POST youtube/auth/
 // @desct  Authenticate YouTube client using Google account
 // @access Private/requires token
@@ -38,13 +41,17 @@ router.post('/', async (req, res) => {
 	 */
 	google.options({ auth: oauth2Client })
 
-	authenticate(scopes, oauth2Client)
-		.then((client) =>
+	let authenticatedClient
+
+	await authenticate(scopes, oauth2Client)
+		.then((client) => {
 			console.log('Successfully retrieved YouTube client ', client)
-		)
+			authenticatedClient = client.credentials
+		})
 		.catch((e) => console.log(e))
 
-	res.send('Successfully authenticaded YouTube client')
+	// res.send('Successfully authenticaded YouTube client')
+	res.send(authenticatedClient)
 })
 
 /**
@@ -82,5 +89,25 @@ async function authenticate(scopes, oauth2Client) {
 		destroyer(server)
 	})
 }
+
+// @route  GET youtube/auth/channelName
+// @desct  Retrieve the channel name for current authenticated user
+// @access Private/requires token
+router.get('/channelName', async (req, res) => {
+	try {
+		const response = await youtube.channels.list({
+			// Setting the "mine" request parameter's value to "true" indicates that
+			// you want to retrieve the currently authenticated user's channel.
+			mine: true,
+			part: 'snippet',
+		})
+
+		const name = response.data.items[0].snippet.title ?? '-'
+		res.send(name)
+	} catch (err) {
+		console.error(err.message)
+		res.status(500).send('Server Error')
+	}
+})
 
 module.exports = router
