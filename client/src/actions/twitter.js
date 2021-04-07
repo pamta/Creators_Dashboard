@@ -47,3 +47,19 @@ export const twitterLogin = () => async (dispatch) => {
         })
     })
 }
+
+export const tweet = (postInfo) => (dispatch, getState) => {
+    const qs = require('querystring');
+    const oauth = {
+        consumer_key: twConsumerKey,
+        consumer_secret: twConsumerSecret,
+        token: getState().twitter.token,
+        token_secret: getState().twitter.tokenSecret
+    }
+    const url = 'https://api.twitter.com/oauth/request_token';
+
+    request.post({url: url, oauth:oauth, body:postInfo}, function(e,r,body) {
+        console.log(qs.parse(body));
+    })
+
+}
