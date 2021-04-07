@@ -50,8 +50,8 @@ const NotesPage = () => {
                             }  
                             key={note._id}>
 
-                            <div className="flex-1 ">{note.name}</div>
-                            <div className="flex-1 text-yellow-900 text-opacity-90 text-right text-sm ">{note.creationDate.substring(0,10)}</div>
+                            <div className="flex-1 flex-shrink ">{note.name}</div>
+                            <div className="flex-none text-yellow-900 text-opacity-90 text-right text-sm ">{note.creationDate.substring(0,10)}</div>
                         </div>
             })
         }

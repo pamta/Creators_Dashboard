@@ -3,7 +3,7 @@ import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { setFbUserInfo, selectFbPage } from '../../actions/facebook'
 import { twitterLogin } from "../../actions/twitter";
-import { setYTUserInfo } from '../../actions/youtube'
+import { setYTUserInfo } from '../../actions/youtube';
 
 import { connect } from 'react-redux'
 import BasicModal from '../layout/BasicModal'

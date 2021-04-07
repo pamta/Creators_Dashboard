@@ -6,17 +6,17 @@ const SocialNetworkSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    hasText: {
+    acceptsText: {
         type: Boolean,
         required: true,
         default: false,
     },
-    hasImage: {
+    acceptsImage: {
         type: Boolean,
         required: true,
         default: false,
     },
-    hasVideo: {
+    acceptsVideo: {
         type: Boolean,
         required: true,
         default: false,

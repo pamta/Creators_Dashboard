@@ -32,9 +32,9 @@ router.post(
 
       const newSocialNetwork = { name: req.body.name };
       const attributes = [
-        "hasText",
-        "hasImage",
-        "hasVideo",
+        "acceptsText",
+        "acceptsImage",
+        "acceptsVideo",
         "textLimit",
         "imageLimit",
         "videoLimit",

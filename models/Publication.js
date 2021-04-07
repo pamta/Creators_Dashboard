@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 
 const PublicationSchema = new mongoose.Schema({
   user_id: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
     required: true,
   },
   name: {
@@ -24,26 +25,16 @@ const PublicationSchema = new mongoose.Schema({
   text: {
     type: String,
   },
-  analitics: [
+  publicationsToSocialNetworks: [
     {
-      analitic: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "analitic",
-      },
-      value: {
-        type: String,
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "publicationInSN",
     },
   ],
-  socialNetworkReferences: [
+  notes: [
     {
-      socialNetwork: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "socialNetwork",
-      },
-      reference: {
-        type: String,
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "note",
     },
   ],
   creationDate: {
