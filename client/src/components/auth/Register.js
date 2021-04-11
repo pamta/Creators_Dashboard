@@ -133,13 +133,10 @@ const Register = ({ title, register, setAlert, isAuthenticated }) => {
                   </form>
                   <div className="flex flex-wrap mt-3">
                     <div className="w-1/2">
-                      <a
-                        href="#login"
-                        onClick={(e) => e.preventDefault()}
-                        className="font-bold text-sm text-blue-500 hover:text-blue-800"
-                      >
-                        <Link to="/login">I already have an account</Link>
-                      </a>
+                      <Link to="/login" className="font-bold text-sm text-blue-500 hover:text-blue-800">
+                        I already have an account
+                      </Link>
+                  
                     </div>
                   </div>
                 </div>

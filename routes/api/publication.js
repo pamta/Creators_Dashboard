@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../../middleware/auth");
+const axios = require("axios");
 
 const { v4: uuid } = require('uuid');
 const mime = require('mime-types');
@@ -156,7 +157,7 @@ router.post(
 // @route  POST api/publication/upload/images
 // @access private, requires a user token     //aut not yet activated
 router.post(
-  "/upload/images", /*auth,*/ multer().array('file', 4), //aut not yet activated because of testing (easier to post without headder)
+  "/upload/images", auth, multer().array('file', 4), //aut not yet activated because of testing (easier to post without headder)
   [
     // Second parameter of check is a custom error message
     check("publication_id", "A publication is required").not().isEmpty(),
@@ -173,7 +174,10 @@ router.post(
     //we get the alredy checked payload
     const { publication_id } = req.body;
 
-    if(!req.files){
+    console.log("Uploading images");
+    console.log(req.files);
+
+    if(!req.files || req.files.length == 0){
       return handleError(res, 400, "No images sent");
     }  
     try{
@@ -228,7 +232,6 @@ router.post(
         publicationFound.updateDate = Date.now();
       }
 
-      const imagesFinished = publicationFound.images;
       publicationFound.save((err, images)=>{
           if(err){
             return handleError(res, 500, `DB error: ${err}`, err);
@@ -248,7 +251,7 @@ router.post(
 // @route  POST api/publication/upload/video
 // @access private, requires a user token       //aut not yet activated b
 router.post(
-  "/upload/video", /*auth,*/ multer().single('file'), //aut not yet activated because of testing (easier to post without headder)
+  "/upload/video", auth, multer().single('file'), //aut not yet activated because of testing (easier to post without headder)
   [
     // Second parameter of check is a custom error message
     check("publication_id", "A publication is required").not().isEmpty(),
@@ -350,9 +353,14 @@ router.post(
 router.delete(
   "/", auth,
   async (req, res) => {
+    let finished = false;
+
     try{
       const publication_id = req.header("publication_id");
       const publication = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec();
+      //
+      const oldVideo = publication.video;
+      const oldImages = publication.images;
 
       if (!publication) {
         return handleError(res, 400, "Publication non existent");
@@ -365,10 +373,32 @@ router.delete(
       }).exec();
       
       //responds with the id of the deleted publication
-      return res.json({_id: publication_id});
+      res.json({_id: publication_id});                    //no return as we still need to delete the files in storage, the user does not need to wait for that
+      finished = true;
+
+
+      //Delete Videos
+      try{
+        await mediaBucket.file(oldVideo.name).delete();
+        console.log(`${oldVideo.URL} deleted.`);
+      }catch (err){
+        console.log(`could not delete file ${oldVideo.name}, maybe it does not exists`);
+      }
+      //Delete Images
+      for (let image of oldImages){
+        try{
+          await mediaBucket.file(image.name).delete();
+          console.log(`${image.URL}  deleted.`);
+        }catch (err){
+          console.log(`could not delete file ${image.name}, maybe it does not exists`);
+        }
+      }
 
     } catch(err) {
-      return handleError(res, 500, "Server Error", err);
+      if(!finished){
+        return handleError(res, 500, "Server Error", err);
+      }
+      console.log(err);
     }
   });
 

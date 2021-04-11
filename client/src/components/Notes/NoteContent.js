@@ -1,5 +1,4 @@
-import { useState } from "react";
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 //redux
 import {useSelector, useDispatch} from "react-redux";
 import {createNote, updateNote, deleteNote} from "../../actions/note"
@@ -30,7 +29,7 @@ const NoteContent = ( ) => {
             const selected_note = notes.currentNote == (null || "new") ? null : notes.notes.find( 
                 (note) => { 
                     return note._id == notes.currentNote;
-                })            
+                });            
             if(selected_note){
                 setName(selected_note.name);
                 setText(selected_note.text);

@@ -1,4 +1,3 @@
-import styles from './newPost.module.css'
 
 const PostsPage = () => {
 	return (

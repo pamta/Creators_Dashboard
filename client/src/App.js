@@ -38,7 +38,7 @@ import {
 	TWITTER_TOKEN,
 } from './utils/localStorageTypes'
 import { loadFbDataFromStorage } from './actions/facebook'
-import NewPostPage from './components/posts/NewPostPage'
+import EditPostPage from './components/posts/EditPostPage'
 
 setAuthToken(localStorage[AUTH_TOKEN])
 setFacebookToken(localStorage[FACEBOOK_TOKEN])
@@ -84,7 +84,7 @@ const App = () => {
             <Switch>
               <PrivateRoute exact path="/" component={LandingPage} />
               <PrivateRoute path="/posts" component={PostsPage} />
-              <PrivateRoute path="/newpost" component={NewPostPage} />
+              <PrivateRoute path="/editpost/:id" component={EditPostPage} />
               <PrivateRoute path="/notes" component={NotesPage} />
               <PrivateRoute path="/analytics" component={AnalyticsPage} />
               <PrivateRoute path="/settings" component={SettingsPage} />

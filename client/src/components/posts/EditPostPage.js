@@ -1,11 +1,53 @@
-import useWindowSize from '../../lib/useWindowSize'
-import { useState } from 'react'
-import Switch from 'react-switch'
-import styles from './newPost.module.css'
+import { useEffect, useState } from "react";
+import Switch from 'react-switch';
+import { Redirect } from "react-router-dom";
+import { useParams } from "react-router";
+import useWindowSize from '../../lib/useWindowSize';
 
-const NewPostPage = () => {
+import styles from './newPost.module.css'
+//redux
+import {useSelector, useDispatch} from "react-redux";
+import {uploadImages, uploadVideo, deletePost} from "../../actions/post"
+
+const EditPostPage = () => {
+	const [title, setTitle] = useState('');
+	const [content, setContent] = useState('');
+	const [fileNames, setFileNames] = useState([]);
+	const [videoName, setVideoName] = useState('');
+	const [isYoutubeSelected, setYoutubeSelected] = useState(false)
+	const [isFacebookSelected, setFacebookSelected] = useState(false);
+	const [isTwitterSelected, setTwitterSelected] = useState(false);
+	const [isPublicYoutube, setIsPublicYoutube] = useState(false);
+
+	const [redirect, setRedirect] = useState();
+
+
+	const post = useSelector(state => state.post);
+	let { id } = useParams(); //get the params from the url
+
+	const dispatch = useDispatch();
+
 	const isTablet = useWindowSize().width <= 1080
 
+	const uploadVideoFromInput = (e) => {
+		var videofile = document.querySelector('#video');
+		dispatch(uploadVideo(videofile, post.currentPost));
+	};
+
+	const uploadImagesFromInput = (e) => {
+		var imagesfile = document.querySelector('#images');
+		const ammount = imagesfile.files.length;
+		console.log(imagesfile.files);
+		dispatch(uploadImages(imagesfile, post.currentPost, ammount));
+	};
+
+	const deleteCurrentPost = (e) => {
+		dispatch(deletePost(id));
+		setRedirect(`/posts`);
+	}
+
+
+	//Style
 	const getComponentStyle = () => {
 		return isTablet
 			? 'flex flex-col space-y-8 w-full'
@@ -18,20 +60,29 @@ const NewPostPage = () => {
 			: 'flex flex-row space-x-8'
 	}
 
-	const [title, setTitle] = useState('')
-	const [content, setContent] = useState('')
-	const [fileNames, setFileNames] = useState([])
-	const [videoName, setVideoName] = useState('')
-	const [isYoutubeSelected, setYoutubeSelected] = useState(false)
-	const [isFacebookSelected, setFacebookSelected] = useState(false)
-	const [isTwitterSelected, setTwitterSelected] = useState(false)
-	const [isPublicYoutube, setIsPublicYoutube] = useState(false)
+	//console.log('is ? ' + (isYoutubeSelected ? 'yes' : 'no'))
 
-	console.log('is ? ' + (isYoutubeSelected ? 'yes' : 'no'))
+	useEffect(() => {
+		//console.log(id + " : " + post.posts);
+		const selected_post = post.posts.find( 
+			(somePost) => { 
+				return somePost._id == id;
+			}
+		);
 
+		if(selected_post){
+			setTitle(selected_post.name);
+		}else{
+			//setRedirect(`/posts`); //redirect to posts
+		}
+	}, [post.posts]);
+
+	if (redirect) {
+		return <Redirect to={redirect}/>
+	}
 	return (
 		<div className='p-4'>
-			<h1 className='font-semibold text-3xl mb-4'>New post</h1>
+			<h1 className='font-semibold text-3xl mb-4'>Edit post</h1>
 			<div className={getLayoutStyle()}>
 				{/* Blog post component */}
 				<div
@@ -48,6 +99,7 @@ const NewPostPage = () => {
 								placeholder={'Title'}
 								className='focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md h-8 p-2'
 								onChange={(e) => setTitle(e.target.value)}
+								value={title}
 							/>
 							<div className='absolute flex items-left h-8 w-full'>
 								<label htmlFor={'title'} className='sr-only'></label>
@@ -74,7 +126,8 @@ const NewPostPage = () => {
 							className={'cursor-pointer' + (isTablet ? ' w-full' : ' w-1/2')}
 						>
 							<input
-								name='file'
+								name='images'
+								id='images'
 								type='file'
 								multiple
 								onChange={(e) => {
@@ -84,6 +137,7 @@ const NewPostPage = () => {
 											e.target.files[i].name,
 										])
 									}
+									uploadImagesFromInput(e);
 								}}
 							/>
 							<div className='flex flex-row px-3 py-3 justify-center items-center space-x-4 rounded-lg bg-green-200 text-black active:bg-green-400 text-md md:text-md shadow hover:shadow-lg hover:bg-green-400 hover:text-white'>
@@ -103,8 +157,8 @@ const NewPostPage = () => {
 								<p className='text-center'>Upload images</p>
 							</div>
 							<div className='flex flex-col w-1/2 text-sm text-gray-500 italic'>
-								{fileNames.map((file) => (
-									<p>{file}</p>
+								{fileNames.map((file, index) => (
+									<p key={index} >{file}</p>
 								))}
 							</div>
 						</label>
@@ -114,9 +168,13 @@ const NewPostPage = () => {
 							className={'cursor-pointer' + (isTablet ? ' w-full' : ' w-1/2')}
 						>
 							<input
-								name='file'
+								name='video'
+								id='video'
 								type='file'
-								onChange={(e) => setVideoName(e.target.value)}
+								onChange={(e) => {
+									setVideoName(e.target.value);
+									uploadVideoFromInput(e);
+								}}
 							/>
 							<div className='flex flex-row px-3 py-3 justify-center items-center space-x-4 rounded-lg bg-green-400 text-black active:bg-green-600 text-md md:text-md shadow hover:shadow-lg hover:bg-green-600 hover:text-white'>
 								<svg
@@ -321,8 +379,16 @@ const NewPostPage = () => {
 				</div>
 			</div>
 
+			<div className='py-5 float-left'>
+				<button className="p-2 text-sm rounded-lg bg-red-900 text-white active:bg-red-700  font-bold uppercase shadow hover:shadow-lg outline-none focus:outline-none "
+					 	onClick={(e) => {e.preventDefault(); deleteCurrentPost()} }>
+					<p>Delete</p>
+				</button>
+			</div>
+							
 			<div className='py-5 float-right'>
-				<button className='p-2 text-sm md:text-sm rounded-lg bg-gray-400 text-black flex flex-row justify-center items-center space-x-2 hover:bg-gray-600 hover:text-white'>
+				<button className='p-2 text-sm rounded-lg bg-gray-400 text-black flex flex-row justify-center items-center space-x-2 hover:bg-gray-600 hover:text-white'
+						onClick={ () => {setRedirect(`/posts`)} }>
 					<svg
 						xmlns='http://www.w3.org/2000/svg'
 						width='16'
@@ -339,8 +405,9 @@ const NewPostPage = () => {
 					<p>Back</p>
 				</button>
 			</div>
+			
 		</div>
 	)
 }
 
-export default NewPostPage
+export default EditPostPage

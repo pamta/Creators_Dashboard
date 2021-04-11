@@ -23,7 +23,6 @@ const handleError = (res, status, msg, err = null) => {
 // @access Private/requires token
 router.get("/all", auth, async (req, res) => {
   try {
-    console.log("Finding notes for: " + req.user.id);
     const notes = await Note.find({user_id: req.user.id});
     return res.json(notes);
   } catch (err) {

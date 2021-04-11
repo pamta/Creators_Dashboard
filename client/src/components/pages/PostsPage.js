@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Redirect } from "react-router-dom";
+
 import PostsCards from './PostsCards'
 import ConfirmModal from '../layout/ConfirmModal';
 import AddSVG from '../layout/AddSVG';
 
 //redux
 import {useSelector, useDispatch} from "react-redux";
+
 import {createPost} from "../../actions/post"
 import { setAlert } from "../../actions/alert";
 
@@ -16,7 +18,6 @@ const PostsPage = () => {
 	const [redirect, setRedirect] = useState();
 
 	//const post = useSelector(state => state.post);
-
 	const dispatch = useDispatch();
 	
 
@@ -29,8 +30,12 @@ const PostsPage = () => {
 		}
 
 		console.log("Creating post: " + newTitle);
-		dispatch(createPost(newTitle))
-		setRedirect("/newpost");		//TODO: in the new post page, redirect back to posts if post.currentPost is null
+		dispatch(createPost(newTitle)).then(newpost => {
+			setRedirect(`/editpost/${newpost._id}`);		//TODO: in the new post page, redirect back to posts if post.currentPost is null
+		}, (error) => {
+			//
+		});
+		
 	};
 
 	const newPostModalBody = () => {

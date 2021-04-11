@@ -64,6 +64,17 @@ export default function (state = initialState, action) {
                 ...state, 
                 posts: newState
             };
+        case POST_UPLOAD_IMAGES:
+        case POST_UPLOAD_VIDEO:
+        case POST_UPDATE_TEXT:
+            // get the index of the specific post, creates a copy modifing the necesary contents and replaces the previous post from the state at its previous position       
+            const index = state.posts.findIndex((post) => post._id == payload._id);
+            state.posts[index] = payload;
+
+            return {
+                ...state, 
+                posts: state.posts
+            };
         case POST_DELETE:
             return {
                 ...state, 

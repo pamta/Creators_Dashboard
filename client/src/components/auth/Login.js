@@ -93,13 +93,10 @@ const Login = ({ title, login, isAuthenticated }) => {
                         </a>
                       </div>
                       <div className="w-1/2 text-right">
-                        <a
-                          href="#humberto"
-                          onClick={(e) => e.preventDefault()}
-                          className="font-bold text-sm text-blue-500 hover:text-blue-800"
-                        >
-                          <Link to="/signup">Create new account</Link>
-                        </a>
+                      <Link to="/signup" className="font-bold text-sm text-blue-500 hover:text-blue-800">
+                        Create new account
+                      </Link>
+                        
                       </div>
                     </div>
                   </div>

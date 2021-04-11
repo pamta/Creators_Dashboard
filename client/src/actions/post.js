@@ -59,7 +59,8 @@ export const loadPosts = () => async (dispatch) => {
 
 
 // Create new Post
-export const createPost = (name) => async (dispatch) => {
+export const createPost = (name) => async (dispatch) => 
+  new Promise(async function(resolve, reject) {     //this dispatch returns a promise as to be able ti use the res contents after calling it (I need the new post ID)
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -77,36 +78,73 @@ export const createPost = (name) => async (dispatch) => {
         payload: res.data, //newly created post object
       });
       dispatch(setCurrentPost(res.data._id));
-      console.log("Creted new post");
+      
+      resolve(res.data);
+
     } catch (error) {
       handlePostError(error, dispatch);
+      reject(error);
     }
+  });
+
+
+// Upload Images
+export const uploadImages = ( imagesfile, post_id, ammount ) => async (dispatch) => {
+  const config = {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
   };
+  console.log("Uploading images");
+
+  try {
+    let formData = new FormData();
+    for (var i = 0; i < ammount; i++) {
+      formData.append("file", imagesfile.files[i]);
+    }
+    formData.append("publication_id", post_id);
+
+    const res = await axios.post("/api/publication/upload/images", formData, config);
+
+    let plural = imagesfile.files.length > 1 ? "s" : "";
+    dispatch(setAlert(`Image${plural} uploaded`, "success"));
+    dispatch({
+      type: POST_UPLOAD_IMAGES,
+      payload: res.data,
+    });
+
+  } catch (error) {
+    handlePostError(error, dispatch);
+  }
+};
 
 
-// // Update Note
-// export const updateNote = (note_id, name, text) => async (dispatch) => {
-//   const config = {
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//   };
+// Upload Video
+export const uploadVideo = ( videofile, post_id ) => async (dispatch) => {
+  const config = {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+  };
+  console.log("Uploading video");
+  console.log(videofile);
+  try {
+    let formData = new FormData();
+    formData.append("file", videofile.files[0]);
+    formData.append("publication_id", post_id);
 
-//   try {
-//     const body = JSON.stringify({ note_id, name, text });      
-//     //res.data contains the updated object as in the backend
-//     const res = await axios.post("/api/note/update", body, config);
+    const res = await axios.post("/api/publication/upload/video", formData, config);
 
-//     dispatch(setAlert("Note updated", "success"));
-//     dispatch({
-//       type: NOTE_UPDATE,
-//       payload: res.data,
-//     });
+    dispatch(setAlert("Video uploaded", "success"));
+    dispatch({
+      type: POST_UPLOAD_VIDEO,
+      payload: res.data,
+    });
 
-//   } catch (error) {
-//     handlePostError(error, dispatch);
-//   }
-// };
+  } catch (error) {
+    handlePostError(error, dispatch);
+  }
+};
 
 
 // Delete Post
