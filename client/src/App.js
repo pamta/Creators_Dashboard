@@ -16,7 +16,6 @@ import MobileNavbar from './components/layout/MobileNavbar'
 import Alert from './components/layout/Alert'
 import LandingPage from './components/pages/LandingPage'
 import PostsPage from './components/pages/PostsPage'
-import PostsPageTest from './components/pages/PostsPageTest'
 import ViewPostPage from './components/pages/ViewPost'
 import NotesPage from './components/pages/NotesPage'
 import AnalyticsPage from './components/pages/AnalyticsPage'
@@ -90,7 +89,6 @@ const App = () => {
 							<PrivateRoute path='/notes' component={NotesPage} />
 							<PrivateRoute path='/analytics' component={AnalyticsPage} />
 							<PrivateRoute path='/settings' component={SettingsPage} />
-							<PrivateRoute path='/test' component={PostsPageTest} />
 							<PrivateRoute path='/view' component={ViewPostPage} />
 						</Switch>
 					</div>
