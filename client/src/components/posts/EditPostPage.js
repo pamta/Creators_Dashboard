@@ -61,7 +61,7 @@ const EditPostPage = () => {
 
 	const publishToFb = (e) => {
 		let hasVideo = statePost && statePost.video && !statePost.video.isLoading
-		publishPostToFb(id, hasVideo);
+		dispatch(publishPostToFb(id, hasVideo));
 	}
 
 	//Style
