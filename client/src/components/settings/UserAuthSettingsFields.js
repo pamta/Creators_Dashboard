@@ -3,6 +3,7 @@ import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { setFbUserInfo, selectFbPage } from '../../actions/facebook'
 import { setYTUserInfo } from '../../actions/youtube'
+import { useSelector } from 'react-redux'
 
 import { connect } from 'react-redux'
 import BasicModal from '../layout/BasicModal'
@@ -14,6 +15,9 @@ const UserAuthFields = ({
 	setYTUserInfo,
 }) => {
 	const [showFbPagesModal, setFbPagesModal] = useState(false)
+
+	// Retrieve current user's channel name from store
+	const ytHandler = useSelector((state) => state.youtube.user.channelName) ?? ''
 
 	const genFbModalBody = () =>
 		fbUserPages.map((page) => (
@@ -98,6 +102,7 @@ const UserAuthFields = ({
 				<SettingsField
 					fieldName='YouTube'
 					inputTag='youtube-handler'
+					textValue={ytHandler}
 					authenticate={() => setYTUserInfo()}
 					icon={
 						<svg
