@@ -151,12 +151,12 @@ export const uploadVideo = ( videofile, post_id ) => async (dispatch) => {
 export const updateText = ( text, publication_id ) => async (dispatch) => {
   const config = {
     headers: {
-      'Content-Type': 'multipart/form-data'
+      "Content-Type": "application/json",
     },
   };
 
   try {
-    const body = JSON.stringify({ text, publication_id });
+    const body = JSON.stringify({ text: text, publication_id: publication_id });
     const res = await axios.post("/api/publication/upload/text", body, config);
 
     dispatch(setAlert("Text Updated", "success"));
@@ -172,14 +172,17 @@ export const updateText = ( text, publication_id ) => async (dispatch) => {
 
 // Update Title
 export const updateTitle = ( name, publication_id ) => async (dispatch) => {
+  console.log(name + " : " + publication_id);
+
   const config = {
     headers: {
-      'Content-Type': 'multipart/form-data'
+      "Content-Type": "application/json",
     },
   };
 
   try {
     const body = JSON.stringify({ name, publication_id });
+    console.log(body);
     const res = await axios.post("/api/publication/upload/name", body, config);
 
     dispatch(setAlert("Title Updated", "success"));

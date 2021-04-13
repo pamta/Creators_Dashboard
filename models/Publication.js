@@ -13,13 +13,19 @@ const PublicationSchema = new mongoose.Schema({
   video: {
     URL: String,
     name: String,
-    isLoading: Boolean,
+    isLoading: {
+      type: Boolean,
+      default: true
+    },
   },
   images: [
     {
       URL: String,
       name: String,
-      isLoading: Boolean,
+      isLoading: {
+        type: Boolean,
+        default: true
+      },
     },
   ],
   text: {

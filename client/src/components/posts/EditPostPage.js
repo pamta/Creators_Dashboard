@@ -7,11 +7,14 @@ import useWindowSize from '../../lib/useWindowSize';
 import styles from './newPost.module.css'
 //redux
 import {useSelector, useDispatch} from "react-redux";
-import {uploadImages, uploadVideo, deletePost} from "../../actions/post"
+import {uploadImages, uploadVideo, deletePost, updateText, updateTitle} from "../../actions/post"
+//publishPostToFb = (publicationId, useVideo)
+import {publishPostToFb} from "../../actions/facebook"
 
 const EditPostPage = () => {
 	const [title, setTitle] = useState('');
 	const [content, setContent] = useState('');
+	const [statePost, setStatePost] = useState();
 	const [fileNames, setFileNames] = useState([]);
 	const [videoName, setVideoName] = useState('');
 	const [isYoutubeSelected, setYoutubeSelected] = useState(false)
@@ -28,6 +31,8 @@ const EditPostPage = () => {
 	const dispatch = useDispatch();
 
 	const isTablet = useWindowSize().width <= 1080
+
+	//calls to actions
 
 	const uploadVideoFromInput = (e) => {
 		var videofile = document.querySelector('#video');
@@ -46,6 +51,17 @@ const EditPostPage = () => {
 		setRedirect(`/posts`);
 	}
 
+	const updateTitleFromInput = (e) => {
+		dispatch(updateTitle(title, id));
+	}
+
+	const updateTextFromInput = (e) => {
+		dispatch(updateText(content, id));
+	}
+
+	const publishToFb = (e) => {
+		publishPostToFb(id, false);
+	}
 
 	//Style
 	const getComponentStyle = () => {
@@ -71,7 +87,9 @@ const EditPostPage = () => {
 		);
 
 		if(selected_post){
+			setStatePost(selected_post);
 			setTitle(selected_post.name);
+			setContent(selected_post.text);
 		}else{
 			//setRedirect(`/posts`); //redirect to posts
 		}
@@ -105,6 +123,15 @@ const EditPostPage = () => {
 								<label htmlFor={'title'} className='sr-only'></label>
 							</div>
 						</div>
+						<button
+							onClick={updateTitleFromInput}
+							className={
+								" justify-center items-center space-x-1 rounded-md p-2  text-white" +
+								` bg-red-400` +
+								` hover:bg-red-600`
+							}>
+							Save
+						</button>
 					</div>
 					<div className={'flex flex-col w-full space-y-2'}>
 						<p>Content</p>
@@ -116,8 +143,18 @@ const EditPostPage = () => {
 								className='focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2'
 								onChange={(e) => setContent(e.target.value)}
 								rows='5'
+								value={content}
 							/>
 						</div>
+						<button
+							onClick={updateTextFromInput}
+							className={
+								" justify-center items-center space-x-1 rounded-md p-2  text-white" +
+								` bg-red-400` +
+								` hover:bg-red-600`
+							}>
+							Save
+						</button>
 					</div>
 
 					<div className={getComponentStyle()}>
@@ -196,6 +233,7 @@ const EditPostPage = () => {
 								<p>{videoName.split('\\')[2]}</p>
 							</div>
 						</label>
+
 					</div>
 				</div>
 
@@ -376,6 +414,15 @@ const EditPostPage = () => {
 							<></>
 						)}
 					</div>
+					<button
+						onClick={publishToFb}
+						className={
+							" justify-center items-center space-x-1 rounded-md p-2  text-white" +
+							` bg-red-400` +
+							` hover:bg-red-600`
+						}>
+						Publish
+					</button>
 				</div>
 			</div>
 

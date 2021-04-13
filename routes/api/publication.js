@@ -137,7 +137,8 @@ router.post(
     
     //we get the alredy checked payload
     const { publication_id, name } = req.body;
-
+    console.log(name + " : " + publication_id);
+    
     try{
       const publicationFound = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec();
       if (!publicationFound) {
@@ -338,10 +339,12 @@ router.post(
         return handleError(res, 400, "Publication does not exist");
       }
 
-      const oldVideo = Object.assign({}, publicationFound.video);
-      //let oldVideo = publicationFound.video;
+      let oldVideo;
+      if(publicationFound.video){
+        oldVideo = Object.assign({}, publicationFound.video);
+      }      
 
-      //FILE UPLOAD
+      //FILE UPLOAD PREP
       const type = mime.lookup(req.file.originalname);
       console.log(type);
       const regexVideo = /video/g;
@@ -350,7 +353,24 @@ router.post(
       }
 
       const blob = mediaBucket.file(`${uuid()}.${mime.extensions[type][0]}`);
+      const publicURL = `https://storage.googleapis.com/${mediaBucket.name}/${blob.name}`;
 
+      //Save in DB
+      const updateDate = Date.now();
+      publicationFound.video = {URL: publicURL, name: blob.name, isLoading: true};
+      publicationFound.updateDate = updateDate;
+      
+      try{
+        //we await for the save as we need a clear state in the db as the client will be waiting for an udate to isLoading for the lenght of the video upload
+        await publicationFound.save().then( (video) => {
+          //no return as we still need to update the storage, but we send the video object back
+          res.json(video);
+        });
+      }catch (err){
+        return handleError(res, 500, `DB error: ${err}`, err);
+      }
+
+      //FILE UPLOAD STREAM
       const stream = blob.createWriteStream({
         resumable: true,
         contentType: type,
@@ -361,26 +381,21 @@ router.post(
         return handleError(res, 500, "Error during media streaming", err);
       });
 
-      publicURL = `https://storage.googleapis.com/${mediaBucket.name}/${blob.name}`;
-    
-      stream.on('finish', () => { //idk if needed
+      stream.on('finish', () => { 
         console.log("File finished upload");
+
+        //update db to signal that the video has finished uploading
+        publicationFound.video.isLoading = false;
+        publicationFound.save((err, video)=>{
+          if(err){
+            return handleError(res, 500, `DB error: ${err}`, err);
+          }
+          console.log("Updated IsLoading state");
+        });
+        
       });
     
       stream.end(req.file.buffer);
-
-      //Save in DB
-      const updateDate = Date.now();
-      publicationFound.video = {URL: publicURL, name: blob.name};
-      publicationFound.updateDate = updateDate;
-      
-      publicationFound.save((err, video)=>{
-        if(err){
-          return handleError(res, 500, `DB error: ${err}`, err);
-        }
-        //no return as we still need to update the storage, but we send the video object back
-        res.json(video);
-      });
     
       //No error handling if video was not deleted. idk were to put error handling for this, as this is not of concert for the user
       if(oldVideo){
