@@ -27,8 +27,6 @@ const NewPostPage = () => {
 	const [isTwitterSelected, setTwitterSelected] = useState(false)
 	const [isPublicYoutube, setIsPublicYoutube] = useState(false)
 
-	console.log('is ? ' + (isYoutubeSelected ? 'yes' : 'no'))
-
 	return (
 		<div className='p-4'>
 			<h1 className='font-semibold text-3xl mb-4'>New post</h1>

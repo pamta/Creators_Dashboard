@@ -32,7 +32,6 @@ export const setYTUserInfo = () => async (dispatch, getState) => {
 		})
 
 		localStorage.setItem(YOUTUBE_TOKEN, JSON.stringify(getState().youtube))
-		console.log(getState())
 	} catch (error) {
 		console.log(error)
 		dispatch({ type: YT_AUTH_USER_FAIL })
