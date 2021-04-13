@@ -13,13 +13,20 @@ const { check, validationResult } = require("express-validator");
 // Returns a moongose model of the user
 const User = require("../../models/User");
 const Publication = require("../../models/Publication");
+const { eventNames } = require("../../models/User");
 
 
 const handleError = (res, status, msg, err = null) => {
+  if(!res.headersSent){
+    if (err) {
+      console.error(err)
+    };
+    return res.status(status).json({ errors: [{ msg: msg }] });
+  }
+
   if (err) {
-    console.error(err.message)
+    console.error(err)
   };
-  return res.status(status).json({ errors: [{ msg: msg }] });
 };
 
 
@@ -107,6 +114,53 @@ router.post(
     }
   );
 
+
+
+// @route  POST api/publication/upload/name
+// @access private, requires a user token
+router.post(
+  "/upload/name", auth,
+  [
+    // Second parameter of check is a custom error message
+    check("name", "A name is required").not().isEmpty(),
+    check("publication_id", "A publication is required").not().isEmpty(),
+  ],
+  async (req, res) => {
+
+    // Finds the validation errors in this request and wraps them in an object with handy functions
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ // 400 is for a bad request
+        errors: errors.array(),
+      });
+    }
+    
+    //we get the alredy checked payload
+    const { publication_id, name } = req.body;
+
+    try{
+      const publicationFound = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec();
+      if (!publicationFound) {
+        return handleError(res, 400, "Publication does not exist");
+      }
+
+      //UPDATE PUBLICATION
+      publicationFound.name = name;
+      publicationFound.updateDate = Date.now();
+
+      publicationFound.save((err, doc)=>{
+        if(err){
+          return handleError(res, 500, `DB error: ${err}`, err);
+        }
+        //we return the saved publication
+        return res.json(doc);
+      });
+
+    } catch (err) {
+      return handleError(res, 500, "Server Error", err);
+    }
+  });
+
 // route to add text content to a publication
 // @route  POST api/publication/upload/text
 // @access private, requires a user token
@@ -182,8 +236,8 @@ router.post(
     }  
     try{
       //use this instead when activating the auth middleware
-      //const publicationFound = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec();
-      let publicationFound = await Publication.findById(publication_id).exec();
+      const publicationFound = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec(); 
+      //let publicationFound = await Publication.findById(publication_id).exec();
 
       if (!publicationFound) {
         return handleError(res, 400, "Publication does not exist");
@@ -277,14 +331,15 @@ router.post(
       //VERIFICATIONS of user, publication and content
 
       //use this instead when activating the auth middleware
-      //const publicationFound = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec();
-      let publicationFound = await Publication.findById(publication_id).exec();
+      const publicationFound = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec();
+      //let publicationFound = await Publication.findById(publication_id).exec();
 
       if (!publicationFound) {
         return handleError(res, 400, "Publication does not exist");
       }
 
-      let oldVideo = publicationFound.video;
+      const oldVideo = Object.assign({}, publicationFound.video);
+      //let oldVideo = publicationFound.video;
 
       //FILE UPLOAD
       const type = mime.lookup(req.file.originalname);
@@ -314,8 +369,7 @@ router.post(
     
       stream.end(req.file.buffer);
 
-      //PUBLICATION UPDATE TODO: Dont use findByIdAndUpdate, but update existing publicationFound and save()
-
+      //Save in DB
       const updateDate = Date.now();
       publicationFound.video = {URL: publicURL, name: blob.name};
       publicationFound.updateDate = updateDate;
@@ -353,19 +407,19 @@ router.post(
 router.delete(
   "/", auth,
   async (req, res) => {
-    let finished = false;
 
     try{
       const publication_id = req.header("publication_id");
       const publication = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec();
       //
-      const oldVideo = publication.video;
-      const oldImages = publication.images;
+      const oldVideo = Object.assign({}, publication.video);
+      const oldImages = [...publication.images];
 
       if (!publication) {
         return handleError(res, 400, "Publication non existent");
       }
-
+      
+      //DELETE IN DB
       await Publication.remove({_id: publication_id, user_id: req.user.id}, (err, doc) => {
         if(err){
           return handleError(res, 500, `DB error: ${err}`, err);
@@ -374,9 +428,8 @@ router.delete(
       
       //responds with the id of the deleted publication
       res.json({_id: publication_id});                    //no return as we still need to delete the files in storage, the user does not need to wait for that
-      finished = true;
 
-
+      //DELETE IN STORAGE
       //Delete Videos
       try{
         await mediaBucket.file(oldVideo.name).delete();
@@ -395,54 +448,10 @@ router.delete(
       }
 
     } catch(err) {
-      if(!finished){
-        return handleError(res, 500, "Server Error", err);
-      }
-      console.log(err);
+      return handleError(res, 500, "Server Error", err);
     }
   });
 
-
-  //delete video from publication
-  router.delete(
-    "/video", auth,
-    async (req, res) => {
-      try{
-        const publication_id = req.header("publication_id");
-        const publication = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec();
-  
-        if (!publication) {
-          return handleError(res, 400, "Publication non existent");
-        }
-
-        //DELETE IN CLOUD
-        const oldVideo = publication.video;
-        if(oldVideo){
-          try{
-            await mediaBucket.file(oldVideo.name).delete();
-            console.log(`${oldVideo.URL} deleted.`);
-          }catch (err){
-            console.log(`could not delete file ${oldVideo.name}, maybe it does not exists`);
-
-            return handleError(res, 500, `Storage error: ${err}`, err);
-          }
-
-          //DELETE IN DB
-          publication.video = undefined;
-          publication.save((err)=>{
-            if(err){
-              return handleError(res, 500, `DB error: ${err}`, err);
-            }
-            return res.json({video: oldVideo});
-          });
-        }else{
-          return res.json({video: {} });
-        }
-        
-      } catch(err) {
-        return handleError(res, 500, "Server error", err);
-      }
-    });
 
 //delete text from publication
 router.delete(
@@ -456,22 +465,65 @@ router.delete(
         return handleError(res, 400, "Publication non existent");
       }
 
-      const oldtext = publication.text;
-      if(oldtext){
+      if(publication.text){
         //DELETE IN DB
         publication.text = undefined;
-        publication.save((err)=>{
+        publication.save((err, doc)=>{
           if(err){
             return handleError(res, 500, `DB error: ${err}`, err);
           }
-          return res.json({text: oldtext});
+          return res.json(doc); //return the post with no text
         });
       }else{
-        return res.json({text: ""}); //if there no text to delete
+        return handleError(res, 400, "The publication already does not have text content", err);
+        //return res.json(publication); //if there no text to delete
       }
       
     } catch(err) {
       return handleError(res, 500, "Server error", err);
+    }
+  });
+
+
+//delete video from publication
+router.delete(
+  "/video", auth,
+  async (req, res) => {
+    try{
+      const publication_id = req.header("publication_id");
+      const publication = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec();
+
+      if (!publication) {
+        return handleError(res, 400, "Publication non existent");
+      }
+
+      const oldVideo = Object.assign({}, publication.video);
+      if(oldVideo){
+        //DELETE IN DB
+        publication.video = undefined;
+        publication.save((err, doc)=>{
+          if(err){
+            return handleError(res, 500, `DB error: ${err}`, err);
+          }
+          res.json(doc);
+        });
+
+        //DELETE IN CLOUD
+        try{
+          await mediaBucket.file(oldVideo.name).delete();
+          console.log(`${oldVideo.URL} deleted.`);
+        }catch (err){
+          console.log(`could not delete file ${oldVideo.name}, maybe it does not exists`);
+
+          return handleError(res, 500, `Storage error: ${err}`, err);
+        }
+      }else{
+        return handleError(res, 400, "The publication already does not have a video", err);
+        //return res.json({video: {} });
+      }
+      
+    } catch(err) {
+      return handleError(res, 500, "Server Error", err);
     }
   });
 
@@ -487,8 +539,19 @@ router.delete(
         return handleError(res, 400, "Publication non existent");
       }
       
-      const oldImages = publication.images;
+      const oldImages = [...publication.images];
       if(!(oldImages === undefined || oldImages.length == 0)){
+
+        //DELETE IN DB
+        publication.images = [];
+        publication.save((err, doc)=>{
+          if(err){
+            return handleError(res, 500, `DB error: ${err}`, err);
+          }
+          //if succesful return the updated post object
+          res.json(doc);
+        });
+
         //DELETE IN CLOUD
         for (let image of oldImages){
           try{
@@ -500,21 +563,67 @@ router.delete(
           }
         }
 
-        //DELETE IN DB
-        publication.images = [];
-        publication.save((err)=>{
-          if(err){
-            return handleError(res, 500, `DB error: ${err}`, err);
-          }
-          //if succesful return deleted images
-          return res.json({images: oldImages});
-        });
       }else{
-        return res.json({images: []}); //if there are no images to delete
+        return handleError(res, 400, "The publication already does not have any images", err);
+        //return res.json({images: []}); //if there are no images to delete
       }
       
     } catch(err) {
-      return handleError(res, 500, "Server error", err);
+      return handleError(res, 500, "Server Error", err);
+    }
+  });
+
+//delete a specific image from the publication
+router.delete(
+  "/image", auth,
+  async (req, res) => {
+    try{
+      const publication_id = req.header("publication_id");
+      const image_name = req.header("image_name");
+      const publication = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec();
+
+      if (!publication) {
+        return handleError(res, 400, "Publication non existent");
+      }
+      
+      if(!(publication.images === undefined || publication.images.length == 0)){        
+        //DELETE IN DB
+
+        if( !(publication.images.find((image) => {
+              return image.name == image_name;
+            }))
+          ){
+            return handleError(res, 400, "That image does not exist in DB");
+        }
+
+        publication.images = publication.images.filter((image) => {
+            return image.name !== image_name;
+          });
+
+        publication.save((err, doc)=>{
+          if(err){
+            return handleError(res, 500, `DB error: ${err}`, err);
+          }
+          //if succesful return the updated post object
+          res.json(doc);
+          //after sending response we continue to delete it in storage as that is not of concern for the user
+        });
+
+        //DELETE IN CLOUD
+        try{
+          await mediaBucket.file(image_name).delete();
+          console.log(`${image_name}  deleted.`);
+        }catch (err){
+          console.log(`could not delete file ${image_name}, maybe it does not exists`);
+          return handleError(res, 500, `Storage error: ${err}`, err);
+        }
+
+      }else{
+        return handleError(res, 400, "The publication already does not have any images", err);
+      }
+      
+    } catch(err) {
+      return handleError(res, 500, "Server Error", err);
     }
   });
 

@@ -5,7 +5,7 @@ import {
     POST_CREATE,
     POST_UPLOAD_IMAGES,
     POST_UPLOAD_VIDEO,
-    POST_UPDATE_TEXT,
+    POST_UPDATE,
     POST_DELETE,
     POST_FAIL,
 } from "../actions/types";
@@ -66,7 +66,7 @@ export default function (state = initialState, action) {
             };
         case POST_UPLOAD_IMAGES:
         case POST_UPLOAD_VIDEO:
-        case POST_UPDATE_TEXT:
+        case POST_UPDATE:
             // get the index of the specific post, creates a copy modifing the necesary contents and replaces the previous post from the state at its previous position       
             const index = state.posts.findIndex((post) => post._id == payload._id);
             state.posts[index] = payload;

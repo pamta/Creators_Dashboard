@@ -10,10 +10,16 @@ const User = require("../../models/User");
 const Note = require("../../models/Note");
 
 const handleError = (res, status, msg, err = null) => {
+  if(!res.headersSent){
+    if (err) {
+      console.error(err)
+    };
+    return res.status(status).json({ errors: [{ msg: msg }] });
+  }
+
   if (err) {
-    console.error(err.message)
+    console.error(err)
   };
-  return res.status(status).json({ errors: [{ msg: msg }] });
 };
 
 // ######## ROUTES ########
@@ -104,7 +110,7 @@ router.post(
   );
 
 // route to update text content of a note
-// @route  POST api/note/text
+// @route  POST api/note/update
 // @access private, requires a user token
 // responds with updated note object
 router.post(

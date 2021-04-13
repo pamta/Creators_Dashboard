@@ -45,7 +45,7 @@ export const SET_CURRENT_POST = "SET_CURRENT_POST";
 export const POST_CREATE = "POST_CREATE";
 export const POST_UPLOAD_IMAGES = "POST_UPLOAD_IMAGES";
 export const POST_UPLOAD_VIDEO = "POST_UPLOAD_VIDEO";
-export const POST_UPDATE_TEXT = "POST_UPDATE_TEXT";
+export const POST_UPDATE = "POST_UPDATE";
 export const POST_DELETE = "POST_DELETE";
 export const POST_FAIL = "NOTE_FAIL";
 

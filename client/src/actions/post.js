@@ -6,7 +6,7 @@ import {
     POST_CREATE,
     POST_UPLOAD_IMAGES,
     POST_UPLOAD_VIDEO,
-    POST_UPDATE_TEXT,
+    POST_UPDATE,
     POST_DELETE,
     POST_FAIL,
 } from "./types";
@@ -127,7 +127,7 @@ export const uploadVideo = ( videofile, post_id ) => async (dispatch) => {
     },
   };
   console.log("Uploading video");
-  console.log(videofile);
+
   try {
     let formData = new FormData();
     formData.append("file", videofile.files[0]);
@@ -146,6 +146,54 @@ export const uploadVideo = ( videofile, post_id ) => async (dispatch) => {
   }
 };
 
+
+// Update Text
+export const updateText = ( text, publication_id ) => async (dispatch) => {
+  const config = {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+  };
+
+  try {
+    const body = JSON.stringify({ text, publication_id });
+    const res = await axios.post("/api/publication/upload/text", body, config);
+
+    dispatch(setAlert("Text Updated", "success"));
+    dispatch({
+      type: POST_UPDATE,
+      payload: res.data,
+    });
+
+  } catch (error) {
+    handlePostError(error, dispatch);
+  }
+};
+
+// Update Title
+export const updateTitle = ( name, publication_id ) => async (dispatch) => {
+  const config = {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+  };
+
+  try {
+    const body = JSON.stringify({ name, publication_id });
+    const res = await axios.post("/api/publication/upload/name", body, config);
+
+    dispatch(setAlert("Title Updated", "success"));
+    dispatch({
+      type: POST_UPDATE,
+      payload: res.data,
+    });
+
+  } catch (error) {
+    handlePostError(error, dispatch);
+  }
+};
+
+//Delete Actions
 
 // Delete Post
 export const deletePost = (post_id) => async (dispatch) => {
@@ -171,3 +219,97 @@ export const deletePost = (post_id) => async (dispatch) => {
     handlePostError(error, dispatch);
   }
 };
+
+// Delete Text
+export const removeText= (post_id) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      "publication_id": post_id
+    },
+  };
+
+  try {
+    const res = await axios.delete("/api/publication/text", config);
+
+    dispatch(setAlert("Text Removed", "success"));
+    dispatch({
+      type: POST_UPDATE,
+      payload: res.data,
+    });
+
+  } catch (error) {
+    handlePostError(error, dispatch);
+  }
+};
+
+// Delete Video
+export const deleteVideo= (post_id) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      "publication_id": post_id
+    },
+  };
+
+  try {
+    const res = await axios.delete("/api/publication/video", config);
+
+    dispatch(setAlert("Video Removed", "success"));
+    dispatch({
+      type: POST_UPDATE,
+      payload: res.data,
+    });
+
+  } catch (error) {
+    handlePostError(error, dispatch);
+  }
+};
+
+// Delete Images
+export const deleteImages= (post_id) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      "publication_id": post_id
+    },
+  };
+
+  try {
+    const res = await axios.delete("/api/publication/images", config);
+
+    dispatch(setAlert("Images Removed", "success"));
+    dispatch({
+      type: POST_UPDATE,
+      payload: res.data,
+    });
+
+  } catch (error) {
+    handlePostError(error, dispatch);
+  }
+};
+
+// Delete a specific Image
+export const deleteImage= (post_id, name) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      "publication_id": post_id,
+      "image_name": name,
+    },
+  };
+
+  try {
+    const res = await axios.delete("/api/publication/image", config);
+
+    dispatch(setAlert("Images Removed", "success"));
+    dispatch({
+      type: POST_UPDATE,
+      payload: res.data,
+    });
+
+  } catch (error) {
+    handlePostError(error, dispatch);
+  }
+};
+
