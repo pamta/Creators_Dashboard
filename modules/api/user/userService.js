@@ -90,6 +90,41 @@ class UserService {
       }
     }).exec();
   }
+
+  async authenticate(userIdentifier, password) {
+    //We try to find a user, first by mail, and then by userName.
+    //there is no posibility for a user name to have the same format as an email or the other way around,
+    //so no user should be incorrectly identified
+    let mailFound = await User.findOne({ email: userIdentifier }).exec();
+    let userNameFound = await User.findOne({
+      userName: userIdentifier,
+    }).exec();
+
+    let user = mailFound || userNameFound;
+    if (!user) {
+      throw new ArrayError([{ msg: "Invalid credentials" }]);
+    }
+
+    // Check if the hash version of a non-encrypted text equals to a hash
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      throw new ArrayError([{ msg: "Invalid credentials" }]);
+    }
+
+    const payload = {
+      user: {
+        id: user.id, // Moongose gets the id of the database
+      },
+    };
+    // Generate a JSON Web Token (encrypted payload with signature)
+    const token = jwt.sign(
+      payload,
+      config.get("jwtSecret"), // encryption key
+      { expiresIn: 360000 }
+    );
+
+    return token;
+  }
 }
 
 module.exports = UserService;
