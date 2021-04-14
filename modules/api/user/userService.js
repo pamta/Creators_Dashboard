@@ -1,15 +1,15 @@
 const bcrypt = require("bcryptjs");
 const config = require("config");
 const jwt = require("jsonwebtoken");
-const User = require("../../../models/User");
+const User = require("./userDAO");
 const ArrayError = require("../../../utils/ArrayError");
 
 class UserService {
   async signUp(userDTO) {
     const { name, userName, email, password } = userDTO;
     // Check if there's a user with that email o that userName (since we put emails and usernames as unique)
-    let mailFound = await User.findOne({ email }).exec();
-    let userNameFound = await User.findOne({ userName }).exec();
+    let mailFound = await User.findOne({ email });
+    let userNameFound = await User.findOne({ userName });
     if (userNameFound || mailFound) {
       throw new ArrayError([{ msg: "User already exists" }]);
     }
@@ -33,7 +33,7 @@ class UserService {
     // // Encrypt the password
     user.password = await bcrypt.hash(password, salt);
     // // Remember that User is a moongose model and we connected moongose with our database
-    await user.save();
+    await user.upload();
 
     const payload = {
       user: {
@@ -54,7 +54,7 @@ class UserService {
     const { name, userName, email } = userDTO;
 
     // Check if there's a user with that id
-    let userFound = await User.findById(userID).exec();
+    let userFound = await User.findById(userID);
 
     if (!userFound) {
       throw new ArrayError([{ msg: "User non existent" }]);
@@ -74,12 +74,12 @@ class UserService {
           throw new Error(err.message);
         }
       }
-    ).exec();
+    );
   }
 
   async delete(userID) {
     // Check if there's a user with that id
-    let userFound = await User.findById(userID).exec();
+    let userFound = await User.findById(userID);
     if (!userFound) {
       throw new ArrayError([{ msg: "User non existent" }]);
     }
@@ -88,17 +88,17 @@ class UserService {
       if (err) {
         throw new Error(err.message);
       }
-    }).exec();
+    });
   }
 
   async authenticate(userIdentifier, password) {
     //We try to find a user, first by mail, and then by userName.
     //there is no posibility for a user name to have the same format as an email or the other way around,
     //so no user should be incorrectly identified
-    let mailFound = await User.findOne({ email: userIdentifier }).exec();
+    let mailFound = await User.findOne({ email: userIdentifier });
     let userNameFound = await User.findOne({
       userName: userIdentifier,
-    }).exec();
+    });
 
     let user = mailFound || userNameFound;
     if (!user) {
@@ -127,9 +127,7 @@ class UserService {
   }
 
   async getById(userID) {
-    // The middleware auth modifies the request to have the user id if it has a correct token in the header
-    // Do not pass the password.
-    const user = await User.findById(userID).select("-password");
+    const user = await User.findByIdAndSelect(userID, "-password");
     return user;
   }
 }
