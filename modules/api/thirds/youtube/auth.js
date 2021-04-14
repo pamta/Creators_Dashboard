@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const auth = require('../../middleware/auth')
+const auth = require('../../../../middleware/auth')
 const path = require('path')
 const { google } = require('googleapis')
 const fs = require('fs')
@@ -23,7 +23,7 @@ const youtube = google.youtube('v3')
 // @desct  Authenticate YouTube client using Google account
 // @access Private/requires token
 router.post('/', async (req, res) => {
-	const keyPath = path.join(__dirname, '../../oauth2.keys.json')
+	const keyPath = path.join(__dirname, '../../../../config/oauth2.keys.json')
 	let keys = { redirect_uris: [''] }
 	if (fs.existsSync(keyPath)) {
 		keys = require(keyPath).installed

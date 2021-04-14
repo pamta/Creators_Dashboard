@@ -8,6 +8,8 @@ import logo from './logo.svg'
 import { Provider } from 'react-redux'
 import store from './store'
 import { loadUser } from './actions/auth'
+import { loadFbDataFromStorage } from './actions/facebook'
+import { loadYTDataFromStorage } from './actions/youtube'
 //Style
 import './App.css'
 //Components
@@ -22,7 +24,7 @@ import SettingsPage from "./components/pages/SettingsPage";
 import PrivateRoute from "./components/routing/PrivateRoute";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
-import EditPost from "./components/posts/EditPostPage";
+import EditPostPage from './components/posts/EditPostPage'
 import Post from "./components/pages/Post";
 //
 import {
@@ -32,12 +34,12 @@ import {
 	setTwitterToken,
 } from './utils/tokenSetter'
 import {
-  AUTH_TOKEN,
-  FACEBOOK_TOKEN,
-  INSTAGRAM_TOKEN,
-  TWITTER_TOKEN,
-} from "./utils/localStorageTypes";
-import { loadFbDataFromStorage } from "./actions/facebook";
+	AUTH_TOKEN,
+	FACEBOOK_TOKEN,
+	INSTAGRAM_TOKEN,
+	TWITTER_TOKEN,
+} from './utils/localStorageTypes'
+
 
 setAuthToken(localStorage[AUTH_TOKEN])
 setFacebookToken(localStorage[FACEBOOK_TOKEN])
@@ -49,8 +51,9 @@ const App = () => {
 	useEffect(() => {
 		fbSDKInit()
 		store.dispatch(loadFbDataFromStorage())
+		store.dispatch(loadYTDataFromStorage())
 		store.dispatch(loadUser())
-	}, [fbSDKInit, loadUser, loadFbDataFromStorage])
+	}, [fbSDKInit, loadUser, loadFbDataFromStorage, loadYTDataFromStorage])
 
 	// Constantly update isMobile variable
 	// const isMobile = useWindowSize().width <= 768
@@ -85,7 +88,7 @@ const App = () => {
 						<Switch>
 							<PrivateRoute exact path='/' component={LandingPage} />
 							<PrivateRoute path='/posts' component={PostsPage} />
-							<PrivateRoute path="/editpost/:id" component={EditPost} />
+							<PrivateRoute path='/editpost/:id' component={EditPostPage} />
 							<PrivateRoute path='/notes/:id' component={NotesPage} />
 							<PrivateRoute path='/analytics' component={AnalyticsPage} />
 							<PrivateRoute path='/settings' component={SettingsPage} />

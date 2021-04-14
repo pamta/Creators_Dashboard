@@ -27,16 +27,24 @@ app.get("/", (req, res) => res.send("API Running"));
 
 // Define Routes
 // All the routes on ./routes/api/user are behind the main route /api/user
-app.use('/api/user', require('./routes/api/user'));
-app.use('/api/auth', require('./routes/api/auth'));
-app.use('/api/publication', require('./routes/api/publication'));
-app.use("/api/note", require("./routes/api/note"));
-app.use('/youtube/auth', require('./routes/youtube/auth'));
-app.use('/youtube/analytics', require('./routes/youtube/analytics'));
-app.use('/youtube/upload', require('./routes/youtube/upload'));
-app.use("/api/facebook", require("./routes/api/facebook"));
-app.use("/admin/socialnetworks", require("./routes/admin/socialnetworks"));
-
+app.use("/api/user", require("./modules/api/user/userRoute"));
+app.use("/api/auth", require("./modules/api/user/auth"));
+app.use(
+  "/api/publication",
+  require("./modules/api/publication/publicationRoute")
+);
+app.use("/api/note", require("./modules/api/note/noteRoute"));
+app.use("/youtube/auth", require("./modules/api/thirds/youtube/auth"));
+app.use(
+  "/youtube/analytics",
+  require("./modules/api/thirds/youtube/analytics")
+);
+app.use("/youtube/upload", require("./modules/api/thirds/youtube/upload"));
+app.use("/api/facebook", require("./modules/api/thirds/facebook/facebook"));
+app.use(
+  "/admin/socialnetworks",
+  require("./modules/admin/socialNetworks/socialnetworks")
+);
 
 https
   .createServer(

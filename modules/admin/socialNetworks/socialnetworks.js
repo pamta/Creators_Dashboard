@@ -3,7 +3,7 @@ const router = express.Router();
 const { check, validationResult } = require("express-validator/check");
 const config = require("config");
 const adminKey = config.get("adminKey");
-const SocialNetwork = require("../../models/SocialNetwork");
+const SocialNetwork = require("../../../models/SocialNetwork");
 
 // @route POST admin/socialnetworks
 // @desct Register a new social network
