@@ -51,12 +51,30 @@ class UserService {
   }
 
   async update(userID, userDTO) {
+    const { name, userName, email } = userDTO;
+
     // Check if there's a user with that id
-    let userFound = await User.findById(tokenUser.id).exec();
+    let userFound = await User.findById(userID).exec();
 
     if (!userFound) {
-      return res.status(400).json({ errors: [{ msg: "User non existent" }] });
+      throw new ArrayError([{ msg: "User non existent" }]);
     }
+    const updateDate = Date.now();
+
+    await User.findByIdAndUpdate(
+      userID,
+      {
+        name: name,
+        email: email,
+        userName: userName,
+        updateDate: updateDate,
+      },
+      (err, doc) => {
+        if (err) {
+          throw new Error(err.message);
+        }
+      }
+    ).exec();
   }
 }
 
