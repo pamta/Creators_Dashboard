@@ -13,7 +13,7 @@ import {
 
 const handlePostError = (error, dispatch) => {
   // Our backend send an array of errors when there is one or more. Show them all as alerts
-  if (error.response) {
+  if (error && error.response && error.response.data.errors) {
     const errors = error.response.data.errors;
     errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
   }else{ //in case the error is sent from any other point in the conection

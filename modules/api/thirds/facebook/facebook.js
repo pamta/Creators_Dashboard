@@ -2,14 +2,14 @@ const express = require("express");
 const config = require("config");
 const router = express.Router();
 const axios = require("axios");
-const auth = require("../../middleware/auth");
+const auth = require("../../../../middleware/auth");
 const fbAppId = config.get("fbAppId");
 
 // Exporting two objects
 const { check, validationResult } = require("express-validator");
 
-const Publication = require("../../models/Publication");
-const SocialNetwork = require("../../models/SocialNetwork");
+const Publication = require("../../../../models/Publication");
+const SocialNetwork = require("../../../../models/SocialNetwork");
 
 let facebook = null;
 const getFacebook = async () => {
