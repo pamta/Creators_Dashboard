@@ -37,6 +37,7 @@ import {
 	TWITTER_TOKEN,
 } from './utils/localStorageTypes'
 import { loadFbDataFromStorage } from './actions/facebook'
+import { loadYTDataFromStorage } from './actions/youtube'
 import EditPostPage from './components/posts/EditPostPage'
 
 setAuthToken(localStorage[AUTH_TOKEN])
@@ -49,8 +50,9 @@ const App = () => {
 	useEffect(() => {
 		fbSDKInit()
 		store.dispatch(loadFbDataFromStorage())
+		store.dispatch(loadYTDataFromStorage())
 		store.dispatch(loadUser())
-	}, [fbSDKInit, loadUser, loadFbDataFromStorage])
+	}, [fbSDKInit, loadUser, loadFbDataFromStorage, loadYTDataFromStorage])
 
 	// Constantly update isMobile variable
 	// const isMobile = useWindowSize().width <= 768
@@ -85,7 +87,7 @@ const App = () => {
 						<Switch>
 							<PrivateRoute exact path='/' component={LandingPage} />
 							<PrivateRoute path='/posts' component={PostsPage} />
-							<PrivateRoute path="/editpost/:id" component={EditPostPage} />
+							<PrivateRoute path='/editpost/:id' component={EditPostPage} />
 							<PrivateRoute path='/notes/:id' component={NotesPage} />
 							<PrivateRoute path='/analytics' component={AnalyticsPage} />
 							<PrivateRoute path='/settings' component={SettingsPage} />
