@@ -49,6 +49,15 @@ class UserService {
     );
     return token;
   }
+
+  async update(userID, userDTO) {
+    // Check if there's a user with that id
+    let userFound = await User.findById(tokenUser.id).exec();
+
+    if (!userFound) {
+      return res.status(400).json({ errors: [{ msg: "User non existent" }] });
+    }
+  }
 }
 
 module.exports = UserService;
