@@ -3,7 +3,9 @@ const router = express.Router();
 
 const auth = require("../../../middleware/auth");
 const UserService = require("./userService");
+const userValidators = require("./userValidators");
 const userService = new UserService();
+
 // Exporting two objects
 const { check, validationResult } = require("express-validator");
 
@@ -14,49 +16,18 @@ const User = require("../../../models/User");
 // @route  POST api/user
 // @desct  Register user
 // @access Public/non-authentication/no-token
-router.post(
-  "/",
-  [
-    // Second parameter of check is a custom error message
-    // Checks for the value of a json key called "name"
-    check("name", "A name is required").not().isEmpty(),
-    check("userName", "A user name is required")
-      .not()
-      .isEmpty()
-      .not()
-      .isEmail(), //to prevent from erroniously use an email as user name
-    check("email", "Please include a valid email").isEmail(),
-    check(
-      "password",
-      "Please enter a password with 8 or more characters"
-    ).isLength({ min: 8 }),
-  ],
-  async (req, res) => {
-    // The check is done with the second parameter of above within []
-    // Pass the request whose body has a json element
-
-    // Finds the validation errors in this request and wraps them in an object with handy functions
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      // 400 is for a bad request
-      return res.status(400).json({
-        errors: errors.array(),
-      });
+router.post("/", userValidators.signUp, async (req, res) => {
+  try {
+    token = await userService.signUp(req.body);
+    res.json({ token });
+  } catch (err) {
+    if (err.name == "ArrayError") {
+      return res.status(400).json({ errors: err.errors });
     }
-
-    try {
-      token = await userService.signUp(req.body);
-      res.json({ token });
-    } catch (err) {
-      if (err.name == "ArrayError") {
-        return res.status(400).json({ errors: err.errors });
-      }
-      console.error(err);
-      res.status(500).send("Server error");
-    }
+    console.error(err);
+    res.status(500).send("Server error");
   }
-);
+});
 
 // @route  POST api/user/update
 // @desct  Update existing user's data
