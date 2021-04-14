@@ -125,6 +125,13 @@ class UserService {
 
     return token;
   }
+
+  async getById(userID) {
+    // The middleware auth modifies the request to have the user id if it has a correct token in the header
+    // Do not pass the password.
+    const user = await User.findById(userID).select("-password");
+    return user;
+  }
 }
 
 module.exports = UserService;
