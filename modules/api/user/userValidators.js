@@ -21,3 +21,9 @@ exports.update = [
   check("email", "Please include a valid email").isEmail(),
   validateResults,
 ];
+
+exports.auth = [
+  check("userIdentifier", "Please include a valid email or user name").exists(),
+  check("password", "Please, a password is required").exists(),
+  validateResults,
+];
