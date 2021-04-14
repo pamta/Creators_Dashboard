@@ -15,7 +15,7 @@ const PostsCards = () => {
             <div className="px-10 grid grid-cols-1 md:grid-cols-2 grid-flow-row gap-4 ">
                 {
                 posts.map((post, index) => {
-                    return  <Link key={post._id} to='/view' onClick={() => dispatch(setCurrentPost(post._id))}>
+                    return  <Link key={post._id} to={`/post/${post._id}`} onClick={() => dispatch(setCurrentPost(post._id))}>
                                 <div className={
                                         (isMobile && "max-w-xl ") + 
                                         " bg-white border-2 border-gray-300 p-5 rounded-lg tracking-wide shadow-lg cursor-pointer"

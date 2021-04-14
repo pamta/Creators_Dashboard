@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Switch from 'react-switch';
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory, useLocation } from "react-router-dom";
 import { useParams } from "react-router";
 import useWindowSize from '../../lib/useWindowSize';
 
@@ -11,7 +11,7 @@ import {uploadImages, uploadVideo, deletePost, updateText, updateTitle} from "..
 //publishPostToFb = (publicationId, useVideo)
 import {publishPostToFb} from "../../actions/facebook"
 
-const EditPostPage = () => {
+const EditPostPage = ({match}) => {
 	const [title, setTitle] = useState('');
 	const [content, setContent] = useState('');
 	const [statePost, setStatePost] = useState();
@@ -24,9 +24,11 @@ const EditPostPage = () => {
 
 	const [redirect, setRedirect] = useState();
 
+    
 
 	const post = useSelector(state => state.post);
-	let { id } = useParams(); //get the params from the url
+    let history = useHistory();
+	let { id } = useParams(); 
 
 	const dispatch = useDispatch();
 
@@ -36,14 +38,14 @@ const EditPostPage = () => {
 
 	const uploadVideoFromInput = (e) => {
 		var videofile = document.querySelector('#video');
-		dispatch(uploadVideo(videofile, post.currentPost));
+		dispatch(uploadVideo(videofile, id));
 	};
 
 	const uploadImagesFromInput = (e) => {
 		var imagesfile = document.querySelector('#images');
 		const ammount = imagesfile.files.length;
 		console.log(imagesfile.files);
-		dispatch(uploadImages(imagesfile, post.currentPost, ammount));
+		dispatch(uploadImages(imagesfile, id, ammount));
 	};
 
 	const deleteCurrentPost = (e) => {
@@ -99,6 +101,31 @@ const EditPostPage = () => {
 	if (redirect) {
 		return <Redirect to={redirect}/>
 	}
+    const backbtn = () => {
+        if (match && match.path === "/editpost/:id") {
+            return (<div className='py-5 float-right'>
+                    <button className='flex flex-row justify-center items-center space-x-2 p-2 text-sm font-bold uppercase rounded-lg bg-gray-400 text-black hover:shadow-lg hover:bg-gray-600 hover:text-white'
+                            onClick={ () => {setRedirect(`/posts`)}}>
+                        <svg
+                            xmlns='http://www.w3.org/2000/svg'
+                            width='16'
+                            height='16'
+                            viewBox='0 0 24 24'
+                            fill='none'
+                            stroke='currentColor'
+                            strokeWidth='2'
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                        >
+                            <path d='M19 12H6M12 5l-7 7 7 7' />
+                        </svg>
+                        <p>Back</p>
+                    </button>
+                </div>
+            );
+        }
+    }
+
 	return (
 		<div className='p-4'>
 			<h1 className='font-semibold text-3xl mb-4'>Edit post</h1>
@@ -428,31 +455,14 @@ const EditPostPage = () => {
 			</div>
 
 			<div className='py-5 float-left'>
-				<button className="p-2 text-sm rounded-lg bg-red-900 text-white active:bg-red-700  font-bold uppercase shadow hover:shadow-lg outline-none focus:outline-none "
+				<button className="flex flex-row justify-center items-center space-x-2 p-2 text-sm rounded-lg bg-red-900 text-white active:bg-red-700  font-bold uppercase shadow hover:shadow-lg outline-none focus:outline-none "
 					 	onClick={(e) => {e.preventDefault(); deleteCurrentPost()} }>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
 					<p>Delete</p>
 				</button>
 			</div>
 							
-			<div className='py-5 float-right'>
-				<button className='p-2 text-sm rounded-lg bg-gray-400 text-black flex flex-row justify-center items-center space-x-2 hover:bg-gray-600 hover:text-white'
-						onClick={ () => {setRedirect(`/posts`)} }>
-					<svg
-						xmlns='http://www.w3.org/2000/svg'
-						width='16'
-						height='16'
-						viewBox='0 0 24 24'
-						fill='none'
-						stroke='currentColor'
-						strokeWidth='2'
-						strokeLinecap='round'
-						strokeLinejoin='round'
-					>
-						<path d='M19 12H6M12 5l-7 7 7 7' />
-					</svg>
-					<p>Back</p>
-				</button>
-			</div>
+			{backbtn()}
 			
 		</div>
 	)

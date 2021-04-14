@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Redirect } from "react-router-dom";
 
-import PostsCards from './PostsCards'
+import PostsCards from '../posts/PostsCards'
 import ConfirmModal from '../layout/ConfirmModal';
 import AddSVG from '../layout/AddSVG';
 
