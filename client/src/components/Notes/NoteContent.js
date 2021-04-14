@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router";
+import { useHistory } from "react-router-dom";
+
 //redux
 import {useSelector, useDispatch} from "react-redux";
 import {createNote, updateNote, deleteNote} from "../../actions/note"
@@ -8,28 +11,38 @@ const NoteContent = ( ) => {
 	const [text, setText] = useState();
 
     const dispatch = useDispatch();
+    let history = useHistory();
 
     //fetch the storee notes
     const notes = useSelector(state => state.note);
+    let { id } = useParams(); //get the params from the url
 
     const saveNote = (name, text) => { 
-        if(notes.currentNote == (null || "new")){
-            dispatch(createNote(name, text));
+        if(id == (null || "new")){
+            dispatch(createNote(name, text)).then((note_id) => {
+                console.log("returned new id: " + note_id);
+                history.push(`/notes/${note_id}`);
+            });
+
+            //some how get the id from the dispatch
+            //history.push("/notes/new");
         }else{
-            dispatch(updateNote(notes.currentNote, name, text));
+            dispatch(updateNote(id, name, text));
         }
 	};
 
     const deleteCurrentNote = () => { 
-        dispatch(deleteNote(notes.currentNote));
+        dispatch(deleteNote(id));
+        history.push("/notes/new");
 	};
     
 
     useEffect(() => {
-            const selected_note = notes.currentNote == (null || "new") ? null : notes.notes.find( 
+            const selected_note = notes.notes.find( 
                 (note) => { 
-                    return note._id == notes.currentNote;
-                });            
+                    return note._id == id;
+                });         
+            console.log(selected_note);
             if(selected_note){
                 setName(selected_note.name);
                 setText(selected_note.text);
@@ -37,7 +50,7 @@ const NoteContent = ( ) => {
                 setName("");
                 setText("");
             }
-        }, [notes.currentNote]);
+        }, [id, notes.notes]);
 
 	return (
 		<div className="relative flex flex-col bg-white w-full">
@@ -71,7 +84,7 @@ const NoteContent = ( ) => {
                             Save
                         </button>
                         {
-                            notes.currentNote != ("new" || null) &&
+                            id != ("new" || null) &&
                                 <button
                                 onClick={(e) => {e.preventDefault(); deleteCurrentNote()} }
                                 className="rounded-lg bg-red-900 text-white active:bg-red-700 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-1/4"

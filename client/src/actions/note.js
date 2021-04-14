@@ -73,7 +73,8 @@ export const createNote = (name, text) => async (dispatch) => {
         type: NOTE_CREATE,
         payload: res.data, //newly created note object
       });
-      dispatch(setCurrentNote(res.data._id));
+      return res.data._id;
+      //dispatch(setCurrentNote(res.data._id));
 
     } catch (error) {
       handleNoteError(error, dispatch);
@@ -124,7 +125,7 @@ export const deleteNote = (note_id) => async (dispatch) => {
       type: NOTE_DELETE,
       payload: res.data,
     });
-    dispatch(setCurrentNote("new"));
+    //dispatch(setCurrentNote("new"));
 
   } catch (error) {
     handleNoteError(error, dispatch);

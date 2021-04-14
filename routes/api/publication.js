@@ -230,14 +230,12 @@ router.post(
     const { publication_id } = req.body;
 
     console.log("Uploading images");
-    console.log(req.files);
 
     if(!req.files || req.files.length == 0){
       return handleError(res, 400, "No images sent");
     }  
     try{
       //use this instead when activating the auth middleware
-      console.log("post id received when image upload: " + publication_id);
       const publicationFound = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec(); 
       //let publicationFound = await Publication.findById(publication_id).exec();
 

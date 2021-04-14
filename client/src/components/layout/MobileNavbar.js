@@ -76,7 +76,7 @@ const MobileNavbar = ({ logout }) => {
 					/>
 					<NavbarLink
 						name='Notes'
-						link='/notes'
+						link='/notes/new'
 						icon={
 							<svg
 								className='w-5 h-5'

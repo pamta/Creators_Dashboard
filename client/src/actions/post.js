@@ -102,7 +102,6 @@ export const uploadImages = ( imagesfile, post_id, ammount ) => async (dispatch)
     for (var i = 0; i < ammount; i++) {
       formData.append("file", imagesfile.files[i]);
     }
-    console.log("id in client: " + post_id);
     formData.append("publication_id", post_id);
 
     const res = await axios.post("/api/publication/upload/images", formData, config);
@@ -173,7 +172,6 @@ export const updateText = ( text, publication_id ) => async (dispatch) => {
 
 // Update Title
 export const updateTitle = ( name, publication_id ) => async (dispatch) => {
-  console.log(name + " : " + publication_id);
 
   const config = {
     headers: {
@@ -183,7 +181,6 @@ export const updateTitle = ( name, publication_id ) => async (dispatch) => {
 
   try {
     const body = JSON.stringify({ name, publication_id });
-    console.log(body);
     const res = await axios.post("/api/publication/upload/name", body, config);
 
     dispatch(setAlert("Title Updated", "success"));

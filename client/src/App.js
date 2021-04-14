@@ -86,7 +86,7 @@ const App = () => {
 							<PrivateRoute exact path='/' component={LandingPage} />
 							<PrivateRoute path='/posts' component={PostsPage} />
 							<PrivateRoute path="/editpost/:id" component={EditPostPage} />
-							<PrivateRoute path='/notes' component={NotesPage} />
+							<PrivateRoute path='/notes/:id' component={NotesPage} />
 							<PrivateRoute path='/analytics' component={AnalyticsPage} />
 							<PrivateRoute path='/settings' component={SettingsPage} />
 							<PrivateRoute path='/view' component={ViewPostPage} />

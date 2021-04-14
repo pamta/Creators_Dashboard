@@ -45,7 +45,7 @@ const Navbar = ({ logout }) => {
 					/>
 					<NavbarLink
 						name='Notes'
-						link='/notes'
+						link='/notes/new'
 						icon={
 							<svg
 								className='w-6 h-6'

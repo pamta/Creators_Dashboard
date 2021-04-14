@@ -2,36 +2,38 @@
 //React
 import { useState } from "react";
 import React,  { useCallback, useEffect } from "react";
+import { useParams } from "react-router";
+import { useHistory } from "react-router-dom";
+
 import useWindowSize from '../../lib/useWindowSize';
 import NoteContent from '../Notes/NoteContent';
 import AddSVG from '../layout/AddSVG';
 
 //redux
 import {useSelector, useDispatch} from "react-redux";
-import {createNote, setCurrentNote} from "../../actions/note"
+//import {createNote, setCurrentNote} from "../../actions/note"
 
 const NotesPage = () => {
     const dispatch = useDispatch();
+    let history = useHistory();
 
     //fetch the storee notes
     const notes = useSelector(state => state.note);
+    let { id } = useParams(); //get the params from the url
 
     const isMobile = useWindowSize().width <= 768
     const isLarge = useWindowSize().width <= 1280
 
     const newNote = (e) => {
-        dispatch(setCurrentNote("new"));
-		// if(!loading){
-		// 	dispatch(createNote(name, ""));
-		// }
+        history.push("/notes/new");
 	};
 
     const selectNote = (e) => {
-        dispatch(setCurrentNote(e));
+        history.push(`/notes/${e}`);
 	};
 
-    const selectedNoteBG = (id) => {
-        if(id == notes.currentNote){
+    const selectedNoteBG = (note_id) => {
+        if(note_id == id){
             return " bg-yellow-300 bg-opacity-40"
         } else{
             return ""
@@ -82,7 +84,7 @@ const NotesPage = () => {
                     {elementsList(notes.notes)}
                 </div>
             </div>
-            {notes.currentNote && <NoteContent />}
+            {id && <NoteContent />}
         </div>
     );
 };
