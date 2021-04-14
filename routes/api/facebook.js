@@ -69,13 +69,7 @@ router.post(
         const requestLink = `https://graph-video.facebook.com/v10.0/${fbAppId}/videos?access_token=${pageAccessToken}&file_url=${publication.video.URL}`;
         const answer = await axios.post(requestLink);
 
-        const fb = await getFacebook();
-        publication.socialNetworkReferences.push({
-          socialNetwork: fb._id,
-          reference: answer.data.id,
-        });
-        await publication.save();
-        return res.send(publication);
+        return res.send(answer.data.id);
       }
 
       const { images, text } = publication;
@@ -98,13 +92,7 @@ router.post(
         }
 
         const answer = await axios.post(requestLink);
-        const fb = await getFacebook();
-        publication.socialNetworkReferences.push({
-          socialNetwork: fb._id,
-          reference: answer.data.id,
-        });
-        await publication.save();
-        res.send(publication);
+        res.send(answer.data.id);
       }
     } catch (err) {
       console.error(err.message);
