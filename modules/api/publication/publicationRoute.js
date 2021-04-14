@@ -10,10 +10,9 @@ const multer = require("multer");
 // Exporting two objects
 const { check, validationResult } = require("express-validator");
 
-// Returns a moongose model of the user
-const User = require("../../../models/User");
+const User = require("../user/userDAO");
 const Publication = require("../../../models/Publication");
-const { eventNames } = require("../../../models/User");
+const { eventNames } = require("../user/userDAO");
 
 const handleError = (res, status, msg, err = null) => {
   if (!res.headersSent) {
@@ -86,7 +85,7 @@ router.post(
       const user_id = req.user.id;
 
       // All publications must be related to a user, so we check if there's a user with that id.
-      let userFound = await User.findById(user_id).exec();
+      let userFound = await User.findById(user_id);
 
       if (!userFound) {
         return handleError(res, 400, "User non existent");
