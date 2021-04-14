@@ -12,3 +12,12 @@ exports.signUp = [
   ).isLength({ min: 8 }),
   validateResults,
 ];
+
+exports.update = [
+  // Second parameter of check is a custom error message
+  // Checks for the value of a json key called "name"
+  check("name", "A name is required").not().isEmpty(),
+  check("userName", "A user name is required").not().isEmpty().not().isEmail(), //to prevent from erroniously use an email as user name
+  check("email", "Please include a valid email").isEmail(),
+  validateResults,
+];
