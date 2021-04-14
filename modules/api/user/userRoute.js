@@ -1,10 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const config = require("config");
-const auth = require("../../../middleware/auth");
 
+const auth = require("../../../middleware/auth");
+const UserService = require("./userService");
+const userService = new UserService();
 // Exporting two objects
 const { check, validationResult } = require("express-validator");
 
@@ -46,65 +45,16 @@ router.post(
       });
     }
 
-    //we get the alredy checked payload
-    const { name, userName, email, password } = req.body;
-
     try {
-      // Check if there's a user with that email o that userName (since we put emails and usernames as unique)
-      let mailFound = await User.findOne({ email }).exec();
-      let userNameFound = await User.findOne({ userName }).exec();
-      if (userNameFound || mailFound) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: "User already exists" }] });
-      }
-
-      //save current date in the created use. May use some other format so it is up to changes
-      const registrationDate = Date.now();
-      const updateDate = registrationDate;
-
-      user = new User({
-        name,
-        email,
-        userName,
-        password,
-        registrationDate,
-        updateDate,
-      });
-
-      // 10 is recommended in documentation, the bigger the number means more security
-      const salt = await bcrypt.genSalt(10);
-
-      // // Encrypt the password
-      user.password = await bcrypt.hash(password, salt);
-      // // Remember that User is a moongose model and we connected moongose with our database
-      await user.save();
-
-      const payload = {
-        user: {
-          id: user.id, // Moongose gets the id of the database
-        },
-      };
-
-      // // Generate a JSON Web Token (encrypted payload with signature)
-      jwt.sign(
-        payload,
-        config.get("jwtSecret"), // encryption key
-        { expiresIn: 360000 },
-        // Callback
-        (err, token) => {
-          // If there's an error, throw it
-          if (err) throw err;
-          // Else, set in the json of the response this web token with
-          // the user id that can be used for authentication after sign up
-          res.json({ token });
-        }
-      );
+      token = await userService.signUp(req.body);
+      res.json({ token });
     } catch (err) {
+      if (err.name == "ArrayError") {
+        return res.status(400).json({ errors: err.errors });
+      }
       console.error(err);
       res.status(500).send("Server error");
     }
-    //res.send('POST request to register user')
   }
 );
 
