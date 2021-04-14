@@ -237,6 +237,7 @@ router.post(
     }  
     try{
       //use this instead when activating the auth middleware
+      console.log("post id received when image upload: " + publication_id);
       const publicationFound = await Publication.findOne({_id: publication_id, user_id: req.user.id}).exec(); 
       //let publicationFound = await Publication.findById(publication_id).exec();
 

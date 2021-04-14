@@ -102,6 +102,7 @@ export const uploadImages = ( imagesfile, post_id, ammount ) => async (dispatch)
     for (var i = 0; i < ammount; i++) {
       formData.append("file", imagesfile.files[i]);
     }
+    console.log("id in client: " + post_id);
     formData.append("publication_id", post_id);
 
     const res = await axios.post("/api/publication/upload/images", formData, config);
@@ -159,7 +160,7 @@ export const updateText = ( text, publication_id ) => async (dispatch) => {
     const body = JSON.stringify({ text: text, publication_id: publication_id });
     const res = await axios.post("/api/publication/upload/text", body, config);
 
-    dispatch(setAlert("Text Updated", "success"));
+    dispatch(setAlert("Content Updated", "success"));
     dispatch({
       type: POST_UPDATE,
       payload: res.data,
