@@ -76,6 +76,20 @@ class UserService {
       }
     ).exec();
   }
+
+  async delete(userID) {
+    // Check if there's a user with that id
+    let userFound = await User.findById(userID).exec();
+    if (!userFound) {
+      throw new ArrayError([{ msg: "User non existent" }]);
+    }
+
+    await User.remove({ _id: userID }, (err, doc) => {
+      if (err) {
+        throw new Error(err.message);
+      }
+    }).exec();
+  }
 }
 
 module.exports = UserService;
