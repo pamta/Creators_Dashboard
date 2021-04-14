@@ -41,7 +41,8 @@ const NotesPage = () => {
 	};
 
     // useEffect(() => {
-	// }, []); //we need to update the component state when user is updated from the store
+    //     console.log("selectedt: " + id);
+	// }, [notes]); //we need to update the component state when user is updated from the store
 
     const elementsList = (list) => {
         if(list){

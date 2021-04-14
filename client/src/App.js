@@ -8,21 +8,24 @@ import logo from './logo.svg'
 import { Provider } from 'react-redux'
 import store from './store'
 import { loadUser } from './actions/auth'
+import { loadFbDataFromStorage } from './actions/facebook'
+import { loadYTDataFromStorage } from './actions/youtube'
 //Style
 import './App.css'
 //Components
-import Navbar from './components/layout/Navbar'
-import MobileNavbar from './components/layout/MobileNavbar'
-import Alert from './components/layout/Alert'
-import LandingPage from './components/pages/LandingPage'
-import PostsPage from './components/pages/PostsPage'
-import ViewPostPage from './components/pages/ViewPost'
-import NotesPage from './components/pages/NotesPage'
-import AnalyticsPage from './components/pages/AnalyticsPage'
-import SettingsPage from './components/pages/SettingsPage'
-import PrivateRoute from './components/routing/PrivateRoute'
-import Login from './components/auth/Login'
-import Register from './components/auth/Register'
+import Navbar from "./components/layout/Navbar";
+import MobileNavbar from "./components/layout/MobileNavbar";
+import Alert from "./components/layout/Alert";
+import LandingPage from "./components/pages/LandingPage";
+import PostsPage from "./components/pages/PostsPage";
+import NotesPage from "./components/pages/NotesPage";
+import AnalyticsPage from "./components/pages/AnalyticsPage";
+import SettingsPage from "./components/pages/SettingsPage";
+import PrivateRoute from "./components/routing/PrivateRoute";
+import Login from "./components/auth/Login";
+import Register from "./components/auth/Register";
+import EditPostPage from './components/posts/EditPostPage'
+import Post from "./components/pages/Post";
 //
 import {
 	setAuthToken,
@@ -36,8 +39,7 @@ import {
 	INSTAGRAM_TOKEN,
 	TWITTER_TOKEN,
 } from './utils/localStorageTypes'
-import { loadFbDataFromStorage } from './actions/facebook'
-import EditPostPage from './components/posts/EditPostPage'
+
 
 setAuthToken(localStorage[AUTH_TOKEN])
 setFacebookToken(localStorage[FACEBOOK_TOKEN])
@@ -49,8 +51,9 @@ const App = () => {
 	useEffect(() => {
 		fbSDKInit()
 		store.dispatch(loadFbDataFromStorage())
+		store.dispatch(loadYTDataFromStorage())
 		store.dispatch(loadUser())
-	}, [fbSDKInit, loadUser, loadFbDataFromStorage])
+	}, [fbSDKInit, loadUser, loadFbDataFromStorage, loadYTDataFromStorage])
 
 	// Constantly update isMobile variable
 	// const isMobile = useWindowSize().width <= 768
@@ -85,11 +88,11 @@ const App = () => {
 						<Switch>
 							<PrivateRoute exact path='/' component={LandingPage} />
 							<PrivateRoute path='/posts' component={PostsPage} />
-							<PrivateRoute path="/editpost/:id" component={EditPostPage} />
+							<PrivateRoute path='/editpost/:id' component={EditPostPage} />
 							<PrivateRoute path='/notes/:id' component={NotesPage} />
 							<PrivateRoute path='/analytics' component={AnalyticsPage} />
 							<PrivateRoute path='/settings' component={SettingsPage} />
-							<PrivateRoute path='/view' component={ViewPostPage} />
+							<PrivateRoute path='/post/:id' component={Post} />
 						</Switch>
 					</div>
 				</div>
