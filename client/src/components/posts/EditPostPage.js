@@ -37,14 +37,14 @@ const EditPostPage = () => {
 
 	const uploadVideoFromInput = (e) => {
 		var videofile = document.querySelector('#video');
-		dispatch(uploadVideo(videofile, post.currentPost));
+		dispatch(uploadVideo(videofile, id));
 	};
 
 	const uploadImagesFromInput = (e) => {
 		var imagesfile = document.querySelector('#images');
 		const ammount = imagesfile.files.length;
 		console.log(imagesfile.files);
-		dispatch(uploadImages(imagesfile, post.currentPost, ammount));
+		dispatch(uploadImages(imagesfile, id, ammount));
 	};
 
 	const deleteCurrentPost = (e) => {
