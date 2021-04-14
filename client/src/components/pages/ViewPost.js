@@ -1,21 +1,33 @@
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import {Carousel} from 'react-responsive-carousel'
 import ReactPlayer from 'react-player'
+
 import { useParams } from "react-router";
 import { Link } from 'react-router-dom'
-import React, { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
 
 const YoutubeSlide = ({ url, isSelected }) => (
     <ReactPlayer width="100%" url={url} />
 );
-const ViewPost = ({title, content, postMedia, creationDate}) => {
 
-    const user = useSelector(state => state.auth.user);
-    const post = useSelector(state => state.post);
+const ViewPost = () => {
+    const [statePost, setStatePost] = useState();
+
     let { id } = useParams(); //get the params from the url
+    const post = useSelector(state => state.post);
+    const user = useSelector(state => state.auth.user);
 
     let media = [];
+    let title = "Viaje a Cancún";
+    let content = "Disfruté mucho de mis vacaciones con mi familia en las playas hermosas del caribe mexicano.";
+    let creationDate = "Dec 19";
+    let postMedia = [
+                        "https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F28%2F2021%2F02%2F24%2Fcancun-beach-hotels-CANCUNBREAK0221.jpg", 
+                        "https://www.tripsavvy.com/thmb/DozAQgsmHjmlSJXu8kYsqMA1y6A=/1887x1415/smart/filters:no_upscale()/family_fun_beach-56a3eab83df78cf7727fde11.jpg",
+                        "https://cfcdn1.allmexico365.com/wp-content/uploads/cancun-fun-facts-tours-aug-2016.jpg",
+                        "https://www.youtube.com/watch?v=wSyWwokJ2pM"
+                    ];
     
     const customRenderItem = (item, props) => <item.type {...item.props} {...props} />;
 
@@ -34,25 +46,39 @@ const ViewPost = ({title, content, postMedia, creationDate}) => {
             }
         });
 
-    
-    postMedia.forEach(item => {
-        if (item.substr(12, 7) == "youtube") {
-            media.push(
-                <YoutubeSlide  url={item} />
-            )
-        }
-        else {
-
-            media.push(
+    useEffect(() => {
+        postMedia.forEach(item => {
+            if (item.substr(12, 7) == "youtube") {
+                media.push(
+                    <YoutubeSlide  url={item} />
+                )
+            }
+            else {
+                media.push(
                     <img className="w-80" src={item} />
-            )
-        }
-    });
-        
-    return (
+                )
+            }
+        });
+
+		const selected_post = post.posts.find( 
+			(somePost) => { 
+				return somePost._id == id;
+			}
+		);
+        console.log(id);
+        console.log(selected_post);
+
+		if(selected_post){
+            setStatePost(selected_post);
+		}else{
+			
+		}
+	}, [post.posts]);
+
+    return(
         <div className="flex flex-col max-h-full overflow-auto  items-center">
             <div className="flex flex-row w-full justify-between">
-                <Link to="/posts">
+                 <Link to="/posts">
                     <div className="px-10 py-10">
                         <button className="flex flex-row px-4 md:px-16 py-3 justify-start items-center space-x-4 rounded-lg bg-gray-400 text-black active:bg-gray-600 text-base md:text-2xl shadow hover:shadow-lg hover:bg-gray-600 hover:text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8l-4 4 4 4M16 12H9"/></svg>
@@ -95,21 +121,11 @@ const ViewPost = ({title, content, postMedia, creationDate}) => {
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                             <div className="text-base font-thin text-gray-700">{creationDate}</div>
                         </div>
-                    </div>
+                     </div>
                 </div>
             </div>
         </div>
     );
-}
-
-ViewPost.defaultProps = {
-    title: "Viaje a Cancún", 
-    content: "Disfruté mucho de mis vacaciones con mi familia en las playas hermosas del caribe mexicano.", 
-    postMedia: ["https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F28%2F2021%2F02%2F24%2Fcancun-beach-hotels-CANCUNBREAK0221.jpg", 
-    "https://www.tripsavvy.com/thmb/DozAQgsmHjmlSJXu8kYsqMA1y6A=/1887x1415/smart/filters:no_upscale()/family_fun_beach-56a3eab83df78cf7727fde11.jpg",
-    "https://cfcdn1.allmexico365.com/wp-content/uploads/cancun-fun-facts-tours-aug-2016.jpg",
-            "https://www.youtube.com/watch?v=wSyWwokJ2pM"], 
-    creationDate: "Dec 19",
-}
+};
 
 export default ViewPost
