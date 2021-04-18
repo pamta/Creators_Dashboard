@@ -39,8 +39,6 @@ import {
 	INSTAGRAM_TOKEN,
 	TWITTER_TOKEN,
 } from './utils/localStorageTypes'
-import { loadFbDataFromStorage } from './actions/facebook'
-import { loadYTDataFromStorage } from './actions/youtube'
 
 setAuthToken(localStorage[AUTH_TOKEN])
 setFacebookToken(localStorage[FACEBOOK_TOKEN])
