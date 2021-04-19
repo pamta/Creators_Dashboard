@@ -1,88 +1,104 @@
-import { useEffect, useState } from "react";
-import Switch from 'react-switch';
-import { Redirect, useHistory, useLocation } from "react-router-dom";
-import { useParams } from "react-router";
-import useWindowSize from '../../lib/useWindowSize';
-import BasicModal from '../layout/BasicModal';
+import { useEffect, useState } from 'react'
+import Switch from 'react-switch'
+import { Redirect, useHistory, useLocation } from 'react-router-dom'
+import { useParams } from 'react-router'
+import useWindowSize from '../../lib/useWindowSize'
+import BasicModal from '../layout/BasicModal'
 
 import styles from './newPost.module.css'
 //redux
-import {useSelector, useDispatch} from "react-redux";
-import {uploadImages, uploadVideo, deletePost, updateText, updateTitle} from "../../actions/post"
-import {publishPostToFb} from "../../actions/facebook"
-import {setAlert} from '../../actions/alert';
+import { useSelector, useDispatch } from 'react-redux'
+import {
+	uploadImages,
+	uploadVideo,
+	deletePost,
+	updateText,
+	updateTitle,
+} from '../../actions/post'
+import { publishPostToFb } from '../../actions/facebook'
+import { publishVideoToYT } from '../../actions/youtube'
+import { setAlert } from '../../actions/alert'
 
-const EditPostPage = ({match}) => {
-	const [slectedPost, setSelectedPost] = useState();
-	const [title, setTitle] = useState('');
-	const [content, setContent] = useState('');
-	const [fileNames, setFileNames] = useState([]);
-	const [videoName, setVideoName] = useState('');
+const EditPostPage = ({ match }) => {
+	const [slectedPost, setSelectedPost] = useState()
+	const [title, setTitle] = useState('')
+	const [content, setContent] = useState('')
+	const [fileNames, setFileNames] = useState([])
+	const [videoName, setVideoName] = useState('')
 	const [isYoutubeSelected, setYoutubeSelected] = useState(false)
-	const [isFacebookSelected, setFacebookSelected] = useState(false);
-	const [isTwitterSelected, setTwitterSelected] = useState(false);
-	const [isPublicYoutube, setIsPublicYoutube] = useState(false);
+	const [isFacebookSelected, setFacebookSelected] = useState(false)
+	const [isTwitterSelected, setTwitterSelected] = useState(false)
+	const [isPublicYoutube, setIsPublicYoutube] = useState(false)
 
-	const [redirect, setRedirect] = useState();
+	const [redirect, setRedirect] = useState()
 
-    
+	const post = useSelector((state) => state.post)
+	let history = useHistory()
+	let { id } = useParams()
 
-	const post = useSelector(state => state.post);
-    let history = useHistory();
-	let { id } = useParams(); 
-
-	const dispatch = useDispatch();
+	const dispatch = useDispatch()
 
 	const isTablet = useWindowSize().width <= 1080
 
 	//calls to actions
 
 	const uploadVideoFromInput = (e) => {
-		var videofile = document.querySelector('#video');
-		dispatch(uploadVideo(videofile, id));
-	};
+		var videofile = document.querySelector('#video')
+		dispatch(uploadVideo(videofile, id))
+	}
 
 	const uploadImagesFromInput = (e) => {
-		var imagesfile = document.querySelector('#images');
-		const ammount = imagesfile.files.length;
-		console.log(imagesfile.files);
-		dispatch(uploadImages(imagesfile, id, ammount));
-	};
+		var imagesfile = document.querySelector('#images')
+		const ammount = imagesfile.files.length
+		console.log(imagesfile.files)
+		dispatch(uploadImages(imagesfile, id, ammount))
+	}
 
 	const deleteCurrentPost = (e) => {
-		dispatch(deletePost(id));
-		setRedirect(`/posts`);
+		dispatch(deletePost(id))
+		setRedirect(`/posts`)
 	}
 
 	const updateTitleFromInput = (e) => {
-		dispatch(updateTitle(title, id));
+		dispatch(updateTitle(title, id))
 	}
 
 	const updateTextFromInput = (e) => {
-		dispatch(updateText(content, id));
+		dispatch(updateText(content, id))
 	}
 
 	const publishToSN = (e) => {
-		if(! (isFacebookSelected || isYoutubeSelected || isTwitterSelected)){
-			dispatch(setAlert("Please select atleast one social network to publish to", "danger"));
+		if (!(isFacebookSelected || isYoutubeSelected || isTwitterSelected)) {
+			dispatch(
+				setAlert(
+					'Please select atleast one social network to publish to',
+					'danger'
+				)
+			)
 		}
 
-		try{
-
-			if(isFacebookSelected){
-				let hasVideo = slectedPost && slectedPost.video && !slectedPost.video.isLoading
-				dispatch(publishPostToFb(id, hasVideo));
+		try {
+			if (isFacebookSelected) {
+				let hasVideo =
+					slectedPost && slectedPost.video && !slectedPost.video.isLoading
+				dispatch(publishPostToFb(id, hasVideo))
 			}
-			if(isYoutubeSelected){
-
+			if (isYoutubeSelected) {
+				dispatch(
+					publishVideoToYT(
+						slectedPost.video.URL,
+						title,
+						content,
+						isPublicYoutube
+					)
+				)
 			}
-			if(isTwitterSelected){
-
+			if (isTwitterSelected) {
 			}
 			//TODO wait for async dispatchs
-			dispatch(setAlert("Succesful publish", "success"));
-		} catch (err){
-			dispatch(setAlert("Unexpected error while publishing: " + err, "danger"));
+			dispatch(setAlert('Succesful publish', 'success'))
+		} catch (err) {
+			dispatch(setAlert('Unexpected error while publishing: ' + err, 'danger'))
 		}
 	}
 
@@ -103,54 +119,59 @@ const EditPostPage = ({match}) => {
 
 	useEffect(() => {
 		//console.log(id + " : " + post.posts);
-		const selected_post = post.posts.find( 
-			(somePost) => { 
-				return somePost._id == id;
-			}
-		);
+		const selected_post = post.posts.find((somePost) => {
+			return somePost._id == id
+		})
 
-		if(selected_post){
-			setSelectedPost(selected_post);
-			setTitle(selected_post.name);
-			setContent(selected_post.text);
-		}else{
+		if (selected_post) {
+			setSelectedPost(selected_post)
+			setTitle(selected_post.name)
+			setContent(selected_post.text)
+		} else {
 			//setRedirect(`/posts`); //redirect to posts
 		}
-	}, [post.posts]);
+	}, [post.posts])
 
 	if (redirect) {
-		return <Redirect to={redirect}/>
+		return <Redirect to={redirect} />
 	}
-    const backbtn = () => {
-        if (match && match.path === "/editpost/:id") {
-            return (<div className='py-5 float-left '>
-                    <button className='flex flex-row justify-center items-center space-x-2 p-2 text-sm font-bold uppercase rounded-lg bg-gray-400 text-black hover:shadow-lg hover:bg-gray-600 hover:text-white'
-                            onClick={ () => {setRedirect(`/posts`)}}>
-                        <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            width='16'
-                            height='16'
-                            viewBox='0 0 24 24'
-                            fill='none'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                        >
-                            <path d='M19 12H6M12 5l-7 7 7 7' />
-                        </svg>
-                        <p>Back</p>
-                    </button>
-                </div>
-            );
-        }
-    }
+	const backbtn = () => {
+		if (match && match.path === '/editpost/:id') {
+			return (
+				<div className='py-5 float-left '>
+					<button
+						className='flex flex-row justify-center items-center space-x-2 p-2 text-sm font-bold uppercase rounded-lg bg-gray-400 text-black hover:shadow-lg hover:bg-gray-600 hover:text-white'
+						onClick={() => {
+							setRedirect(`/posts`)
+						}}
+					>
+						<svg
+							xmlns='http://www.w3.org/2000/svg'
+							width='16'
+							height='16'
+							viewBox='0 0 24 24'
+							fill='none'
+							stroke='currentColor'
+							strokeWidth='2'
+							strokeLinecap='round'
+							strokeLinejoin='round'
+						>
+							<path d='M19 12H6M12 5l-7 7 7 7' />
+						</svg>
+						<p>Back</p>
+					</button>
+				</div>
+			)
+		}
+	}
 
 	return (
 		// <div className="overflow-x-hidden overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-gray-300 pr-2"></div>
 		<div className='flex flex-col min-w-full h-full'>
-			<div className={"flex flex-row justify-between"}>
-				<h1 className=' px-5 py-5 text-gray-900 text-3xl md:text-4xl'>Edit post</h1>
+			<div className={'flex flex-row justify-between'}>
+				<h1 className=' px-5 py-5 text-gray-900 text-3xl md:text-4xl'>
+					Edit post
+				</h1>
 			</div>
 			{/* <div className="overflow-x-hidden overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-gray-300 pr-2"></div> */}
 			<div>
@@ -179,10 +200,11 @@ const EditPostPage = ({match}) => {
 							<button
 								onClick={updateTitleFromInput}
 								className={
-									" justify-center items-center space-x-1 rounded-md p-2  text-white" +
+									' justify-center items-center space-x-1 rounded-md p-2  text-white' +
 									` bg-red-400` +
 									` hover:bg-red-600`
-								}>
+								}
+							>
 								Save
 							</button>
 						</div>
@@ -202,20 +224,22 @@ const EditPostPage = ({match}) => {
 							<button
 								onClick={updateTextFromInput}
 								className={
-									" justify-center items-center space-x-1 rounded-md p-2  text-white" +
+									' justify-center items-center space-x-1 rounded-md p-2  text-white' +
 									` bg-red-400` +
 									` hover:bg-red-600`
-								}>
+								}
+							>
 								Save
 							</button>
 						</div>
 
 						<div className={getComponentStyle()}>
-							<div className={(isTablet ? ' w-full' : ' w-1/2') + ' flex flex-row flex-wrap'}>
-								<label
-									htmlFor='slide'
-									className={'cursor-pointer w-full'}
-								>
+							<div
+								className={
+									(isTablet ? ' w-full' : ' w-1/2') + ' flex flex-row flex-wrap'
+								}
+							>
+								<label htmlFor='slide' className={'cursor-pointer w-full'}>
 									<input
 										name='images'
 										id='images'
@@ -228,7 +252,7 @@ const EditPostPage = ({match}) => {
 													e.target.files[i].name,
 												])
 											}
-											uploadImagesFromInput(e);
+											uploadImagesFromInput(e)
 										}}
 									/>
 									<div className='flex flex-row px-3 py-3 justify-center items-center space-x-4 rounded-lg bg-green-200 text-black active:bg-green-400 text-md md:text-md shadow hover:shadow-lg hover:bg-green-400 hover:text-white'>
@@ -249,31 +273,37 @@ const EditPostPage = ({match}) => {
 									</div>
 									<div className='flex flex-col w-1/2 text-sm text-gray-500 italic'>
 										{fileNames.map((file, index) => (
-											<p key={index} >{file}</p>
+											<p key={index}>{file}</p>
 										))}
 									</div>
 								</label>
-								{slectedPost && slectedPost.images && slectedPost.images.map((image, index) => {
-									return 	<div className={"w-1/2 "} 
-												key={image.name}
-											>
-												<img className={"w-full"} src={image.URL} alt={image.name} ></img>
+								{slectedPost &&
+									slectedPost.images &&
+									slectedPost.images.map((image, index) => {
+										return (
+											<div className={'w-1/2 '} key={image.name}>
+												<img
+													className={'w-full'}
+													src={image.URL}
+													alt={image.name}
+												></img>
 											</div>
-									}) 
-								}
+										)
+									})}
 							</div>
-							<div className={(isTablet ? ' w-full' : ' w-1/2') + ' flex flex-row flex-wrap'}>
-								<label
-									htmlFor='video'
-									className={'cursor-pointer w-full'}
-								>
+							<div
+								className={
+									(isTablet ? ' w-full' : ' w-1/2') + ' flex flex-row flex-wrap'
+								}
+							>
+								<label htmlFor='video' className={'cursor-pointer w-full'}>
 									<input
 										name='video'
 										id='video'
 										type='file'
 										onChange={(e) => {
-											setVideoName(e.target.value);
-											uploadVideoFromInput(e);
+											setVideoName(e.target.value)
+											uploadVideoFromInput(e)
 										}}
 									/>
 									<div className='flex flex-row px-3 py-3 justify-center items-center space-x-4 rounded-lg bg-green-400 text-black active:bg-green-600 text-md md:text-md shadow hover:shadow-lg hover:bg-green-600 hover:text-white'>
@@ -296,16 +326,17 @@ const EditPostPage = ({match}) => {
 										<p>{videoName.split('\\')[2]}</p>
 									</div>
 								</label>
-								{slectedPost && slectedPost.video && slectedPost.video.URL &&
-									<div className={"w-full flex justify-center "} 
+								{slectedPost && slectedPost.video && slectedPost.video.URL && (
+									<div
+										className={'w-full flex justify-center '}
 										id={slectedPost.video.name}
 									>
-										<video width="full" height="full" controls>
-											<source src={slectedPost.video.URL} type="video/mp4"/>
+										<video width='full' height='full' controls>
+											<source src={slectedPost.video.URL} type='video/mp4' />
 											Your browser does not support the video tag.
 										</video>
 									</div>
-								}
+								)}
 							</div>
 						</div>
 					</div>
@@ -490,19 +521,40 @@ const EditPostPage = ({match}) => {
 						<button
 							onClick={publishToSN}
 							className={
-								" justify-center items-center space-x-1 rounded-md p-2  text-white" +
+								' justify-center items-center space-x-1 rounded-md p-2  text-white' +
 								` bg-red-400` +
 								` hover:bg-red-600`
-							}>
+							}
+						>
 							Publish
 						</button>
 					</div>
 				</div>
-							
+
 				<div className='flex py-5 float-right'>
-					<button className="flex flex-row justify-center items-center space-x-2 p-2 text-sm rounded-lg bg-red-900 text-white active:bg-red-700  font-bold uppercase shadow hover:shadow-lg outline-none focus:outline-none "
-							onClick={(e) => {e.preventDefault(); deleteCurrentPost()} }>
-							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+					<button
+						className='flex flex-row justify-center items-center space-x-2 p-2 text-sm rounded-lg bg-red-900 text-white active:bg-red-700  font-bold uppercase shadow hover:shadow-lg outline-none focus:outline-none '
+						onClick={(e) => {
+							e.preventDefault()
+							deleteCurrentPost()
+						}}
+					>
+						<svg
+							xmlns='http://www.w3.org/2000/svg'
+							width='24'
+							height='24'
+							viewBox='0 0 24 24'
+							fill='none'
+							stroke='currentColor'
+							strokeWidth='2'
+							strokeLinecap='round'
+							strokeLinejoin='round'
+						>
+							<polyline points='3 6 5 6 21 6'></polyline>
+							<path d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'></path>
+							<line x1='10' y1='11' x2='10' y2='17'></line>
+							<line x1='14' y1='11' x2='14' y2='17'></line>
+						</svg>
 						<p>Delete</p>
 					</button>
 				</div>
