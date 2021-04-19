@@ -166,14 +166,7 @@ const EditPostPage = ({ match }) => {
 	}
 
 	return (
-		// <div className="overflow-x-hidden overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-gray-300 pr-2"></div>
-		<div className='flex flex-col min-w-full h-full'>
-			<div className={'flex flex-row justify-between'}>
-				<h1 className=' px-5 py-5 text-gray-900 text-3xl md:text-4xl'>
-					Edit post
-				</h1>
-			</div>
-			{/* <div className="overflow-x-hidden overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-gray-300 pr-2"></div> */}
+		<div className='flex flex-col min-w-full h-full p-4'>
 			<div>
 				<div className={getLayoutStyle()}>
 					{/* Blog post component */}
@@ -518,22 +511,21 @@ const EditPostPage = ({ match }) => {
 								<></>
 							)}
 						</div>
-						<button
-							onClick={publishToSN}
-							className={
-								' justify-center items-center space-x-1 rounded-md p-2  text-white' +
-								` bg-red-400` +
-								` hover:bg-red-600`
-							}
-						>
-							Publish
-						</button>
 					</div>
 				</div>
 
-				<div className='flex py-5 float-right'>
+				<div
+					className={
+						(isTablet
+							? 'flex flex-col w-full space-y-2'
+							: 'flex flex-row justify-between items-center') + ' mt-4'
+					}
+				>
 					<button
-						className='flex flex-row justify-center items-center space-x-2 p-2 text-sm rounded-lg bg-red-900 text-white active:bg-red-700  font-bold uppercase shadow hover:shadow-lg outline-none focus:outline-none '
+						className={
+							'flex flex-row justify-center items-center p-2 text-sm rounded-lg bg-red-900 text-white active:bg-red-700 font-bold outline-none focus:outline-none ' +
+							(isTablet ? 'w-full' : '')
+						}
 						onClick={(e) => {
 							e.preventDefault()
 							deleteCurrentPost()
@@ -555,7 +547,15 @@ const EditPostPage = ({ match }) => {
 							<line x1='10' y1='11' x2='10' y2='17'></line>
 							<line x1='14' y1='11' x2='14' y2='17'></line>
 						</svg>
-						<p>Delete</p>
+					</button>
+					<button
+						onClick={publishToSN}
+						className={
+							'rounded-md p-2 text-white bg-red-400 hover:bg-red-600' +
+							(isTablet ? ' w-full' : ' w-1/3')
+						}
+					>
+						Publish
 					</button>
 				</div>
 
