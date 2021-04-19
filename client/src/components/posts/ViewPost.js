@@ -100,7 +100,7 @@ const ViewPost = () => {
     };
         
     return (
-        <div className="pt-10 pb-10 flex flex-col max-h-full items-center">
+        <div className="pt-10 pb-10 flex flex-col  items-center">
             <div className="rounded  shadow-lg bg-white w-5/6">
                 <div className="w-full">
                    {mediaDisplay()} 
