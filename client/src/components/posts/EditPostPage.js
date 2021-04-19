@@ -475,7 +475,12 @@ const EditPostPage = ({ match }) => {
 						<div className='flex flex-col space-y-4 bg-gray-200 rounded-md p-6'>
 							<div className='flex flex-row space-x-2 items-center'>
 								<button
-									className='w-5 h-5 bg-white flex items-center justify-center rounded-xl cursor-pointer'
+									className='w-5 h-5 bg-white flex items-center justify-center rounded-xl'
+									disabled={
+										slectedPost != null
+											? slectedPost.video.isLoading == true
+											: true
+									}
 									onClick={() => setYoutubeSelected(!isYoutubeSelected)}
 								>
 									{isYoutubeSelected ? (
