@@ -21,7 +21,7 @@ const Login = ({ title, login, isAuthenticated }) => {
 	return (
 		<>
 			<main>
-				<section className='absolute w-full h-full'>
+				<section className='absolute w-full h-full bg-gradient-to-r from-yellow-200 via-green-200 to-blue-200'>
 					{/* <div
             className="absolute top-0 w-full h-full bg-gray-900"
             style={{
