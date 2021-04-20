@@ -13,19 +13,19 @@ import { loadYTDataFromStorage } from './actions/youtube'
 //Style
 import './App.css'
 //Components
-import Navbar from "./components/layout/Navbar";
-import MobileNavbar from "./components/layout/MobileNavbar";
-import Alert from "./components/layout/Alert";
-import LandingPage from "./components/pages/LandingPage";
-import PostsPage from "./components/pages/PostsPage";
-import NotesPage from "./components/pages/NotesPage";
-import AnalyticsPage from "./components/pages/AnalyticsPage";
-import SettingsPage from "./components/pages/SettingsPage";
-import PrivateRoute from "./components/routing/PrivateRoute";
-import Login from "./components/auth/Login";
-import Register from "./components/auth/Register";
+import Navbar from './components/layout/Navbar'
+import MobileNavbar from './components/layout/MobileNavbar'
+import Alert from './components/layout/Alert'
+import LandingPage from './components/pages/LandingPage'
+import PostsPage from './components/pages/PostsPage'
+import NotesPage from './components/pages/NotesPage'
+import AnalyticsPage from './components/pages/AnalyticsPage'
+import SettingsPage from './components/pages/SettingsPage'
+import PrivateRoute from './components/routing/PrivateRoute'
+import Login from './components/auth/Login'
+import Register from './components/auth/Register'
 import EditPostPage from './components/posts/EditPostPage'
-import Post from "./components/pages/Post";
+import Post from './components/pages/Post'
 //
 import {
 	setAuthToken,
@@ -39,7 +39,6 @@ import {
 	INSTAGRAM_TOKEN,
 	TWITTER_TOKEN,
 } from './utils/localStorageTypes'
-
 
 setAuthToken(localStorage[AUTH_TOKEN])
 setFacebookToken(localStorage[FACEBOOK_TOKEN])

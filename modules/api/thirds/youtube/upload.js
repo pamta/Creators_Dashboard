@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
 		await createFile(fileURL)
 
 		const fileSize = fs.statSync('file.mov').size
-		const filePath = path.join(__dirname, '../../file.mov')
+		const filePath = path.join(__dirname, '../../../../file.mov')
 		const video = await youtube.videos
 			.insert(
 				{
