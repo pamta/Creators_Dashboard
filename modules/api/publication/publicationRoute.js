@@ -1,6 +1,10 @@
 const express = require('express')
 const router = express.Router()
+
 const auth = require('../../../middleware/auth')
+const PublicationService = require('./publicationService')
+const publicationService = new PublicationService()
+
 const axios = require('axios')
 
 const { v4: uuid } = require('uuid')
@@ -9,11 +13,6 @@ const multer = require('multer')
 
 // Exporting two objects
 const { check, validationResult } = require('express-validator')
-
-// Returns a moongose model of the user
-const User = require('../../../models/User')
-const Publication = require('../../../models/Publication')
-const { eventNames } = require('../../../models/User')
 
 const handleError = (res, status, msg, err = null) => {
 	if (!res.headersSent) {
@@ -33,10 +32,16 @@ const handleError = (res, status, msg, err = null) => {
 // Given a JSON web token , it returns all the user's publications
 router.get('/all', auth, async (req, res) => {
 	try {
-		const publications = await Publication.find({ user_id: req.user.id })
+		const publications = await publicationService.getAllPublicationsForUser(
+			req.user.id
+		)
 		res.json(publications)
 	} catch (err) {
-		return handleError(res, 500, 'Server Error', err)
+		if (err.name == 'ArrayError') {
+			return res.status(400).json({ errors: err.errors })
+		}
+		console.error(err)
+		res.status(500).send('Server error')
 	}
 })
 
