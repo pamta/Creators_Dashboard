@@ -15,6 +15,14 @@ class PublicationDAO extends Publication {
 		return publication
 	}
 
+	static findByIdAndUpdate = async (publicationID, publication, callback) => {
+		await Publication.findByIdAndUpdate(
+			publicationID,
+			publication,
+			callback
+		).exec()
+	}
+
 	static remove = async (jsonParams, callback) => {
 		await Publication.remove(jsonParams, callback).exec()
 	}

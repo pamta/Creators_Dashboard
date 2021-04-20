@@ -20,6 +20,10 @@ class PublicationService {
 		}
 		return publication
 	}
+
+	async updatePublication(publicationID, publication, callback) {
+		await Publication.findByIdAndUpdate(publicationID, publication, callback)
+	}
 }
 
 module.exports = PublicationService

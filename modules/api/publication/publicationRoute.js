@@ -144,10 +144,10 @@ router.post(
 		console.log(name + ' : ' + publication_id)
 
 		try {
-			const publicationFound = await Publication.findOne({
-				_id: publication_id,
-				user_id: req.user.id,
-			}).exec()
+			const publicationFound = await publicationService.getPublicationOfUser(
+				publication_id,
+				req.user.id
+			)
 			if (!publicationFound) {
 				return handleError(res, 400, 'Publication does not exist')
 			}
@@ -156,13 +156,19 @@ router.post(
 			publicationFound.name = name
 			publicationFound.updateDate = Date.now()
 
-			publicationFound.save((err, doc) => {
+			const callback = (err, doc) => {
 				if (err) {
 					return handleError(res, 500, `DB error: ${err}`, err)
 				}
 				//we return the saved publication
 				return res.json(doc)
-			})
+			}
+
+			await publicationService.updatePublication(
+				publication_id,
+				publicationFound,
+				callback
+			)
 		} catch (err) {
 			return handleError(res, 500, 'Server Error', err)
 		}
@@ -194,10 +200,10 @@ router.post(
 		const { publication_id, text } = req.body
 
 		try {
-			const publicationFound = await Publication.findOne({
-				_id: publication_id,
-				user_id: req.user.id,
-			}).exec()
+			const publicationFound = await publicationService.getPublicationOfUser(
+				publication_id,
+				req.user.id
+			)
 			if (!publicationFound) {
 				return handleError(res, 400, 'Publication does not exist')
 			}
@@ -206,13 +212,19 @@ router.post(
 			publicationFound.text = text
 			publicationFound.updateDate = Date.now()
 
-			publicationFound.save((err, text) => {
+			const callback = (err, doc) => {
 				if (err) {
 					return handleError(res, 500, `DB error: ${err}`, err)
 				}
-				//we return the saved text
-				return res.json(text)
-			})
+				//we return the saved publication
+				return res.json(doc)
+			}
+
+			await publicationService.updatePublication(
+				publication_id,
+				publicationFound,
+				callback
+			)
 		} catch (err) {
 			return handleError(res, 500, 'Server Error', err)
 		}
