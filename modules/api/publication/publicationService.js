@@ -9,6 +9,17 @@ class PublicationService {
 		}
 		return publications
 	}
+
+	async getPublicationOfUser(publicationID, userID) {
+		const publication = await Publication.findOne({
+			_id: publicationID,
+			user_id: userID,
+		})
+		if (!publication) {
+			throw new ArrayError([{ msg: 'No publications found for this user' }])
+		}
+		return publication
+	}
 }
 
 module.exports = PublicationService

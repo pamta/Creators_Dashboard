@@ -27,34 +27,16 @@ const handleError = (res, status, msg, err = null) => {
 	}
 }
 
-// @route  GET api/publication/all
-// @access Private/requires token
-// Given a JSON web token , it returns all the user's publications
-router.get('/all', auth, async (req, res) => {
-	try {
-		const publications = await publicationService.getAllPublicationsForUser(
-			req.user.id
-		)
-		res.json(publications)
-	} catch (err) {
-		if (err.name == 'ArrayError') {
-			return res.status(400).json({ errors: err.errors })
-		}
-		console.error(err)
-		res.status(500).send('Server error')
-	}
-})
-
 // @route  GET api/publication
 // @access Private/requires token
 // Given a JSON web token , it returns a given  user's specific publication
 router.get('/', auth, async (req, res) => {
 	try {
 		const publication_id = req.header('publication_id')
-		const publication = await Publication.findOne({
-			_id: publication_id,
-			user_id: req.user.id,
-		}).exec()
+		const publication = await publicationService.getPublicationOfUser(
+			publication_id,
+			req.user.id
+		)
 		res.json(publication)
 	} catch (err) {
 		return handleError(res, 500, 'Server Error', err)
@@ -118,6 +100,24 @@ router.post(
 		}
 	}
 )
+
+// @route  GET api/publication/all
+// @access Private/requires token
+// Given a JSON web token , it returns all the user's publications
+router.get('/all', auth, async (req, res) => {
+	try {
+		const publications = await publicationService.getAllPublicationsForUser(
+			req.user.id
+		)
+		res.json(publications)
+	} catch (err) {
+		if (err.name == 'ArrayError') {
+			return res.status(400).json({ errors: err.errors })
+		}
+		console.error(err)
+		res.status(500).send('Server error')
+	}
+})
 
 // @route  POST api/publication/upload/name
 // @access private, requires a user token
