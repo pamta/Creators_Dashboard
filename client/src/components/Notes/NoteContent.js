@@ -59,7 +59,7 @@ const NoteContent = ( ) => {
                         <input 
                             onChange={(e) => setName(e.target.value)} 
                             type="text"
-                            className="border-0 border-solid border-b-2 border-red-500 w-full text-3xl md:text-4xl xl:text-5xl"
+                            className="border-0 border-solid border-b-2 border-red-500 w-full text-2xl md:text-3xl xl:text-4xl"
                             placeholder="Title"
                             value={name}
                         />
