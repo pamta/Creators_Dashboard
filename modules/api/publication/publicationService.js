@@ -21,7 +21,29 @@ class PublicationService {
 		return publication
 	}
 
-	async updatePublication(publicationID, publication, callback) {
+	async updatePublicationName(userID, publicationID, name, callback) {
+		const publication = await this.getPublicationOfUser(publicationID, userID)
+		if (!publication) {
+			throw new ArrayError([{ msg: 'Publication does not exist' }])
+		}
+
+		// Update publication
+		publication.name = name
+		publication.updateDate = Date.now()
+
+		await Publication.findByIdAndUpdate(publicationID, publication, callback)
+	}
+
+	async updatePublicationText(userID, publicationID, text, callback) {
+		const publication = await this.getPublicationOfUser(publicationID, userID)
+		if (!publication) {
+			throw new ArrayError([{ msg: 'Publication does not exist' }])
+		}
+
+		// Update publication
+		publication.text = text
+		publication.updateDate = Date.now()
+
 		await Publication.findByIdAndUpdate(publicationID, publication, callback)
 	}
 }
