@@ -362,7 +362,8 @@ router.post(
       const sockets = req.app.get('sockets');
       const thisSocketId = sockets[publication_id];
       const socketInstance = io.to(thisSocketId);
-      socketInstance.emit('uploadProgress', 'File uploaded, processing data...');
+
+      socketInstance.emit('uploadProgress', 'File received, uploading to storage...');
 
       //VERIFICATIONS of user, publication and content
       console.log("Uploading: " + req.file.originalname);
@@ -453,6 +454,7 @@ router.post(
           }
           console.log("Updated IsLoading state");
         });
+        socketInstance.emit('END','end');
       });
       
       //Read Stream config

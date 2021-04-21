@@ -10,7 +10,7 @@ import io from "socket.io-client"
 import styles from './newPost.module.css'
 //redux
 import {useSelector, useDispatch} from "react-redux";
-import {uploadImages, uploadVideo, deletePost, updateText, updateTitle} from "../../actions/post"
+import {uploadImages, uploadVideo, deletePost, updateText, updateTitle, loadPosts} from "../../actions/post"
 import {publishPostToFb} from "../../actions/facebook"
 import {setAlert} from '../../actions/alert';
 
@@ -123,8 +123,19 @@ const EditPostPage = ({match}) => {
 		//socket connection
 		const socket = io("/");
 		socket.emit('connectInit', id);
+
 		socket.on("uploadProgress", data => {
 			console.log(data);
+			if(data == '100%'){
+				dispatch(setAlert("Succesful video upload", "success"));
+				dispatch(loadPosts());
+			}
+    	});
+		socket.on("END", data => {
+			// if(data == 'END'){
+			// 	dispatch(setAlert("Succesful video upload", "success"));
+			// 	dispatch(loadPosts());
+			// }
     	});
 
 	}, [post.posts]);

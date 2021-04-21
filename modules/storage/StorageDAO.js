@@ -1,12 +1,54 @@
+// class File {
+// }
+const mime = require("mime-types");
+const { v4: uuid } = require("uuid");
+
 class StorageDAO {
-	constructor(publicationDTO) {
-		super(publicationDTO)
+	constructor() {
+		
 	}
 
-	static createFileBlob = async (jsonParams) => {
-		const blob = mediaBucket.file(`${uuid()}.${mime.extensions[type][0]}`);
-		const publicURL = `https://storage.googleapis.com/${mediaBucket.name}/${blob.name}`;
+	static getFileBlob = async (name) => {
+		const blob = mediaBucket.file(name);
 		return blob;
+	}
+
+	static createFileBlob = async (type, name ) => {
+		const blob = mediaBucket.file(`${name || uuid() }.${mime.extensions[type][0]}`);
+		return blob;
+	}
+
+	static createFileAndUpload = async (blob, dataBuffer, writeFinishStreamCallback, writeErrorStreamCallback, writeDataStreamCallback) => {
+		const publicURL = `https://storage.googleapis.com/${mediaBucket.name}/${blob.name}`;
+		
+
+		const writeStream = blob.createWriteStream({
+			resumable: true,
+			contentType: type,
+			//predefinedAcl: 'publicRead', //posible error
+		  });
+		
+		writeStream.on("error", writeErrorStreamCallback);
+  
+		writeStream.on("finish", writeStreamCallback);
+		
+		//Read Stream config
+		let readableBuffer = new streamBuffers.ReadableStreamBuffer({
+		  frequency: 2,      // in milliseconds.
+		  chunkSize: 65536          // in bytes.
+		});
+		readableBuffer.put(dataBuffer);
+  
+		let written = 0;
+  
+		readableBuffer.on('end', function() {
+		  //console.log("Finished Readable Stream");
+		  writeStream.end();
+		});
+  
+		readableBuffer.on('data', chunk => {
+			writeStream.write(chunk, writeDataStreamCallback);
+		});
 	}
 }
 
