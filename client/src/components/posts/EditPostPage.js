@@ -5,6 +5,8 @@ import { useParams } from "react-router";
 import useWindowSize from '../../lib/useWindowSize';
 import BasicModal from '../layout/BasicModal';
 
+import io from "socket.io-client"
+
 import styles from './newPost.module.css'
 //redux
 import {useSelector, useDispatch} from "react-redux";
@@ -25,8 +27,6 @@ const EditPostPage = ({match}) => {
 
 	const [redirect, setRedirect] = useState();
 
-    
-
 	const post = useSelector(state => state.post);
     let history = useHistory();
 	let { id } = useParams(); 
@@ -34,6 +34,9 @@ const EditPostPage = ({match}) => {
 	const dispatch = useDispatch();
 
 	const isTablet = useWindowSize().width <= 1080
+
+	//socket session id to identify this component connection
+	//const sessionId = Math.random().toString(36).substr(2, 9);
 
 	//calls to actions
 
@@ -116,6 +119,14 @@ const EditPostPage = ({match}) => {
 		}else{
 			//setRedirect(`/posts`); //redirect to posts
 		}
+		
+		//socket connection
+		const socket = io("/");
+		socket.emit('connectInit', id);
+		socket.on("uploadProgress", data => {
+			console.log(data);
+    	});
+
 	}, [post.posts]);
 
 	if (redirect) {

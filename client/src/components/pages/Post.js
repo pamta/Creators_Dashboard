@@ -18,10 +18,8 @@ const Post = () => {
     const defaultStyle = "py-2 px-6 bg-white rounded-t-lg text-gray-500 bg-gray-200 hover:text-blue-500 focus:outline-none"
     let history = useHistory();
     let {id} = useParams();
-    console.log("id = " + id);
 
     useEffect(() => {
-		//console.log(id + " : " + post.posts);
 		const selected_post = post.posts.find( 
 			(somePost) => { 
 				return somePost._id == id;

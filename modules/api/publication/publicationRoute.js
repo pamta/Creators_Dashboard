@@ -6,6 +6,11 @@ const axios = require("axios");
 const { v4: uuid } = require("uuid");
 const mime = require("mime-types");
 const multer = require("multer");
+const progress = require('progress-stream');
+const fs = require('fs');
+const streamBuffers = require('stream-buffers');
+const { Readable } = require('stream');
+//const getStream = require('into-stream')
 
 // Exporting two objects
 const { check, validationResult } = require("express-validator");
@@ -332,6 +337,7 @@ router.post(
   [
     // Second parameter of check is a custom error message
     check("publication_id", "A publication is required").not().isEmpty(),
+    //check("sessionId", "Socket connection sessionId missing").not().isEmpty(),
   ],
   async (req, res) => {
     // Finds the validation errors in this request and wraps them in an object with handy functions
@@ -351,7 +357,17 @@ router.post(
     }
 
     try {
+      // Get the socket connection from Express app
+      const io = req.app.get('io');
+      const sockets = req.app.get('sockets');
+      const thisSocketId = sockets[publication_id];
+      const socketInstance = io.to(thisSocketId);
+      socketInstance.emit('uploadProgress', 'File uploaded, processing data...');
+
       //VERIFICATIONS of user, publication and content
+      console.log("Uploading: " + req.file.originalname);
+      console.log("Of Size:  " + req.file.size);
+      console.log("Buffer Size:  " + req.file.buffer.length );
 
       //use this instead when activating the auth middleware
       const publicationFound = await Publication.findOne({
@@ -384,7 +400,7 @@ router.post(
       const blob = mediaBucket.file(`${uuid()}.${mime.extensions[type][0]}`);
       const publicURL = `https://storage.googleapis.com/${mediaBucket.name}/${blob.name}`;
 
-      //Save in DB
+      //SAVE IN DB
       const updateDate = Date.now();
       publicationFound.video = {
         URL: publicURL,
@@ -404,18 +420,30 @@ router.post(
       }
 
       //FILE UPLOAD STREAM
-      const stream = blob.createWriteStream({
+      // console.log(blob);
+
+      //progress bar
+      // let str = progress({
+      //   length: req.file.size,
+      //   time: 100 /* ms */
+      // });
+      // str.on('progress', function(progress) {
+      //   console.log(progress);
+      // });
+      
+      //Write Stream config
+      const writeStream = blob.createWriteStream({
         resumable: true,
         contentType: type,
         //predefinedAcl: 'publicRead', //posible error
       });
 
-      stream.on("error", (err) => {
-        return handleError(res, 500, "Error during media streaming", err);
-      });
+      writeStream.on("error", (err) => {
+          return handleError(res, 500, "Error during media streaming", err);
+        });
 
-      stream.on("finish", () => {
-        console.log("File finished upload");
+      writeStream.on("finish", () => {
+        console.log("File finished upload: " + publicURL);
 
         //update db to signal that the video has finished uploading
         publicationFound.video.isLoading = false;
@@ -426,8 +454,35 @@ router.post(
           console.log("Updated IsLoading state");
         });
       });
+      
+      //Read Stream config
+      let readableBuffer = new streamBuffers.ReadableStreamBuffer({
+        frequency: 2,      // in milliseconds.
+        chunkSize: 65536          // in bytes.
+      });
+      readableBuffer.put(req.file.buffer);
 
-      stream.end(req.file.buffer);
+      let written = 0;
+
+      readableBuffer.on('end', function() {
+        console.log("Finished Readable Stream");
+        writeStream.end();
+      });
+
+      readableBuffer.on('data', chunk => {
+          writeStream.write(chunk, () => {
+              written += chunk.length;
+              let progress = (written/req.file.size) * 100;
+
+              console.log(`${progress}% uploaded, ${written}Bytes out of ${req.file.size} Bytes.`);
+              socketInstance.emit('uploadProgress', `${progress}%`);
+
+              if(written >= req.file.size){
+                readableBuffer.stop();    //special function of the stream-buffers module
+              }
+          });
+      });
+
 
       //No error handling if video was not deleted. idk were to put error handling for this, as this is not of concert for the user
       if (oldVideo) {

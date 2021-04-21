@@ -132,6 +132,7 @@ export const uploadVideo = ( videofile, post_id ) => async (dispatch) => {
     let formData = new FormData();
     formData.append("file", videofile.files[0]);
     formData.append("publication_id", post_id);
+    //formData.append("sessionId", sessionId);
 
     const res = await axios.post("/api/publication/upload/video", formData, config);
 
