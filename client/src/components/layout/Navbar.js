@@ -1,10 +1,12 @@
 import NavbarLink from './NavbarLink'
 import PropTypes from 'prop-types'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { logout } from '../../actions/auth'
 
 const Navbar = ({ logout }) => {
+	const currentPage = useLocation().pathname.split('/')[1]
+
 	return (
 		<div className='w-72 p-4 bg-gray-100'>
 			<div className='flex flex-col justify-between h-full'>
@@ -27,6 +29,7 @@ const Navbar = ({ logout }) => {
 							</svg>
 						}
 						color='green'
+						isSelected={currentPage === 'posts' || currentPage === 'post'}
 					/>
 					<NavbarLink
 						name='Analytics'
@@ -42,6 +45,9 @@ const Navbar = ({ logout }) => {
 							</svg>
 						}
 						color='blue'
+						isSelected={
+							currentPage === 'analytics' || currentPage === 'analytic'
+						}
 					/>
 					<NavbarLink
 						name='Notes'
@@ -57,6 +63,7 @@ const Navbar = ({ logout }) => {
 							</svg>
 						}
 						color='yellow'
+						isSelected={currentPage === 'notes' || currentPage === 'note'}
 					/>
 				</div>
 				<div className='space-y-2'>
@@ -78,6 +85,7 @@ const Navbar = ({ logout }) => {
 							</svg>
 						}
 						color='gray'
+						isSelected={currentPage === 'settings'}
 					/>
 					<div>
 						<a onClick={logout} href='#!'>
