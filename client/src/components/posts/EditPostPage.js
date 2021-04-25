@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Switch from 'react-switch';
 import { Redirect, useHistory, useLocation } from "react-router-dom";
 import { useParams } from "react-router";
@@ -120,6 +120,10 @@ const EditPostPage = ({match}) => {
 			//setRedirect(`/posts`); //redirect to posts
 		}
 		
+		//reload vieo on url update
+		// console.log(selected_post.video.URL);
+		// React.findDOMNode(this.refs.video).load(); 
+
 		//socket connection
 		const socket = io("/");
 		socket.emit('connectInit', id);
@@ -322,9 +326,9 @@ const EditPostPage = ({match}) => {
 									<div className={"w-full flex justify-center "} 
 										id={slectedPost.video.name}
 									>
-										<video width="full" height="full" controls>
-											<source src={slectedPost.video.URL} type="video/mp4"/>
-											Your browser does not support the video tag.
+										<video src={slectedPost.video.URL} width="full" height="full" controls>
+											{/* <source src={slectedPost.video.URL} type="video/mp4"/>
+											Your browser does not support the video tag. */}
 										</video>
 									</div>
 								}

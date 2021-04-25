@@ -467,7 +467,7 @@ router.post(
       let written = 0;
 
       readableBuffer.on('end', function() {
-        console.log("Finished Readable Stream");
+        //console.log("Finished Readable Stream");
         writeStream.end();
       });
 
@@ -476,7 +476,7 @@ router.post(
               written += chunk.length;
               let progress = (written/req.file.size) * 100;
 
-              console.log(`${progress}% uploaded, ${written}Bytes out of ${req.file.size} Bytes.`);
+              //console.log(`${progress}% uploaded, ${written}Bytes out of ${req.file.size} Bytes.`);
               socketInstance.emit('uploadProgress', `${progress}%`);
 
               if(written >= req.file.size){

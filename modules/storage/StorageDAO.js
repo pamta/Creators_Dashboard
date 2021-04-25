@@ -1,12 +1,7 @@
-// class File {
-// }
 const mime = require("mime-types");
 const { v4: uuid } = require("uuid");
 
 class StorageDAO {
-	constructor() {
-		
-	}
 
 	static getFileBlob = async (name) => {
 		const blob = mediaBucket.file(name);
@@ -18,9 +13,12 @@ class StorageDAO {
 		return blob;
 	}
 
-	static createFileAndUpload = async (blob, dataBuffer, writeFinishStreamCallback, writeErrorStreamCallback, writeDataStreamCallback) => {
+	static getNameFromBlob = async ( blob ) => {
 		const publicURL = `https://storage.googleapis.com/${mediaBucket.name}/${blob.name}`;
-		
+		return publicURL;
+	}
+
+	static createFileAndUpload = async (blob, dataBuffer, writeFinishStreamCallback, writeErrorStreamCallback, writeDataStreamCallback) => {
 
 		const writeStream = blob.createWriteStream({
 			resumable: true,
@@ -30,7 +28,7 @@ class StorageDAO {
 		
 		writeStream.on("error", writeErrorStreamCallback);
   
-		writeStream.on("finish", writeStreamCallback);
+		writeStream.on("finish", writeFinishStreamCallback);
 		
 		//Read Stream config
 		let readableBuffer = new streamBuffers.ReadableStreamBuffer({
