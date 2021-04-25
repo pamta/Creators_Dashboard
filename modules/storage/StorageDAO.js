@@ -1,24 +1,25 @@
 const mime = require("mime-types");
 const { v4: uuid } = require("uuid");
+const streamBuffers = require('stream-buffers');
 
 class StorageDAO {
 
-	static getFileBlob = async (name) => {
+	static getFileBlob = (name) => {
 		const blob = mediaBucket.file(name);
 		return blob;
 	}
 
-	static createFileBlob = async (type, name ) => {
+	static createFileBlob = (type, name ) => {
 		const blob = mediaBucket.file(`${name || uuid() }.${mime.extensions[type][0]}`);
 		return blob;
 	}
 
-	static getNameFromBlob = async ( blob ) => {
+	static getUrlFromBlob = ( blob ) => {
 		const publicURL = `https://storage.googleapis.com/${mediaBucket.name}/${blob.name}`;
 		return publicURL;
 	}
 
-	static createFileAndUpload = async (blob, dataBuffer, writeFinishStreamCallback, writeErrorStreamCallback, writeDataStreamCallback) => {
+	static createFileAndUpload = async (blob, type, dataBuffer, writeStreamFinishCallback, writeStreamErrorCallback, writeStreamDataCallback) => {
 
 		const writeStream = blob.createWriteStream({
 			resumable: true,
@@ -26,9 +27,9 @@ class StorageDAO {
 			//predefinedAcl: 'publicRead', //posible error
 		  });
 		
-		writeStream.on("error", writeErrorStreamCallback);
+		writeStream.on("error", writeStreamErrorCallback);
   
-		writeStream.on("finish", writeFinishStreamCallback);
+		writeStream.on("finish", writeStreamFinishCallback);
 		
 		//Read Stream config
 		let readableBuffer = new streamBuffers.ReadableStreamBuffer({
@@ -37,15 +38,13 @@ class StorageDAO {
 		});
 		readableBuffer.put(dataBuffer);
   
-		let written = 0;
-  
 		readableBuffer.on('end', function() {
 		  //console.log("Finished Readable Stream");
 		  writeStream.end();
 		});
   
 		readableBuffer.on('data', chunk => {
-			writeStream.write(chunk, writeDataStreamCallback);
+			writeStream.write(chunk, writeStreamDataCallback(chunk, readableBuffer));
 		});
 	}
 }

@@ -20,18 +20,22 @@ const User = require("../../../models/User");
 const Publication = require("../../../models/Publication");
 const { eventNames } = require("../../../models/User");
 
-const handleError = (res, status, msg, err = null) => {
-  if (!res.headersSent) {
-    if (err) {
-      console.error(err);
-    }
-    return res.status(status).json({ errors: [{ msg: msg }] });
-  }
+const { handleError } = require("../../error/ErrorHandling");
+const MediaStorageService = require("../../storage/MediaStorageService");
+const mediaStorageService = new MediaStorageService();
 
-  if (err) {
-    console.error(err);
-  }
-};
+// const handleError = (res, status, msg, err = null) => {
+//   if (!res.headersSent) {
+//     if (err) {
+//       console.error(err);
+//     }
+//     return res.status(status).json({ errors: [{ msg: msg }] });
+//   }
+
+//   if (err) {
+//     console.error(err);
+//   }
+// };
 
 // ######## ROUTES ########
 
@@ -388,7 +392,7 @@ router.post(
 
       //FILE UPLOAD PREP
       const type = mime.lookup(req.file.originalname);
-      console.log(type);
+      //console.log(type);
       const regexVideo = /video/g;
       if (type.search(regexVideo) == -1) {
         return handleError(
@@ -398,8 +402,10 @@ router.post(
         );
       }
 
-      const blob = mediaBucket.file(`${uuid()}.${mime.extensions[type][0]}`);
-      const publicURL = `https://storage.googleapis.com/${mediaBucket.name}/${blob.name}`;
+      const blob = mediaStorageService.createFileBlob(type);
+      const publicURL = mediaStorageService.getUrlFromBlob(blob);
+      //const blob = mediaBucket.file(`${uuid()}.${mime.extensions[type][0]}`);
+      //const publicURL = `https://storage.googleapis.com/${mediaBucket.name}/${blob.name}`;
 
       //SAVE IN DB
       const updateDate = Date.now();
@@ -420,71 +426,9 @@ router.post(
         return handleError(res, 500, `DB error: ${err}`, err);
       }
 
-      //FILE UPLOAD STREAM
-      // console.log(blob);
-
-      //progress bar
-      // let str = progress({
-      //   length: req.file.size,
-      //   time: 100 /* ms */
-      // });
-      // str.on('progress', function(progress) {
-      //   console.log(progress);
-      // });
+      //FILE UPLOAD TO STORAGE STREAM
       
-      //Write Stream config
-      const writeStream = blob.createWriteStream({
-        resumable: true,
-        contentType: type,
-        //predefinedAcl: 'publicRead', //posible error
-      });
-
-      writeStream.on("error", (err) => {
-          return handleError(res, 500, "Error during media streaming", err);
-        });
-
-      writeStream.on("finish", () => {
-        console.log("File finished upload: " + publicURL);
-
-        //update db to signal that the video has finished uploading
-        publicationFound.video.isLoading = false;
-        publicationFound.save((err, video) => {
-          if (err) {
-            return handleError(res, 500, `DB error: ${err}`, err);
-          }
-          console.log("Updated IsLoading state");
-        });
-        socketInstance.emit('END','end');
-      });
-      
-      //Read Stream config
-      let readableBuffer = new streamBuffers.ReadableStreamBuffer({
-        frequency: 2,      // in milliseconds.
-        chunkSize: 65536          // in bytes.
-      });
-      readableBuffer.put(req.file.buffer);
-
-      let written = 0;
-
-      readableBuffer.on('end', function() {
-        //console.log("Finished Readable Stream");
-        writeStream.end();
-      });
-
-      readableBuffer.on('data', chunk => {
-          writeStream.write(chunk, () => {
-              written += chunk.length;
-              let progress = (written/req.file.size) * 100;
-
-              //console.log(`${progress}% uploaded, ${written}Bytes out of ${req.file.size} Bytes.`);
-              socketInstance.emit('uploadProgress', `${progress}%`);
-
-              if(written >= req.file.size){
-                readableBuffer.stop();    //special function of the stream-buffers module
-              }
-          });
-      });
-
+      mediaStorageService.uploadVideo(blob, type, req.file.buffer, req.file.size, res, socketInstance);
 
       //No error handling if video was not deleted. idk were to put error handling for this, as this is not of concert for the user
       if (oldVideo) {
