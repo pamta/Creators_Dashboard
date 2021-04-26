@@ -36,11 +36,11 @@ const Post = () => {
     const tabStyle = (tab) => {
         switch(tab) {
             case "view":
-                return activeTab == 'view' ? "py-2 px-6 bg-green-500 rounded-t-lg hover:bg-green-300 focus:outline-none text-black border-b-2 font-medium border-red-600" : "py-2 px-6 rounded-t-lg text-gray-500 bg-green-300 hover:text-black hover:bg-green-500 focus:outline-none";
+                return activeTab == 'view' ? "py-2 px-6 bg-green-500 rounded-t-lg hover:bg-green-300 focus:outline-none text-black border-b-2 font-medium border-black" : "py-2 px-6 rounded-t-lg text-gray-500 bg-green-300 hover:text-black hover:bg-green-500 focus:outline-none";
             case "analytics":
-                return activeTab == 'analytics' ? "py-2 px-6 bg-blue-400 rounded-t-lg hover:bg-blue-300 focus:outline-none text-black border-b-2 font-medium border-red-600" : "py-2 px-6 rounded-t-lg text-gray-500 bg-blue-300 hover:text-black hover:bg-blue-400 focus:outline-none";
+                return activeTab == 'analytics' ? "py-2 px-6 bg-blue-400 rounded-t-lg hover:bg-blue-300 focus:outline-none text-black border-b-2 font-medium border-black" : "py-2 px-6 rounded-t-lg text-gray-500 bg-blue-300 hover:text-black hover:bg-blue-400 focus:outline-none";
             case "edit":
-                return activeTab == 'edit' ? "py-2 px-6 bg-pink-400 rounded-t-lg hover:bg-pink-300 focus:outline-none text-black border-b-2 font-medium border-red-600" : "py-2 px-6 rounded-t-lg text-gray-500 bg-pink-300 hover:text-black hover:bg-pink-400 focus:outline-none";
+                return activeTab == 'edit' ? "py-2 px-6 bg-red-400 rounded-t-lg hover:bg-red-300 focus:outline-none text-black border-b-2 font-medium border-black" : "py-2 px-6 rounded-t-lg text-gray-500 bg-red-300 hover:text-black hover:bg-red-400 focus:outline-none";
         }
     } 
 
@@ -60,14 +60,29 @@ const Post = () => {
 
     return (
         <div className="flex flex-col min-w-full h-full">
-            <div className="flex flex-row w-full justify-between border-b-2 border-solid border-gray-300 m">
-                <div className="flex flex-row  px-4 text-gray-900 text-2xl md:text-4xl capitalize">
-                    <div>{title}</div>
-
-                    
+            <div className="flex flex-row w-full justify-between border-b-2 border-solid border-gray-300 mt-5">
+                <div className="self-end pb-1">
+                    <button onClick={() => history.goBack()} className="flex  justify-center items-center space-x-2 p-2 text-sm font-bold uppercase rounded-lg bg-gray-400 text-black hover:shadow-lg hover:bg-gray-600 hover:text-white">
+                    <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        width='16'
+                        height='16'
+                        viewBox='0 0 24 24'
+                        fill='none'
+                        stroke='currentColor'
+                        strokeWidth='2'
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                    >
+                        <path d='M19 12H6M12 5l-7 7 7 7' />
+                    </svg>
+                        <p>Back</p>
+                    </button>
                 </div>
-
-                <div >
+                <div className="px-4 text-center text-gray-900 text-2xl md:text-3xl font-semibold capitalize">
+                    <div className="mb-5">{title}</div>
+                </div>
+                <div className="self-end" >
                     <button className={tabStyle("view")} onClick={() => setActive('view')}> 
                         <svg
                             className='w-6 h-6'
@@ -100,24 +115,7 @@ const Post = () => {
             <div className={"overflow-x-hidden overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-gray-300 pr-2"}>
                 {tabContent()}
             </div>
-            <div className="ml-8 flex flex-row justify-start">
-                <button onClick={() => history.goBack()} className="flex  justify-center items-center space-x-2 p-2 text-sm font-bold uppercase rounded-lg bg-gray-400 text-black hover:shadow-lg hover:bg-gray-600 hover:text-white">
-                <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    width='16'
-                    height='16'
-                    viewBox='0 0 24 24'
-                    fill='none'
-                    stroke='currentColor'
-                    strokeWidth='2'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                >
-                    <path d='M19 12H6M12 5l-7 7 7 7' />
-                </svg>
-                    <p>Back</p>
-                </button>
-            </div>
+           
         </div>
     );
 }

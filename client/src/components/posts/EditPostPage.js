@@ -193,6 +193,7 @@ const EditPostPage = ({ match }) => {
 
 	return (
 		<div className='flex flex-col min-w-full h-full p-4'>
+            {backbtn()}
 			<div>
 				<div className={getLayoutStyle()}>
 					{/* Blog post component */}
@@ -641,7 +642,7 @@ const EditPostPage = ({ match }) => {
 					</button>
 				</div>
 
-				{backbtn()}
+				
 			</div>
 		</div>
 	)
