@@ -107,7 +107,7 @@ export const uploadImages = ( imagesfile, post_id, ammount ) => async (dispatch)
     const res = await axios.post("/api/publication/upload/images", formData, config);
 
     let plural = imagesfile.files.length > 1 ? "s" : "";
-    dispatch(setAlert(`Image${plural} uploaded`, "success"));
+    //dispatch(setAlert(`Image${plural} uploaded`, "success"));
     dispatch({
       type: POST_UPLOAD_IMAGES,
       payload: res.data,

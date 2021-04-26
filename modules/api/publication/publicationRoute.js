@@ -241,6 +241,14 @@ router.post(
 			return handleError(res, 400, 'No images sent')
 		}
 		try {
+            // Get the socket connection from Express app
+            const io = req.app.get('io');
+            const sockets = req.app.get('sockets');
+            const thisSocketId = sockets[publication_id];
+            const socketInstance = io.to(thisSocketId);
+
+            socketInstance.emit('uploadProgress', 'File received, uploading to storage...');
+
 			//use this instead when activating the auth middleware
 			const publicationFound = await Publication.findOne({
 				_id: publication_id,
@@ -277,27 +285,40 @@ router.post(
 
 			for (file of req.files) {
 				//FILE UPLOAD
-				const type = mime.lookup(file.originalname)
-				const blob = mediaBucket.file(`${uuid()}.${mime.extensions[type][0]}`)
+                const type = mime.lookup(file.originalname)
+				const blob = mediaStorageService.createFileBlob(type);
+                const publicURL = mediaStorageService.getUrlFromBlob(blob);
 
-				const stream = blob.createWriteStream({
-					resumable: true,
-					contentType: type,
-					//predefinedAcl: 'publicRead', //posible error
-				})
+				// const stream = blob.createWriteStream({
+				// 	resumable: true,
+				// 	contentType: type,
+				// 	//predefinedAcl: 'publicRead', //posible error
+				// })
 
-				stream.on('error', (err) => {
-					return handleError(res, 500, 'Error during media streaming', err)
-				})
+				// stream.on('error', (err) => {
+				// 	return handleError(res, 500, 'Error during media streaming', err)
+				// })
 
-				publicURL = `https://storage.googleapis.com/${mediaBucket.name}/${blob.name}`
+				// publicURL = `https://storage.googleapis.com/${mediaBucket.name}/${blob.name}`
 
-				stream.on('finish', () => {
-					//idk if needed
-					console.log('File finished upload')
-				})
+				// stream.on('finish', () => {
+				// 	//idk if needed
+				// 	console.log('File finished upload')
+				// })
 
-				stream.end(file.buffer)
+				// stream.end(file.buffer)
+                const uploadFinishedCallback = () => {
+                    // //update db to signal that the video has finished uploading
+                    // publicationFound.video.isLoading = false;
+                    // publicationFound.save((err, video) => {
+                    //     if (err) {
+                    //         return handleError(res, 500, `DB error: ${err}`, err);
+                    //     }
+                    //     console.log("Updated IsLoading state");
+                    // });
+                }
+                
+                mediaStorageService.uploadImage(blob, type, file.buffer, file.size, res, socketInstance, uploadFinishedCallback);
 
 				//PUBLICATION UPDATE
 				publicationFound.images.push({ URL: publicURL, name: blob.name })
@@ -346,17 +367,17 @@ router.post(
 		}
 
 		try {
-      // Get the socket connection from Express app
-      const io = req.app.get('io');
-      const sockets = req.app.get('sockets');
-      const thisSocketId = sockets[publication_id];
-      const socketInstance = io.to(thisSocketId);
+            // Get the socket connection from Express app
+            const io = req.app.get('io');
+            const sockets = req.app.get('sockets');
+            const thisSocketId = sockets[publication_id];
+            const socketInstance = io.to(thisSocketId);
 
-      socketInstance.emit('uploadProgress', 'File received, uploading to storage...');
+            socketInstance.emit('uploadProgress', 'File received, uploading to storage...');
 
-      console.log("Uploading: " + req.file.originalname);
-      console.log("Of Size:  " + req.file.size);
-      console.log("Buffer Size:  " + req.file.buffer.length );
+            console.log("Uploading: " + req.file.originalname);
+            console.log("Of Size:  " + req.file.size);
+            console.log("Buffer Size:  " + req.file.buffer.length );
 
 			//VERIFICATIONS of user, publication and content
 			const publicationFound = await Publication.findOne({
@@ -385,8 +406,8 @@ router.post(
 				)
 			}
 
-		  const blob = mediaStorageService.createFileBlob(type);
-      const publicURL = mediaStorageService.getUrlFromBlob(blob);
+		    const blob = mediaStorageService.createFileBlob(type);
+            const publicURL = mediaStorageService.getUrlFromBlob(blob);
 
 			//Save in DB
 			const updateDate = Date.now()
@@ -407,21 +428,32 @@ router.post(
 				return handleError(res, 500, `DB error: ${err}`, err)
 			}
 
-      //FILE UPLOAD TO STORAGE STREAM
-    
-      mediaStorageService.uploadVideo(blob, type, req.file.buffer, req.file.size, res, socketInstance);
+            //FILE UPLOAD TO STORAGE STREAM
 
-			//No error handling if video was not deleted. idk were to put error handling for this, as this is not of concert for the user
-			if (oldVideo) {
-				try {
-					await mediaBucket.file(oldVideo.name).delete()
-					console.log(`gs://${mediaBucket.name}/${oldVideo.name} deleted.`)
-				} catch (e) {
-					console.log(
-						`could not delete file ${oldVideo.name}, maybe it does not exists`
-					)
-				}
-			}
+            const uploadFinishedCallback = () => {
+                //update db to signal that the video has finished uploading
+                publicationFound.video.isLoading = false;
+                publicationFound.save((err, video) => {
+                    if (err) {
+                        return handleError(res, 500, `DB error: ${err}`, err);
+                    }
+                    console.log("Updated IsLoading state");
+                });
+            }
+            
+            mediaStorageService.uploadVideo(blob, type, req.file.buffer, req.file.size, res, socketInstance, uploadFinishedCallback);
+
+            //No error handling if video was not deleted. idk were to put error handling for this, as this is not of concert for the user
+            if (oldVideo) {
+                try {
+                    await mediaBucket.file(oldVideo.name).delete()
+                    console.log(`gs://${mediaBucket.name}/${oldVideo.name} deleted.`)
+                } catch (e) {
+                    console.log(
+                        `could not delete file ${oldVideo.name}, maybe it does not exists`
+                    )
+                }
+            }
 		} catch (err) {
 			return handleError(res, 500, 'Server Error', err)
 		}

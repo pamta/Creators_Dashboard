@@ -141,19 +141,14 @@ const EditPostPage = ({ match }) => {
 		const socket = io("/");
 		socket.emit('connectInit', id);
 
+		socket.on("end", data => {
+			console.log("Ended: " + data);
+			dispatch(setAlert("Succesful video upload", "success"));
+			dispatch(loadPosts()); //TODO: crete a new action loadPost(id) to only reload the current post
+    	});
+
 		socket.on("uploadProgress", data => {
 			console.log(data);
-			if(data == '100%'){
-				dispatch(setAlert("Succesful video upload", "success"));
-				dispatch(loadPosts());
-			}
-    	});
-		socket.on("END", data => {
-			console.log("Ended: " + data);
-			// if(data == 'END'){
-			// 	dispatch(setAlert("Succesful video upload", "success"));
-			// 	dispatch(loadPosts());
-			// }
     	});
 
 	}, [post.posts]);
