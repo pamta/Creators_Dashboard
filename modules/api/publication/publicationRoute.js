@@ -283,39 +283,22 @@ router.post(
 				}
 			}
 
+            const numberOfImages = req.files.length;
+            let uploadedCount = 0;
+
 			for (file of req.files) {
 				//FILE UPLOAD
                 const type = mime.lookup(file.originalname)
 				const blob = mediaStorageService.createFileBlob(type);
                 const publicURL = mediaStorageService.getUrlFromBlob(blob);
 
-				// const stream = blob.createWriteStream({
-				// 	resumable: true,
-				// 	contentType: type,
-				// 	//predefinedAcl: 'publicRead', //posible error
-				// })
-
-				// stream.on('error', (err) => {
-				// 	return handleError(res, 500, 'Error during media streaming', err)
-				// })
-
-				// publicURL = `https://storage.googleapis.com/${mediaBucket.name}/${blob.name}`
-
-				// stream.on('finish', () => {
-				// 	//idk if needed
-				// 	console.log('File finished upload')
-				// })
-
-				// stream.end(file.buffer)
+                
                 const uploadFinishedCallback = () => {
-                    // //update db to signal that the video has finished uploading
-                    // publicationFound.video.isLoading = false;
-                    // publicationFound.save((err, video) => {
-                    //     if (err) {
-                    //         return handleError(res, 500, `DB error: ${err}`, err);
-                    //     }
-                    //     console.log("Updated IsLoading state");
-                    // });
+                    uploadedCount += 1;
+                    if (uploadedCount == numberOfImages){
+                        socketInstance.emit('end','image');
+                    }
+                    socketInstance.emit('reload','image');
                 }
                 
                 mediaStorageService.uploadImage(blob, type, file.buffer, file.size, res, socketInstance, uploadFinishedCallback);
@@ -324,6 +307,7 @@ router.post(
 				publicationFound.images.push({ URL: publicURL, name: blob.name })
 				publicationFound.updateDate = Date.now()
 			}
+
 
 			publicationFound.save((err, images) => {
 				if (err) {
@@ -432,13 +416,18 @@ router.post(
 
             const uploadFinishedCallback = () => {
                 //update db to signal that the video has finished uploading
-                publicationFound.video.isLoading = false;
-                publicationFound.save((err, video) => {
-                    if (err) {
-                        return handleError(res, 500, `DB error: ${err}`, err);
-                    }
-                    console.log("Updated IsLoading state");
-                });
+                
+
+                // publicationFound.video.isLoading = false;
+                // publicationFound.save((err, video) => {
+                //     if (err) {
+                //         return handleError(res, 500, `DB error: ${err}`, err);
+                //     }
+                //     console.log("Updated IsLoading state");
+                // });
+
+                socketInstance.emit('end','video');
+                socketInstance.emit('reload','video');
             }
             
             mediaStorageService.uploadVideo(blob, type, req.file.buffer, req.file.size, res, socketInstance, uploadFinishedCallback);

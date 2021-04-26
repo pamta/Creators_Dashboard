@@ -77,7 +77,7 @@ const PostsPage = () => {
 				></ConfirmModal>
 			)}
 			<div className='flex flex-row justify-between p-4'>
-				<h1 className='font-semibold text-3xl mb-4'>Posts</h1>
+				<h1 className='font-semibold text-3xl my-2'>Posts</h1>
 				<div>
 					<button
 						className={

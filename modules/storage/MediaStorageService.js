@@ -17,14 +17,16 @@ class MediaStorageService {
 	async uploadVideo(blob, type, dataBuffer, size, res, socketInstance, uploadFinishedCallback) {
 
         const writeStreamFinishCallback = () => {
-            console.log("File finished upload: " + this.getUrlFromBlob(blob));
+            console.log("Video finished upload: " + this.getUrlFromBlob(blob));
             
             uploadFinishedCallback?.();
 
-            socketInstance.emit('end','video');
+            //socketInstance.emit('end','video');
         }
 
         const writeStreamErrorCallback = (err) => {
+            socketInstance.emit('uploaderror','video');
+            socketInstance.emit('reload','video'); 
             return handleError(res, 500, "Error during media streaming", err);
         }
 
@@ -50,14 +52,17 @@ class MediaStorageService {
     async uploadImage(blob, type, dataBuffer, size, res, socketInstance, uploadFinishedCallback) {
 
         const writeStreamFinishCallback = () => {
-            console.log("File finished upload: " + this.getUrlFromBlob(blob));
+            console.log("Image finished upload: " + this.getUrlFromBlob(blob));
             
             uploadFinishedCallback?.();
 
-            socketInstance.emit('end','image');
+            //socketInstance.emit('reload','image');
+            //socketInstance.emit('end','image');
         }
 
         const writeStreamErrorCallback = (err) => {
+            socketInstance.emit('uploaderror','image'); 
+            socketInstance.emit('reload','image');
             return handleError(res, 500, "Error during media streaming", err);
         }
 

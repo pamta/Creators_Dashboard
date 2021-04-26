@@ -80,7 +80,7 @@ const App = () => {
 					)}
 					<div
 						className={
-							'h-full w-full bg-white rounded-tl-xl p-4' +
+							'h-full w-full bg-white rounded-tl-xl px-4' +
 							(!isTablet ? ' border shadow-xl' : '')
 						}
 					>

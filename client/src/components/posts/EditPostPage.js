@@ -139,12 +139,26 @@ const EditPostPage = ({ match }) => {
 
 		//socket connection
 		const socket = io("/");
+		console.log("new socket connection");
 		socket.emit('connectInit', id);
 
-		socket.on("end", data => {
-			console.log("Ended: " + data);
-			dispatch(setAlert("Succesful video upload", "success"));
+		socket.on("reload", data => {
+			console.log("reloading because of: " + data);
 			dispatch(loadPosts()); //TODO: crete a new action loadPost(id) to only reload the current post
+    	});
+
+		socket.on("end", data => {
+			console.log("Ended upload of: " + data);
+			
+			dispatch(setAlert(`Succesful ${data} upload`, "success"));
+			
+    	});
+
+		socket.on("uploaderror", data => {
+			console.log("Errror on: " + data);
+			
+			dispatch(setAlert(`Eror on ${data} upload, please try again`, "danger"));
+			
     	});
 
 		socket.on("uploadProgress", data => {
@@ -254,7 +268,7 @@ const EditPostPage = ({ match }) => {
 									(isTablet ? ' w-full' : ' w-1/2') + ' flex flex-row flex-wrap'
 								}
 							>
-								<label htmlFor='slide' className={'cursor-pointer w-full'}>
+								<label htmlFor='images' className={'cursor-pointer w-full'}>
 									<input
 										name='images'
 										id='images'
