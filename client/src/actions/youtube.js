@@ -1,8 +1,11 @@
 import axios from 'axios'
+import { setAlert } from './alert'
 import {
 	YT_AUTH_USER_SUCCESS,
 	YT_AUTH_USER_FAIL,
 	YT_LOAD_STORED_DATA_SUCCESS,
+	YT_PUBLISH_SUCCESS,
+	YT_PUBLISH_FAIL,
 } from './types'
 import { YOUTUBE_TOKEN } from '../utils/localStorageTypes'
 
@@ -46,6 +49,44 @@ export const loadYTDataFromStorage = () => (dispatch) => {
 		dispatch({
 			type: YT_LOAD_STORED_DATA_SUCCESS,
 			payload: JSON.parse(ytData),
+		})
+	}
+}
+
+export const publishVideoToYT = (
+	fileURL,
+	title,
+	description,
+	privacyStatus
+) => async (dispatch, getState) => {
+	console.log('Going to publish video to YouTube...')
+	privacyStatus = privacyStatus ? 'public' : 'private'
+	try {
+		const body = JSON.stringify({
+			fileURL,
+			title,
+			description,
+			privacyStatus,
+		})
+		const config = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		}
+		const res = await axios.post('/youtube/upload', body, config)
+		dispatch({
+			type: YT_PUBLISH_SUCCESS,
+			payload: res.data,
+		})
+	} catch (err) {
+		const errors = err.response.data.errors
+			? err.response.data.errors
+			: [err.response.data]
+		if (errors) {
+			errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')))
+		}
+		dispatch({
+			type: YT_PUBLISH_FAIL,
 		})
 	}
 }

@@ -136,7 +136,7 @@ export const uploadVideo = ( videofile, post_id ) => async (dispatch) => {
 
     const res = await axios.post("/api/publication/upload/video", formData, config);
 
-    dispatch(setAlert("Video uploaded", "success"));
+    //dispatch(setAlert("Video uploaded", "success"));
     dispatch({
       type: POST_UPLOAD_VIDEO,
       payload: res.data,

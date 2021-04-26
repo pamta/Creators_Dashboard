@@ -33,6 +33,17 @@ const Post = () => {
 		}
 	}, [post.posts]);
 
+    const tabStyle = (tab) => {
+        switch(tab) {
+            case "view":
+                return activeTab == 'view' ? "py-2 px-6 bg-green-500 rounded-t-lg hover:bg-green-300 focus:outline-none text-black border-b-2 font-medium border-red-600" : "py-2 px-6 rounded-t-lg text-gray-500 bg-green-300 hover:text-black hover:bg-green-500 focus:outline-none";
+            case "analytics":
+                return activeTab == 'analytics' ? "py-2 px-6 bg-blue-400 rounded-t-lg hover:bg-blue-300 focus:outline-none text-black border-b-2 font-medium border-red-600" : "py-2 px-6 rounded-t-lg text-gray-500 bg-blue-300 hover:text-black hover:bg-blue-400 focus:outline-none";
+            case "edit":
+                return activeTab == 'edit' ? "py-2 px-6 bg-pink-400 rounded-t-lg hover:bg-pink-300 focus:outline-none text-black border-b-2 font-medium border-red-600" : "py-2 px-6 rounded-t-lg text-gray-500 bg-pink-300 hover:text-black hover:bg-pink-400 focus:outline-none";
+        }
+    } 
+
     const tabContent = () => {
         switch(activeTab) {
   
@@ -41,7 +52,7 @@ const Post = () => {
             case "analytics":
                 return <PostAnaylitics/>;
             case "edit":
-                return <EditPost isEditing = 'true'/>;
+                return <EditPost/>;
             default: 
                 <div></div>;
         }
@@ -53,28 +64,11 @@ const Post = () => {
                 <div className="flex flex-row  px-4 text-gray-900 text-2xl md:text-4xl capitalize">
                     <div>{title}</div>
 
-                    <div className="ml-8 flex-no-wrap ">
-                        <button onClick={() => history.goBack()} className="flex  justify-center items-center space-x-2 p-2 text-sm font-bold uppercase rounded-lg bg-gray-400 text-black hover:shadow-lg hover:bg-gray-600 hover:text-white">
-                        <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            width='16'
-                            height='16'
-                            viewBox='0 0 24 24'
-                            fill='none'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                        >
-                            <path d='M19 12H6M12 5l-7 7 7 7' />
-                        </svg>
-                            <p>Back</p>
-                        </button>
-                    </div>
+                    
                 </div>
 
                 <div >
-                    <button className={activeTab == 'view' ? activeStyle : defaultStyle} onClick={() => setActive('view')}> 
+                    <button className={tabStyle("view")} onClick={() => setActive('view')}> 
                         <svg
                             className='w-6 h-6'
                             fill='currentColor'
@@ -86,7 +80,7 @@ const Post = () => {
                         </svg>
                         {/* View */}
                     </button>
-                    <button className={activeTab == 'analytics' ? activeStyle : defaultStyle} onClick={() => setActive('analytics')}>
+                    <button className={tabStyle("analytics")} onClick={() => setActive('analytics')}>
                         <svg
                                 className='w-6 h-6'
                                 fill='currentColor'
@@ -97,7 +91,7 @@ const Post = () => {
                         </svg>
                         {/* Analytics */}
                     </button>
-                    <button className={activeTab == 'edit' ? activeStyle : defaultStyle} onClick={() => setActive('edit')}>
+                    <button className={tabStyle("edit")} onClick={() => setActive('edit')}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path><polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon></svg>
                         {/* Edit */}
                     </button>
@@ -105,6 +99,24 @@ const Post = () => {
             </div>
             <div className={"overflow-x-hidden overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-gray-300 pr-2"}>
                 {tabContent()}
+            </div>
+            <div className="ml-8 flex flex-row justify-start">
+                <button onClick={() => history.goBack()} className="flex  justify-center items-center space-x-2 p-2 text-sm font-bold uppercase rounded-lg bg-gray-400 text-black hover:shadow-lg hover:bg-gray-600 hover:text-white">
+                <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    width='16'
+                    height='16'
+                    viewBox='0 0 24 24'
+                    fill='none'
+                    stroke='currentColor'
+                    strokeWidth='2'
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                >
+                    <path d='M19 12H6M12 5l-7 7 7 7' />
+                </svg>
+                    <p>Back</p>
+                </button>
             </div>
         </div>
     );
