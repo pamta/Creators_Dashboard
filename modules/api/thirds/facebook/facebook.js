@@ -32,13 +32,19 @@ const updatePublicationWithAnalytics = async (
 ) => {
   const fb = await getFacebook();
   const publicationInSn = await publicationSnService.create(fb.id, postID);
-  const fbAnalytic = await fbPostAanlyticsService.create(
-    postID,
-    pageAccessToken,
-    useVideo
-  );
 
-  await publicationSnService.pushAnalyticRef(publicationInSn.id, fbAnalytic.id);
+  if (!useVideo) {
+    const fbAnalytic = await fbPostAanlyticsService.create(
+      postID,
+      pageAccessToken,
+      false
+    );
+
+    await publicationSnService.pushAnalyticRef(
+      publicationInSn.id,
+      fbAnalytic.id
+    );
+  }
   publication.publicationsToSocialNetworks.push(publicationInSn.id);
   await publication.save();
 };
