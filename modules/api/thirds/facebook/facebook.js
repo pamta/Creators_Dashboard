@@ -8,7 +8,12 @@ const fbAppId = config.get("fbAppId");
 // Exporting two objects
 const { check, validationResult } = require("express-validator");
 
-const Publication = require("../../../../models/Publication");
+const FbPostAanlytics = require("./analyticsFbPostService");
+const PublicationSN = require("../../publication/publicationInSNService");
+const Publication = require("../../publication/publicationDAO");
+const publicationSnService = new PublicationSN();
+const fbPostAanlyticsService = new FbPostAanlytics();
+
 const SocialNetwork = require("../../../../models/SocialNetwork");
 
 let facebook = null;
@@ -17,6 +22,25 @@ const getFacebook = async () => {
     facebook = await SocialNetwork.findOne({ name: "Facebook" });
   }
   return facebook;
+};
+
+const updatePublicationWithAnalytics = async (
+  publication,
+  postID,
+  pageAccessToken,
+  useVideo
+) => {
+  const fb = await getFacebook();
+  const publicationInSn = await publicationSnService.create(fb.id, postID);
+  const fbAnalytic = await fbPostAanlyticsService.create(
+    postID,
+    pageAccessToken,
+    useVideo
+  );
+
+  await publicationSnService.pushAnalyticRef(publicationInSn.id, fbAnalytic.id);
+  publication.publicationsToSocialNetworks.push(publicationInSn.id);
+  await publication.save();
 };
 
 // @route  POST api/facebook
@@ -60,7 +84,7 @@ router.post(
       const publication = await Publication.findOne({
         _id: publication_id,
         user_id: req.user.id,
-      }).exec();
+      });
 
       if (use_video) {
         if (!publication.video || !publication.video.URL) {
@@ -69,7 +93,14 @@ router.post(
         const requestLink = `https://graph-video.facebook.com/v10.0/${fbAppId}/videos?access_token=${pageAccessToken}&file_url=${publication.video.URL}`;
         const answer = await axios.post(requestLink);
 
-        return res.send(answer.data.id);
+        const postID = answer.data.id;
+        await updatePublicationWithAnalytics(
+          publication,
+          postID,
+          pageAccessToken,
+          use_video
+        );
+        return res.send(publication);
       }
 
       const { images, text } = publication;
@@ -92,7 +123,14 @@ router.post(
         }
 
         const answer = await axios.post(requestLink);
-        res.send(answer.data.id);
+        const postID = answer.data.id;
+        await updatePublicationWithAnalytics(
+          publication,
+          postID,
+          pageAccessToken,
+          use_video
+        );
+        res.send(publication);
       }
     } catch (err) {
       console.error(err.message);
