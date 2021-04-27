@@ -1,4 +1,5 @@
 import useWindowSize from '../../lib/useWindowSize'
+import UserStats from '../analytics/UserStats'
 
 const AnalyticsPage = () => {
 	const isTablet = useWindowSize().width <= 1080
@@ -25,7 +26,7 @@ const AnalyticsPage = () => {
 						(isTablet ? ' w-full' : ' w-1/3')
 					}
 				>
-					<h2 className='font-semibold text-xl mb-4'>Analytics</h2>
+					<UserStats isTablet={isTablet} />
 				</div>
 				<div
 					className={
