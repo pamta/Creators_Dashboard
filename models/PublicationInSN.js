@@ -9,7 +9,6 @@ const PublicationInSN_Schema = new mongoose.Schema({
     {
       object: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "",
       },
       date: {
         type: Date,
