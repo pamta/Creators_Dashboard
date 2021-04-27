@@ -51,6 +51,7 @@ class PublicationDAO extends Publication {
             );
             arrAnalytics.push({
               date: analytic.date,
+              socialNetwork: socialNet.name,
               data: element,
             });
           })
