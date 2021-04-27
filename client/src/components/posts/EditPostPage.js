@@ -3,20 +3,27 @@ import Switch from 'react-switch'
 import { Redirect, useHistory, useLocation } from 'react-router-dom'
 import { useParams } from 'react-router'
 import useWindowSize from '../../lib/useWindowSize'
-import BasicModal from '../layout/BasicModal'
+import LoadingBar from './LoadingBar'
 
-import io from "socket.io-client"
+//import io from "socket.io-client"
+
+import {socket} from "../../service/socket";
 
 import styles from './newPost.module.css'
+
 //redux
 import { useSelector, useDispatch } from 'react-redux'
 import {
 	uploadImages,
 	uploadVideo,
-	deletePost,
 	updateText,
 	updateTitle,
 	loadPosts,
+	deletePost,
+	removeText,
+	deleteVideo,
+	deleteImage,
+	deleteImages,	
 } from '../../actions/post'
 import { setAlert } from '../../actions/alert'
 import { publishPostToFb } from '../../actions/facebook'
@@ -34,6 +41,7 @@ const EditPostPage = ({ match }) => {
 	const [isPublicYoutube, setIsPublicYoutube] = useState(false)
 
 	const [redirect, setRedirect] = useState()
+	const [videoUploadProgress, setVideoUploadProgress] = useState(null)
 
 	const post = useSelector((state) => state.post)
 	let history = useHistory()
@@ -138,20 +146,42 @@ const EditPostPage = ({ match }) => {
 		}
 
 		//socket connection
-		const socket = io("/");
-		console.log("new socket connection");
 		socket.emit('connectInit', id);
+		console.log("new socket Innit emition");
+
+		socket.on('disconnect', function () {
+			/* handle disconnect events - possibly reconnect? */
+			socket.emit('connectEnd', id);
+			console.log("Client disconnected");
+		});
+		// socket.on('reconnect', function () {
+		// 	/* handle reconnect events */
+		// 	console.log("Client reconnected");
+		// });
 
 		socket.on("reload", data => {
 			console.log("reloading because of: " + data);
+
+			if (data == "video"){
+				setVideoUploadProgress(null);
+			}
 			dispatch(loadPosts()); //TODO: crete a new action loadPost(id) to only reload the current post
     	});
 
 		socket.on("end", data => {
 			console.log("Ended upload of: " + data);
+			// if (data == "video"){
+			// 	setVideoUploadProgress(null);
+			// }
 			
-			dispatch(setAlert(`Succesful ${data} upload`, "success"));
+			dispatch(setAlert(`Succesfullly added ${data}`, "success"));
 			
+    	});
+
+		socket.on("delete", data => {
+			console.log("Succesfully deleted " + data);
+			
+			dispatch(setAlert(`Succesfully deleted ${data}`, "success"));
     	});
 
 		socket.on("uploaderror", data => {
@@ -162,8 +192,14 @@ const EditPostPage = ({ match }) => {
     	});
 
 		socket.on("uploadProgress", data => {
-			console.log(data);
+			//console.log(data);
+			setVideoUploadProgress(data);
     	});
+
+		return () => {
+			socket.removeAllListeners();
+			socket.emit('connectEnd', id);
+		}
 
 	}, [post.posts]);
 
@@ -310,9 +346,16 @@ const EditPostPage = ({ match }) => {
 									slectedPost.images &&
 									slectedPost.images.map((image, index) => {
 										return (
-											<div className={'w-1/2 '} key={image.name}>
+											<div className={'w-1/2 relative '} key={image.name}>
+												<div className="absolute left-0 top-0">
+													<button className="bg-gray-500 rounded-xl ml-1 mt-1 cursor-pointer" onClick={(e) => { console.log("delete image"); dispatch(deleteImage(id, image.name));}}>
+														<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+															<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+														</svg>
+													</button>
+												</div>
 												<img
-													className={'w-full'}
+													className={'w-full rounded'}
 													src={image.URL}
 													alt={image.name}
 												></img>
@@ -355,13 +398,29 @@ const EditPostPage = ({ match }) => {
 										<p>{videoName.split('\\')[2]}</p>
 									</div>
 								</label>
+
+								{videoUploadProgress && <LoadingBar progress={videoUploadProgress}></LoadingBar>}
+
 								{slectedPost && slectedPost.video && slectedPost.video.URL && (
 									<div
-										className={'w-full flex justify-center '}
+										className={'w-full relative'}
 										id={slectedPost.video.name}
 									>
-										<video src={slectedPost.video.URL} width="full" height="full" controls>
-											{/* <source src={slectedPost.video.URL} type="video/mp4"/>*/}
+										{/* <div className="absolute left-0 top-0">
+											<button className="bg-gray-500 rounded-xl ml-1 mt-1 cursor-pointer" onClick={(e) => {console.log("delete video")}}>
+												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+													<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+												</svg>
+											</button>
+										</div> */}
+										<div className="relative" style={{top: "0px"}}>
+											<button className="bg-gray-500 rounded-xl ml-1 mt-1 cursor-pointer" onClick={(e) => {console.log("delete video"); dispatch(deleteVideo(id));}}>
+												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+													<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+												</svg>
+											</button>
+										</div> 
+										<video className="rounded" src={slectedPost.video.URL} width="full" controls>
 											Your browser does not support the video tag. 
 										</video>
 									</div>

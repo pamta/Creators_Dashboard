@@ -38,7 +38,7 @@ class MediaStorageService {
                 let progress = (written/size) * 100;
 
                 //console.log(`${progress}% uploaded, ${written}Bytes out of ${size} Bytes.`);
-                socketInstance.emit('uploadProgress', `${progress}%`);
+                socketInstance.emit('uploadProgress', `${Math.floor(progress)}`);
 
                 if(written >= size){
                     readableBuffer.stop();    //special function of the stream-buffers module

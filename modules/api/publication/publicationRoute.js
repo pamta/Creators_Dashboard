@@ -247,7 +247,7 @@ router.post(
             const thisSocketId = sockets[publication_id];
             const socketInstance = io.to(thisSocketId);
 
-            socketInstance.emit('uploadProgress', 'File received, uploading to storage...');
+            //socketInstance.emit('uploadProgress', 'File received, uploading to storage...');
 
 			//use this instead when activating the auth middleware
 			const publicationFound = await Publication.findOne({
@@ -357,7 +357,7 @@ router.post(
             const thisSocketId = sockets[publication_id];
             const socketInstance = io.to(thisSocketId);
 
-            socketInstance.emit('uploadProgress', 'File received, uploading to storage...');
+            //socketInstance.emit('uploadProgress', 'File received, uploading to storage...');
 
             console.log("Uploading: " + req.file.originalname);
             console.log("Of Size:  " + req.file.size);
@@ -557,6 +557,11 @@ router.delete('/video', auth, async (req, res) => {
 			return handleError(res, 400, 'Publication non existent')
 		}
 
+		const io = req.app.get('io');
+		const sockets = req.app.get('sockets');
+		const thisSocketId = sockets[publication_id];
+		const socketInstance = io.to(thisSocketId);
+
 		const oldVideo = Object.assign({}, publication.video)
 		if (oldVideo) {
 			//DELETE IN DB
@@ -572,6 +577,9 @@ router.delete('/video', auth, async (req, res) => {
 			try {
 				await mediaBucket.file(oldVideo.name).delete()
 				console.log(`${oldVideo.URL} deleted.`)
+				socketInstance.emit('delete','video');
+                socketInstance.emit('reload','video');
+
 			} catch (err) {
 				console.log(
 					`could not delete file ${oldVideo.name}, maybe it does not exists`
@@ -606,6 +614,11 @@ router.delete('/images', auth, async (req, res) => {
 			return handleError(res, 400, 'Publication non existent')
 		}
 
+		const io = req.app.get('io');
+		const sockets = req.app.get('sockets');
+		const thisSocketId = sockets[publication_id];
+		const socketInstance = io.to(thisSocketId);
+
 		const oldImages = [...publication.images]
 		if (!(oldImages === undefined || oldImages.length == 0)) {
 			//DELETE IN DB
@@ -623,6 +636,8 @@ router.delete('/images', auth, async (req, res) => {
 				try {
 					await mediaBucket.file(image.name).delete()
 					console.log(`${image.URL}  deleted.`)
+					socketInstance.emit('delete','image');
+                	socketInstance.emit('reload','image');
 				} catch (err) {
 					console.log(
 						`could not delete file ${image.name}, maybe it does not exists`
@@ -647,6 +662,7 @@ router.delete('/images', auth, async (req, res) => {
 //delete a specific image from the publication
 router.delete('/image', auth, async (req, res) => {
 	try {
+		console.log("requested image deletion");
 		const publication_id = req.header('publication_id')
 		const image_name = req.header('image_name')
 		const publication = await Publication.findOne({
@@ -657,6 +673,11 @@ router.delete('/image', auth, async (req, res) => {
 		if (!publication) {
 			return handleError(res, 400, 'Publication non existent')
 		}
+
+		const io = req.app.get('io');
+		const sockets = req.app.get('sockets');
+		const thisSocketId = sockets[publication_id];
+		const socketInstance = io.to(thisSocketId);
 
 		if (!(publication.images === undefined || publication.images.length == 0)) {
 			//DELETE IN DB
@@ -686,6 +707,8 @@ router.delete('/image', auth, async (req, res) => {
 			try {
 				await mediaBucket.file(image_name).delete()
 				console.log(`${image_name}  deleted.`)
+				socketInstance.emit('delete','image');
+                socketInstance.emit('reload','image');
 			} catch (err) {
 				console.log(
 					`could not delete file ${image_name}, maybe it does not exists`

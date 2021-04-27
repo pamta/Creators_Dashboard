@@ -257,7 +257,7 @@ export const deleteVideo= (post_id) => async (dispatch) => {
   try {
     const res = await axios.delete("/api/publication/video", config);
 
-    dispatch(setAlert("Video Removed", "success"));
+    //dispatch(setAlert("Video Removed", "success"));
     dispatch({
       type: POST_UPDATE,
       payload: res.data,
@@ -302,9 +302,10 @@ export const deleteImage= (post_id, name) => async (dispatch) => {
   };
 
   try {
+    console.log("DELETING IMAGE")
     const res = await axios.delete("/api/publication/image", config);
 
-    dispatch(setAlert("Images Removed", "success"));
+    //dispatch(setAlert("Images Removed", "success"));
     dispatch({
       type: POST_UPDATE,
       payload: res.data,
