@@ -37,6 +37,23 @@ router.get('/', auth, async (req, res) => {
 	}
 })
 
+// @route   GET api/publication/:id/analytics
+// @desct  Get post by ID
+// @access Private
+router.get("/:id/analytics", auth, async (req, res) => {
+  try {
+    const postID = req.params.id;
+    const analytics = await publicationService.getPostAnalytics(
+      postID,
+      req.user.id
+    );
+    res.json(analytics);
+  } catch (err) {
+    console.error(err.message);
+    return handleError(res, 500, "Server Error", err);
+  }
+});
+
 // route to create a new publication
 // @route  POST api/publication
 // @access private, requires a user token

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const AnalyticsFbPage = new mongoose.Schema({
+const AnalyticsFbPageSchema = new mongoose.Schema({
   pageEngagement: {
     page_engaged_users: {
       type: String,
@@ -169,5 +169,5 @@ const AnalyticsFbPage = new mongoose.Schema({
 
 module.exports = AnalyticsFbPage = mongoose.model(
   "analyticsFbPage",
-  AnalyticsFbPage
+  AnalyticsFbPageSchema
 );
