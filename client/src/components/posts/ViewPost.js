@@ -19,6 +19,8 @@ const ViewPost = () => {
     const [media, setMedia] = useState([]);
         
     const customRenderItem = (item, props) => <item.type {...item.props} {...props} />;
+
+    const imgClassname = "h-auto";
     
     // Video stuff needs to be changed 
     const getVideoThumb = (videoId) => `https://img.youtube.com/vi/${videoId}/default.jpg`;
@@ -56,7 +58,7 @@ const ViewPost = () => {
             let tempMedia = [];
             pMedia.forEach(item => {
                 tempMedia.push(
-                    <img className="w-80" src={item.URL} />
+                    <img className={imgClassname} src={item.URL} />
                 )
             })
             setMedia(tempMedia);
@@ -100,9 +102,9 @@ const ViewPost = () => {
     };
         
     return (
-        <div className="pt-10 pb-10 flex flex-col  items-center">
-            <div className="rounded  shadow-lg bg-white w-5/6">
-                <div className="w-full">
+        <div className="pt-10 pb-10 flex flex-col min-h-full items-center">
+            <div className="rounded shadow-lg bg-white w-1/2 max-h-3/4">
+                <div className="w-full max-h-1/2">
                    {mediaDisplay()} 
                 </div>
                 <div className="px-5 py-2 space-y-2">

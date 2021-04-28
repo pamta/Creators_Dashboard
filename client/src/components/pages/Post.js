@@ -112,7 +112,7 @@ const Post = () => {
                     </button>
                 </div>
             </div>
-            <div className={"overflow-x-hidden overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-gray-300 pr-2"}>
+            <div className={"overflow-x-hidden overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-gray-300 h-full pr-2"}>
                 {tabContent()}
             </div>
            
