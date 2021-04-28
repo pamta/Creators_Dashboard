@@ -150,6 +150,6 @@ router.post(
 // @route  GET api/facebook/pageAnalytics
 // @access Private/requires token
 // Put an existing post in our DB to facebook with a fb page access token
-router.get();
+//router.get();
 
 module.exports = router;

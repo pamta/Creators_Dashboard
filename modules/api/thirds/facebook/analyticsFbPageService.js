@@ -30,8 +30,6 @@ class AnalyticsFbPageService {
     await analytic.upload();
     return analytic;
   }
-
-  async getByPage(fbPageID)
 }
 
 module.exports = AnalyticsFbPageService;
