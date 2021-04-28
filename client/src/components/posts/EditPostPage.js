@@ -4,8 +4,7 @@ import { Redirect, useHistory, useLocation } from 'react-router-dom'
 import { useParams } from 'react-router'
 import useWindowSize from '../../lib/useWindowSize'
 import LoadingBar from './LoadingBar'
-
-//import io from "socket.io-client"
+//import LoadingBar from 'react-top-loading-bar'
 
 import {socket} from "../../service/socket";
 
@@ -30,7 +29,7 @@ import { publishPostToFb } from '../../actions/facebook'
 import { publishVideoToYT } from '../../actions/youtube'
 
 const EditPostPage = ({ match }) => {
-	const [slectedPost, setSelectedPost] = useState()
+	const [selectedPost, setSelectedPost] = useState()
 	const [title, setTitle] = useState('')
 	const [content, setContent] = useState('')
 	const [fileNames, setFileNames] = useState([])
@@ -39,6 +38,7 @@ const EditPostPage = ({ match }) => {
 	const [isFacebookSelected, setFacebookSelected] = useState(false)
 	const [isTwitterSelected, setTwitterSelected] = useState(false)
 	const [isPublicYoutube, setIsPublicYoutube] = useState(false)
+	const [isFbVideoUsed, setIsFbVideoUsed] = useState(false)
 
 	const [redirect, setRedirect] = useState()
 	const [videoUploadProgress, setVideoUploadProgress] = useState(null)
@@ -93,14 +93,13 @@ const EditPostPage = ({ match }) => {
 
 		try {
 			if (isFacebookSelected) {
-				let hasVideo =
-					slectedPost && slectedPost.video && !slectedPost.video.isLoading
-				dispatch(publishPostToFb(id, hasVideo))
+				//let hasVideo = selectedPost && selectedPost?.video?.URL
+				dispatch(publishPostToFb(id, isFbVideoUsed))
 			}
 			if (isYoutubeSelected) {
 				dispatch(
 					publishVideoToYT(
-						slectedPost.video.URL,
+						selectedPost.video.URL,
 						title,
 						content,
 						isPublicYoutube
@@ -145,15 +144,25 @@ const EditPostPage = ({ match }) => {
 			//setRedirect(`/posts`); //redirect to posts
 		}
 
-		//socket connection
+		//socket session connection
 		socket.emit('connectInit', id);
 		console.log("new socket Innit emition");
 
-		socket.on('disconnect', function () {
-			/* handle disconnect events - possibly reconnect? */
-			socket.emit('connectEnd', id);
+		socket.on('disconnect', () => {
 			console.log("Client disconnected");
+			// socket.emit('connectEnd', id);
+
+			/* handle disconnect events - possibly reconnect? */
+			if (socket?.socket?.connected === false &&
+				socket?.socket?.connecting === false) {
+				// use a connect() or reconnect() here if you want
+				console.log("Client reconnecting");
+				socket.socket.connect();
+		   	}
 		});
+
+		socket.io.on("reconnect_attempt", () => {console.log("Attemping reconnection");});
+
 		// socket.on('reconnect', function () {
 		// 	/* handle reconnect events */
 		// 	console.log("Client reconnected");
@@ -197,8 +206,8 @@ const EditPostPage = ({ match }) => {
     	});
 
 		return () => {
-			socket.removeAllListeners();
 			socket.emit('connectEnd', id);
+			socket.removeAllListeners();
 		}
 
 	}, [post.posts]);
@@ -262,7 +271,7 @@ const EditPostPage = ({ match }) => {
 									<label htmlFor={'title'} className='sr-only'></label>
 								</div>
 							</div>
-							<button
+							{/* <button
 								onClick={updateTitleFromInput}
 								className={
 									' justify-center items-center space-x-1 rounded-md p-2  text-white' +
@@ -271,7 +280,7 @@ const EditPostPage = ({ match }) => {
 								}
 							>
 								Save
-							</button>
+							</button> */}
 						</div>
 						<div className={'flex flex-col w-full space-y-2'}>
 							<p>Content</p>
@@ -286,7 +295,7 @@ const EditPostPage = ({ match }) => {
 									value={content}
 								/>
 							</div>
-							<button
+							{/* <button
 								onClick={updateTextFromInput}
 								className={
 									' justify-center items-center space-x-1 rounded-md p-2  text-white' +
@@ -295,7 +304,7 @@ const EditPostPage = ({ match }) => {
 								}
 							>
 								Save
-							</button>
+							</button> */}
 						</div>
 
 						<div className={getComponentStyle()}>
@@ -342,9 +351,9 @@ const EditPostPage = ({ match }) => {
 										))}
 									</div>
 								</label>
-								{slectedPost &&
-									slectedPost.images &&
-									slectedPost.images.map((image, index) => {
+								{selectedPost &&
+									selectedPost.images &&
+									selectedPost.images.map((image, index) => {
 										return (
 											<div className={'w-1/2 relative '} key={image.name}>
 												<div className="absolute left-0 top-0">
@@ -399,34 +408,74 @@ const EditPostPage = ({ match }) => {
 									</div>
 								</label>
 
-								{videoUploadProgress && <LoadingBar progress={videoUploadProgress}></LoadingBar>}
+								{ videoUploadProgress && <LoadingBar progress={videoUploadProgress}></LoadingBar> }
 
-								{slectedPost && slectedPost.video && slectedPost.video.URL && (
+								{ selectedPost?.video?.URL && (
 									<div
 										className={'w-full relative'}
-										id={slectedPost.video.name}
+										id={selectedPost.video.name}
 									>
-										{/* <div className="absolute left-0 top-0">
-											<button className="bg-gray-500 rounded-xl ml-1 mt-1 cursor-pointer" onClick={(e) => {console.log("delete video")}}>
-												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-													<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-												</svg>
-											</button>
-										</div> */}
-										<div className="relative" style={{top: "0px"}}>
+										<div className="relative" style={{top: "3px", left: "-3px"}}>
 											<button className="bg-gray-500 rounded-xl ml-1 mt-1 cursor-pointer" onClick={(e) => {console.log("delete video"); dispatch(deleteVideo(id));}}>
 												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
 													<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
 												</svg>
 											</button>
 										</div> 
-										<video className="rounded" src={slectedPost.video.URL} width="full" controls>
+										<video className="rounded" src={selectedPost.video.URL} width="full" controls>
 											Your browser does not support the video tag. 
 										</video>
 									</div>
 								)}
 							</div>
 						</div>
+						
+						<div
+							className={
+								(isTablet
+									? 'flex flex-col w-full space-y-2'
+									: 'flex flex-row justify-between items-center') + ' mt-4'
+							}
+						>
+							<button
+								className={
+									'flex flex-row justify-center items-center p-2 text-sm rounded-lg bg-red-900 text-white active:bg-red-700 font-bold outline-none focus:outline-none ' +
+									(isTablet ? 'w-full' : '')
+								}
+								onClick={(e) => {
+									e.preventDefault()
+									deleteCurrentPost()
+								}}
+							>
+								<svg
+									xmlns='http://www.w3.org/2000/svg'
+									width='24'
+									height='24'
+									viewBox='0 0 24 24'
+									fill='none'
+									stroke='currentColor'
+									strokeWidth='2'
+									strokeLinecap='round'
+									strokeLinejoin='round'
+								>
+									<polyline points='3 6 5 6 21 6'></polyline>
+									<path d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'></path>
+									<line x1='10' y1='11' x2='10' y2='17'></line>
+									<line x1='14' y1='11' x2='14' y2='17'></line>
+								</svg>
+							</button>
+
+							<button
+								onClick={() => {updateTextFromInput(); updateTitleFromInput();}}
+								className={
+									'rounded-md p-2 text-white bg-red-400 hover:bg-red-600' +
+									(isTablet ? ' w-full' : ' w-1/3')
+								}
+							>
+								Save
+							</button>
+						</div>
+						
 					</div>
 
 					{/* Social auth component */}
@@ -539,29 +588,42 @@ const EditPostPage = ({ match }) => {
 								<p>Facebook</p>
 							</div>
 							{isFacebookSelected ? (
-								<div
-									className={
-										'bg-yellow-100 rounded-md text-gray-600 text-sm p-2 italic items-center'
-									}
-								>
-									<span>
-										<svg
-											className='w-5 h-5 relative inline-block mr-1'
-											fill='none'
-											stroke='currentColor'
-											viewBox='0 0 24 24'
-											xmlns='http://www.w3.org/2000/svg'
-										>
-											<path
-												strokeLinecap='round'
-												strokeLinejoin='round'
-												strokeWidth='2'
-												d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'
-											></path>
-										</svg>
-										Only images will be uploaded
-									</span>
-								</div>
+								<>
+									<div
+										className={
+											'bg-yellow-100 rounded-md text-gray-600 text-sm p-2 italic items-center'
+										}
+									>
+										<span>
+											<svg
+												className='w-5 h-5 relative inline-block mr-1'
+												fill='none'
+												stroke='currentColor'
+												viewBox='0 0 24 24'
+												xmlns='http://www.w3.org/2000/svg'
+											>
+												<path
+													strokeLinecap='round'
+													strokeLinejoin='round'
+													strokeWidth='2'
+													d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'
+												></path>
+											</svg>
+											Only {isFbVideoUsed ? "video" : "images"} will be uploaded
+										</span>
+									</div>
+									<div className='flex flex-row space-x-2 items-center'>
+										<Switch
+											onChange={() => setIsFbVideoUsed(!isFbVideoUsed)}
+											checked={isFbVideoUsed}
+											width={38}
+											height={20}
+											checkedIcon={false}
+											uncheckedIcon={false}
+										/>
+										{isFbVideoUsed ? <p>Video</p> : <p>Images</p>}
+									</div>
+								</>
 							) : (
 								<></>
 							)}
@@ -572,8 +634,8 @@ const EditPostPage = ({ match }) => {
 								<button
 									className='w-5 h-5 bg-white flex items-center justify-center rounded-xl'
 									disabled={
-										slectedPost != null
-											? slectedPost.video.isLoading == true
+										selectedPost?.video?.URL
+											? false
 											: true
 									}
 									onClick={() => setYoutubeSelected(!isYoutubeSelected)}
@@ -662,52 +724,15 @@ const EditPostPage = ({ match }) => {
 								<></>
 							)}
 						</div>
-					</div>
-				</div>
-
-				<div
-					className={
-						(isTablet
-							? 'flex flex-col w-full space-y-2'
-							: 'flex flex-row justify-between items-center') + ' mt-4'
-					}
-				>
-					<button
-						className={
-							'flex flex-row justify-center items-center p-2 text-sm rounded-lg bg-red-900 text-white active:bg-red-700 font-bold outline-none focus:outline-none ' +
-							(isTablet ? 'w-full' : '')
-						}
-						onClick={(e) => {
-							e.preventDefault()
-							deleteCurrentPost()
-						}}
-					>
-						<svg
-							xmlns='http://www.w3.org/2000/svg'
-							width='24'
-							height='24'
-							viewBox='0 0 24 24'
-							fill='none'
-							stroke='currentColor'
-							strokeWidth='2'
-							strokeLinecap='round'
-							strokeLinejoin='round'
+						<button
+							onClick={publishToSN}
+							className={
+								'rounded-md p-2 text-white bg-red-400 hover:bg-red-600 w-full' 
+							}
 						>
-							<polyline points='3 6 5 6 21 6'></polyline>
-							<path d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'></path>
-							<line x1='10' y1='11' x2='10' y2='17'></line>
-							<line x1='14' y1='11' x2='14' y2='17'></line>
-						</svg>
-					</button>
-					<button
-						onClick={publishToSN}
-						className={
-							'rounded-md p-2 text-white bg-red-400 hover:bg-red-600' +
-							(isTablet ? ' w-full' : ' w-1/3')
-						}
-					>
-						Publish
-					</button>
+							Publish
+						</button>
+					</div>
 				</div>
 
 				
