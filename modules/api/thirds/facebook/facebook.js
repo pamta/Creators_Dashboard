@@ -8,11 +8,13 @@ const fbAppId = config.get("fbAppId");
 // Exporting two objects
 const { check, validationResult } = require("express-validator");
 
-const FbPostAanlytics = require("./analyticsFbPostService");
+const FbPostAnalytics = require("./analyticsFbPostService");
+const FbPageAnalytics = require("./analyticsFbPageService");
 const PublicationSN = require("../../publication/publicationInSNService");
 const Publication = require("../../publication/publicationDAO");
 const publicationSnService = new PublicationSN();
-const fbPostAanlyticsService = new FbPostAanlytics();
+const fbPostAnalyticsService = new FbPostAnalytics();
+const fbPageAnalyticsService = new FbPageAnalytics();
 
 const SocialNetwork = require("../../../../models/SocialNetwork");
 
@@ -34,7 +36,7 @@ const updatePublicationWithAnalytics = async (
   const publicationInSn = await publicationSnService.create(fb.id, postID);
 
   if (!useVideo) {
-    const fbAnalytic = await fbPostAanlyticsService.create(
+    const fbAnalytic = await fbPostAnalyticsService.create(
       postID,
       pageAccessToken,
       false
@@ -144,5 +146,10 @@ router.post(
     }
   }
 );
+
+// @route  GET api/facebook/pageAnalytics
+// @access Private/requires token
+// Put an existing post in our DB to facebook with a fb page access token
+router.get();
 
 module.exports = router;
