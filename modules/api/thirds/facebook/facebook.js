@@ -147,9 +147,22 @@ router.post(
   }
 );
 
-// @route  GET api/facebook/pageAnalytics
+// @route  GET api/facebook/page/:fbPageID//analytics
 // @access Private/requires token
 // Put an existing post in our DB to facebook with a fb page access token
-//router.get();
+router.get("/page/:fbPageID/analytics", auth, async (req, res) => {
+  try {
+    const fbPageID = req.params.fbPageID;
+    const pageAcessToken = req.headers.pageaccesstoken;
+    const pageAnalytics = await fbPageAnalyticsService.updatePageAnalytic(
+      fbPageID,
+      pageAcessToken
+    );
+    res.json(pageAnalytics);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
 
 module.exports = router;
