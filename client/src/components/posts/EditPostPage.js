@@ -124,16 +124,17 @@ const EditPostPage = ({ match }) => {
 			: 'flex flex-row space-x-8'
 	}
 
+	const getUploadsStyle = () => {
+		return isTablet ? 'flex flex-col space-y-8 w-full' : 'flex flex-row'
+	}
+
 	const getLayoutStyle = () => {
 		return isTablet
 			? 'flex flex-col space-y-8 w-full'
 			: 'flex flex-row space-x-8'
 	}
 
-	//console.log('is ? ' + (isYoutubeSelected ? 'yes' : 'no'))
-
 	useEffect(() => {
-		//console.log(id + " : " + post.posts);
 		const selected_post = post.posts.find((somePost) => {
 			return somePost._id == id
 		})
@@ -254,27 +255,28 @@ const EditPostPage = ({ match }) => {
 			<div>
 				<div className={getLayoutStyle()}>
 					{/* Blog post component */}
-					<div
-						className={
-							'w-full flex flex-col space-y-8 justify-between rounded-md bg-gray-200 p-6'
-						}
-					>
-						<div className={'flex flex-col w-full space-y-2'}>
-							<p>Title</p>
-							<div className={'relative rounded-md shadow-sm h-8 w-full'}>
-								<input
-									name={'Title'}
-									id={'title'}
-									placeholder={'Title'}
-									className='focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md h-8 p-2'
-									onChange={(e) => setTitle(e.target.value)}
-									value={title}
-								/>
-								<div className='absolute flex items-left h-8 w-full'>
-									<label htmlFor={'title'} className='sr-only'></label>
+					<div>
+						<div
+							className={
+								'w-full flex flex-col space-y-8 justify-between rounded-md bg-gray-200 p-6'
+							}
+						>
+							<div className={'flex flex-col w-full space-y-2'}>
+								<p>Title</p>
+								<div className={'relative rounded-md shadow-sm h-8 w-full'}>
+									<input
+										name={'Title'}
+										id={'title'}
+										placeholder={'Title'}
+										className='focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md h-8 p-2'
+										onChange={(e) => setTitle(e.target.value)}
+										value={title}
+									/>
+									<div className='absolute flex items-left h-8 w-full'>
+										<label htmlFor={'title'} className='sr-only'></label>
+									</div>
 								</div>
-							</div>
-							{/* <button
+								{/* <button
 								onClick={updateTitleFromInput}
 								className={
 									' justify-center items-center space-x-1 rounded-md p-2  text-white' +
@@ -284,21 +286,21 @@ const EditPostPage = ({ match }) => {
 							>
 								Save
 							</button> */}
-						</div>
-						<div className={'flex flex-col w-full space-y-2'}>
-							<p>Content</p>
-							<div className={'relative rounded-md shadow-sm w-full'}>
-								<textarea
-									name={'Content'}
-									id={'content'}
-									placeholder={'Content'}
-									className='focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2'
-									onChange={(e) => setContent(e.target.value)}
-									rows='5'
-									value={content}
-								/>
 							</div>
-							{/* <button
+							<div className={'flex flex-col w-full space-y-2'}>
+								<p>Content</p>
+								<div className={'relative rounded-md shadow-sm w-full'}>
+									<textarea
+										name={'Content'}
+										id={'content'}
+										placeholder={'Content'}
+										className='focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2'
+										onChange={(e) => setContent(e.target.value)}
+										rows='5'
+										value={content}
+									/>
+								</div>
+								{/* <button
 								onClick={updateTextFromInput}
 								className={
 									' justify-center items-center space-x-1 rounded-md p-2  text-white' +
@@ -308,60 +310,166 @@ const EditPostPage = ({ match }) => {
 							>
 								Save
 							</button> */}
-						</div>
+							</div>
 
-						<div className={getComponentStyle()}>
+							<div className={getComponentStyle()}>
+								<div
+									className={
+										(isTablet ? ' w-full' : ' w-1/2') +
+										' flex flex-row flex-wrap'
+									}
+								>
+									<label htmlFor='images' className={'cursor-pointer w-full'}>
+										<input
+											name='images'
+											id='images'
+											type='file'
+											multiple
+											onChange={(e) => {
+												for (let i = 0; i < e.target.files.length; i++) {
+													setFileNames((prevFileNames) => [
+														...prevFileNames,
+														e.target.files[i].name,
+													])
+												}
+												uploadImagesFromInput(e)
+											}}
+										/>
+										<div className='flex flex-row px-3 py-3 justify-center items-center space-x-4 rounded-lg bg-green-200 text-black active:bg-green-400 text-md md:text-md shadow hover:shadow-lg hover:bg-green-400 hover:text-white'>
+											<svg
+												xmlns='http://www.w3.org/2000/svg'
+												width='18'
+												height='18'
+												viewBox='0 0 24 24'
+												fill='none'
+												stroke='currentColor'
+												strokeWidth='2'
+												strokeLinecap='round'
+												strokeLinejoin='round'
+											>
+												<path d='M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 8l-5-5-5 5M12 4.2v10.3' />
+											</svg>
+											<p className='text-center'>Upload images</p>
+										</div>
+										<div className='flex flex-col w-1/2 text-sm text-gray-500 italic'>
+											{fileNames.map((file, index) => (
+												<p key={index}>{file}</p>
+											))}
+										</div>
+									</label>
+								</div>
+								<div
+									className={
+										(isTablet ? ' w-full' : ' w-1/2') +
+										' flex flex-row flex-wrap'
+									}
+								>
+									<label htmlFor='video' className={'cursor-pointer w-full'}>
+										<input
+											name='video'
+											id='video'
+											type='file'
+											onChange={(e) => {
+												setVideoName(e.target.value)
+												uploadVideoFromInput(e)
+											}}
+										/>
+										<div className='flex flex-row px-3 py-3 justify-center items-center space-x-4 rounded-lg bg-green-400 text-black active:bg-green-600 text-md md:text-md shadow hover:shadow-lg hover:bg-green-600 hover:text-white'>
+											<svg
+												xmlns='http://www.w3.org/2000/svg'
+												width='18'
+												height='18'
+												viewBox='0 0 24 24'
+												fill='none'
+												stroke='currentColor'
+												strokeWidth='2'
+												strokeLinecap='round'
+												strokeLinejoin='round'
+											>
+												<path d='M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 8l-5-5-5 5M12 4.2v10.3' />
+											</svg>
+											<p className='text-center'>Upload video</p>
+										</div>
+										<div className='flex flex-col w-1/2 text-sm text-gray-500 italic'>
+											<p>{videoName.split('\\')[2]}</p>
+										</div>
+									</label>
+
+									{videoUploadProgress && (
+										<LoadingBar progress={videoUploadProgress}></LoadingBar>
+									)}
+								</div>
+							</div>
+
 							<div
 								className={
-									(isTablet ? ' w-full' : ' w-1/2') + ' flex flex-row flex-wrap'
+									(isTablet
+										? 'flex flex-col w-full space-y-2'
+										: 'flex flex-row justify-between items-center') + ' mt-4'
 								}
 							>
-								<label htmlFor='images' className={'cursor-pointer w-full'}>
-									<input
-										name='images'
-										id='images'
-										type='file'
-										multiple
-										onChange={(e) => {
-											for (let i = 0; i < e.target.files.length; i++) {
-												setFileNames((prevFileNames) => [
-													...prevFileNames,
-													e.target.files[i].name,
-												])
-											}
-											uploadImagesFromInput(e)
-										}}
-									/>
-									<div className='flex flex-row px-3 py-3 justify-center items-center space-x-4 rounded-lg bg-green-200 text-black active:bg-green-400 text-md md:text-md shadow hover:shadow-lg hover:bg-green-400 hover:text-white'>
-										<svg
-											xmlns='http://www.w3.org/2000/svg'
-											width='18'
-											height='18'
-											viewBox='0 0 24 24'
-											fill='none'
-											stroke='currentColor'
-											strokeWidth='2'
-											strokeLinecap='round'
-											strokeLinejoin='round'
-										>
-											<path d='M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 8l-5-5-5 5M12 4.2v10.3' />
-										</svg>
-										<p className='text-center'>Upload images</p>
-									</div>
-									<div className='flex flex-col w-1/2 text-sm text-gray-500 italic'>
-										{fileNames.map((file, index) => (
-											<p key={index}>{file}</p>
-										))}
-									</div>
-								</label>
+								<button
+									className={
+										'flex flex-row justify-center items-center p-2 text-sm rounded-lg bg-red-900 text-white active:bg-red-700 font-bold outline-none focus:outline-none ' +
+										(isTablet ? 'w-full' : '')
+									}
+									onClick={(e) => {
+										e.preventDefault()
+										deleteCurrentPost()
+									}}
+								>
+									<svg
+										xmlns='http://www.w3.org/2000/svg'
+										width='24'
+										height='24'
+										viewBox='0 0 24 24'
+										fill='none'
+										stroke='currentColor'
+										strokeWidth='2'
+										strokeLinecap='round'
+										strokeLinejoin='round'
+									>
+										<polyline points='3 6 5 6 21 6'></polyline>
+										<path d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'></path>
+										<line x1='10' y1='11' x2='10' y2='17'></line>
+										<line x1='14' y1='11' x2='14' y2='17'></line>
+									</svg>
+								</button>
+
+								<button
+									onClick={() => {
+										updateTextFromInput()
+										updateTitleFromInput()
+									}}
+									className={
+										'rounded-md p-2 text-white bg-red-400 hover:bg-red-600' +
+										(isTablet ? ' w-full' : ' w-1/3')
+									}
+								>
+									Save
+								</button>
+							</div>
+						</div>
+						{/* Images and video container */}
+						<div className={'w-full py-4 rounded-md border my-4 '}>
+							<p className={'italic mx-4 font-bold text-gray-600'}>Uploads</p>
+							<div
+								className={getUploadsStyle() + ' flex-wrap px-4 justify-center'}
+							>
 								{selectedPost &&
 									selectedPost.images &&
 									selectedPost.images.map((image, index) => {
 										return (
-											<div className={'w-1/2 relative '} key={image.name}>
-												<div className='absolute left-0 top-0'>
+											<div
+												className={
+													'relative m-4 flex flex-row ' +
+													(isTablet ? 'w-full' : 'w-1/3')
+												}
+												key={image.name}
+											>
+												<div className='relative' style={{ left: '-15px' }}>
 													<button
-														className='bg-gray-500 rounded-xl ml-1 mt-1 cursor-pointer'
+														className='bg-red-400 w-4 h-4 rounded-xl my-4 cursor-pointer float-right'
 														onClick={(e) => {
 															console.log('delete image')
 															dispatch(deleteImage(id, image.name))
@@ -371,66 +479,25 @@ const EditPostPage = ({ match }) => {
 															xmlns='http://www.w3.org/2000/svg'
 															width='16'
 															height='16'
-															fill='currentColor'
+															fill='white'
 															class='bi bi-x'
 															viewBox='0 0 16 16'
 														>
 															<path d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z' />
 														</svg>
 													</button>
+													<img
+														className={'w-full rounded object-contain'}
+														src={image.URL}
+														alt={image.name}
+													></img>
 												</div>
-												<img
-													className={'w-full rounded'}
-													src={image.URL}
-													alt={image.name}
-												></img>
 											</div>
 										)
 									})}
-							</div>
-							<div
-								className={
-									(isTablet ? ' w-full' : ' w-1/2') + ' flex flex-row flex-wrap'
-								}
-							>
-								<label htmlFor='video' className={'cursor-pointer w-full'}>
-									<input
-										name='video'
-										id='video'
-										type='file'
-										onChange={(e) => {
-											setVideoName(e.target.value)
-											uploadVideoFromInput(e)
-										}}
-									/>
-									<div className='flex flex-row px-3 py-3 justify-center items-center space-x-4 rounded-lg bg-green-400 text-black active:bg-green-600 text-md md:text-md shadow hover:shadow-lg hover:bg-green-600 hover:text-white'>
-										<svg
-											xmlns='http://www.w3.org/2000/svg'
-											width='18'
-											height='18'
-											viewBox='0 0 24 24'
-											fill='none'
-											stroke='currentColor'
-											strokeWidth='2'
-											strokeLinecap='round'
-											strokeLinejoin='round'
-										>
-											<path d='M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 8l-5-5-5 5M12 4.2v10.3' />
-										</svg>
-										<p className='text-center'>Upload video</p>
-									</div>
-									<div className='flex flex-col w-1/2 text-sm text-gray-500 italic'>
-										<p>{videoName.split('\\')[2]}</p>
-									</div>
-								</label>
-
-								{videoUploadProgress && (
-									<LoadingBar progress={videoUploadProgress}></LoadingBar>
-								)}
-
 								{selectedPost?.video?.URL && (
 									<div
-										className={'w-full relative'}
+										className={'relative ' + (isTablet ? 'w-full' : 'w-1/3')}
 										id={selectedPost.video.name}
 									>
 										<div
@@ -438,7 +505,7 @@ const EditPostPage = ({ match }) => {
 											style={{ top: '3px', left: '-3px' }}
 										>
 											<button
-												className='bg-gray-500 rounded-xl ml-1 mt-1 cursor-pointer'
+												className='bg-red-400 w-4 h-4 rounded-xl my-4 cursor-pointer float-right'
 												onClick={(e) => {
 													console.log('delete video')
 													dispatch(deleteVideo(id))
@@ -448,7 +515,7 @@ const EditPostPage = ({ match }) => {
 													xmlns='http://www.w3.org/2000/svg'
 													width='16'
 													height='16'
-													fill='currentColor'
+													fill='white'
 													class='bi bi-x'
 													viewBox='0 0 16 16'
 												>
@@ -467,55 +534,6 @@ const EditPostPage = ({ match }) => {
 									</div>
 								)}
 							</div>
-						</div>
-
-						<div
-							className={
-								(isTablet
-									? 'flex flex-col w-full space-y-2'
-									: 'flex flex-row justify-between items-center') + ' mt-4'
-							}
-						>
-							<button
-								className={
-									'flex flex-row justify-center items-center p-2 text-sm rounded-lg bg-red-900 text-white active:bg-red-700 font-bold outline-none focus:outline-none ' +
-									(isTablet ? 'w-full' : '')
-								}
-								onClick={(e) => {
-									e.preventDefault()
-									deleteCurrentPost()
-								}}
-							>
-								<svg
-									xmlns='http://www.w3.org/2000/svg'
-									width='24'
-									height='24'
-									viewBox='0 0 24 24'
-									fill='none'
-									stroke='currentColor'
-									strokeWidth='2'
-									strokeLinecap='round'
-									strokeLinejoin='round'
-								>
-									<polyline points='3 6 5 6 21 6'></polyline>
-									<path d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'></path>
-									<line x1='10' y1='11' x2='10' y2='17'></line>
-									<line x1='14' y1='11' x2='14' y2='17'></line>
-								</svg>
-							</button>
-
-							<button
-								onClick={() => {
-									updateTextFromInput()
-									updateTitleFromInput()
-								}}
-								className={
-									'rounded-md p-2 text-white bg-red-400 hover:bg-red-600' +
-									(isTablet ? ' w-full' : ' w-1/3')
-								}
-							>
-								Save
-							</button>
 						</div>
 					</div>
 
