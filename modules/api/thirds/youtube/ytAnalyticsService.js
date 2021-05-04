@@ -1,5 +1,6 @@
 const YouTubeAnalytics = require('./ytAnalyticsDAO')
 const { google } = require('googleapis')
+const { analyticsadmin } = require('googleapis/build/src/apis/analyticsadmin')
 
 // Initialize the Youtube API library
 const youtube = google.youtube('v3')
@@ -14,14 +15,15 @@ class YouTubeAnalyticsService {
 
 		const analytics = res.data.items[0].statistics
 
-		analyticDTO[viewCount] = analytics.viewCount
-		analyticDTO[likeCount] = analytics.likeCount
-		analyticDTO[dislikeCount] = analytics.dislikeCount
-		analyticDTO[favoriteCount] = analytics.favoriteCount
-		analyticDTO[commentCount] = analytics.commentCount
+		analyticDTO['viewCount'] = parseInt(analytics.viewCount) ?? 0
+		analyticDTO['likeCount'] = parseInt(analytics.likeCount) ?? 0
+		analyticDTO['dislikeCount'] = parseInt(analytics.dislikeCount) ?? 0
+		analyticDTO['favoriteCount'] = parseInt(analytics.favoriteCount) ?? 0
+		analyticDTO['commentCount'] = parseInt(analytics.commentCount) ?? 0
 
 		const analytic = new YouTubeAnalytics(analyticDTO)
 		await analytic.upload()
+
 		return analytic
 	}
 }

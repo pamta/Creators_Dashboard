@@ -1,21 +1,24 @@
 const mongoose = require('mongoose')
 
 const YouTubeAnalyticSchema = new mongoose.Schema({
-	view_count: {
+	viewCount: {
 		type: Number,
 	},
-	like_count: {
+	likeCount: {
 		type: Number,
 	},
-	dislike_count: {
+	dislikeCount: {
 		type: Number,
 	},
-	favorite_count: {
+	favoriteCount: {
 		type: Number,
 	},
-	comment_count: {
+	commentCount: {
 		type: Number,
 	},
 })
 
-module.exports = Note = mongoose.model('youtubeAnalytic', YouTubeAnalyticSchema)
+module.exports = YouTubeAnalytic = mongoose.model(
+	'youtubeAnalytic',
+	YouTubeAnalyticSchema
+)
