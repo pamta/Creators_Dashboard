@@ -23,6 +23,31 @@ class PublicationDAO extends Publication {
     return publication;
   };
 
+  static findById = async (id, populateField = null, selectFields = null) => {
+    let publication = null;
+    if (populateField == null) {
+      if (selectFields == null) {
+        publication = await Publication.findById(id).exec();
+      } else {
+        publication = await Publication.findById(id)
+          .select(selectFields)
+          .exec();
+      }
+    } else {
+      if (selectFields == null) {
+        publication = await Publication.findById(id)
+          .populate(populateField)
+          .exec();
+      } else {
+        publication = await Publication.findById(id)
+          .select(selectFields)
+          .populate(populateField)
+          .exec();
+      }
+    }
+    return publication;
+  };
+
   static findByIdAndUpdate = async (publicationID, publication, callback) => {
     await Publication.findByIdAndUpdate(
       publicationID,
