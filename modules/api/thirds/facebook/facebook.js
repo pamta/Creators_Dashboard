@@ -33,13 +33,13 @@ const updatePublicationWithAnalytics = async (
   useVideo
 ) => {
   const fb = await getFacebook();
-  const publicationInSn = await publicationSnService.create(fb.id, postID);
+  const compoundID = useVideo ? `${fbAppId}_${postID}` : `${postID}`;
+  const publicationInSn = await publicationSnService.create(fb.id, compoundID);
 
   if (!useVideo) {
     const fbAnalytic = await fbPostAnalyticsService.create(
       postID,
-      pageAccessToken,
-      false
+      pageAccessToken
     );
 
     await publicationSnService.pushAnalyticRef(
