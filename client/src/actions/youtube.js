@@ -57,7 +57,8 @@ export const publishVideoToYT = (
 	fileURL,
 	title,
 	description,
-	privacyStatus
+	privacyStatus,
+	publicationID
 ) => async (dispatch, getState) => {
 	console.log('Going to publish video to YouTube...')
 	privacyStatus = privacyStatus ? 'public' : 'private'
@@ -67,6 +68,7 @@ export const publishVideoToYT = (
 			title,
 			description,
 			privacyStatus,
+			publicationID,
 		})
 		const config = {
 			headers: {
