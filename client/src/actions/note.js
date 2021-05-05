@@ -56,7 +56,8 @@ export const loadNotes = () => async (dispatch) => {
 
 
 // Create new Note
-export const createNote = (name, text) => async (dispatch) => {
+export const createNote = (name, text) => async (dispatch) => 
+  new Promise(async function(resolve, reject) {     //this dispatch returns a promise as to be able ti use the res contents after calling it (I need the new post ID)
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -73,13 +74,16 @@ export const createNote = (name, text) => async (dispatch) => {
         type: NOTE_CREATE,
         payload: res.data, //newly created note object
       });
-      return res.data._id;
+      //return res.data._id;
+
+      resolve(res.data);
       //dispatch(setCurrentNote(res.data._id));
 
     } catch (error) {
       handleNoteError(error, dispatch);
+      reject(error);
     }
-  };
+  });
 
 
 // Update Note

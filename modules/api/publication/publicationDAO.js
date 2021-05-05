@@ -25,6 +25,7 @@ class PublicationDAO extends Publication {
     await Publication.findByIdAndUpdate(
       publicationID,
       publication,
+      {new: true}, //so the callback allways returns the updated object
       callback
     ).exec();
   };

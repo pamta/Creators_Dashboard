@@ -13,7 +13,7 @@ const PostsCards = () => {
 	return (
 		<div className='overflow-x-hidden overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-gray-300 pr-2'>
 			<div className='px-10 grid grid-cols-1 md:grid-cols-2 grid-flow-row gap-4 '>
-				{posts.map((post, index) => {
+			{posts.map((post, index) => {
 					return (
 						<Link key={post._id} to={`/post/${post._id}`}>
 							<div

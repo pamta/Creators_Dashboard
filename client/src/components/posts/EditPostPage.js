@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import Switch from 'react-switch'
-import { Redirect, useHistory, useLocation } from 'react-router-dom'
+import { Redirect, useHistory, useLocation, Link } from 'react-router-dom'
 import { useParams } from 'react-router'
+
 import useWindowSize from '../../lib/useWindowSize'
 import LoadingBar from './LoadingBar'
-//import LoadingBar from 'react-top-loading-bar'
+import ConfirmModal from '../layout/ConfirmModal'
+import AddSVG from '../layout/AddSVG'
 
 import { socket } from '../../service/socket'
 
@@ -23,10 +25,12 @@ import {
 	deleteVideo,
 	deleteImage,
 	deleteImages,
+	addNote,
 } from '../../actions/post'
 import { setAlert } from '../../actions/alert'
 import { publishPostToFb } from '../../actions/facebook'
 import { publishVideoToYT } from '../../actions/youtube'
+import { createNote } from '../../actions/note'
 
 const EditPostPage = ({ match }) => {
 	const [selectedPost, setSelectedPost] = useState()
@@ -40,19 +44,65 @@ const EditPostPage = ({ match }) => {
 	const [isPublicYoutube, setIsPublicYoutube] = useState(false)
 	const [isFbVideoUsed, setIsFbVideoUsed] = useState(false)
 
-	const [redirect, setRedirect] = useState()
 	const [videoUploadProgress, setVideoUploadProgress] = useState(null)
 
+	const [open, setOpen] = useState(false)
+	const [newTitle, setNewTitle] = useState()
+	const [redirect, setRedirect] = useState()
+
+	const dispatch = useDispatch()
 	const post = useSelector((state) => state.post)
+	const note = useSelector((state) => state.note)
+
 	let history = useHistory()
 	let { id } = useParams()
 
-	const dispatch = useDispatch()
-
 	const isTablet = useWindowSize().width <= 1080
 
-	//socket session id to identify this component connection
-	//const sessionId = Math.random().toString(36).substr(2, 9);
+	const closeModal = () => {
+		setOpen(false)
+		setNewTitle('')
+	}
+
+	const newNote = (e) => {
+		if (!newTitle) {
+			dispatch(setAlert('A Note title is required', 'danger'))
+			return
+		}
+
+		console.log('Creating note: ' + newTitle)
+		dispatch(createNote(newTitle, "my text"))
+			.then( (newnote) => {
+				dispatch(addNote(id, newnote._id))
+					.then((post) => { 
+						setRedirect(`/notes/${newnote._id}`) 
+					})
+				
+			},
+			(error) => {
+				//
+			}
+		)
+	}
+
+	const newNoteModalBody = () => {
+		return (
+			<div>
+				<h4>Give this Note a tite:</h4>
+				<br></br>
+				<input
+					type='text'
+					name='newTitle'
+					id='newTitle'
+					placeholder='Title'
+					className='focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md h-8 p-2 bg-gray-200'
+					onChange={(e) => {
+						setNewTitle(e.target.value)
+					}}
+				/>
+			</div>
+		)
+	}
 
 	//calls to actions
 
@@ -251,6 +301,17 @@ const EditPostPage = ({ match }) => {
 
 	return (
 		<div className='flex flex-col min-w-full h-full p-4'>
+			{open && (
+				<ConfirmModal
+					title={'New Note'}
+					body={newNoteModalBody()}
+					closeFunction={closeModal}
+					warning={false}
+					acceptFunction={newNote}
+					acceptText='Create Note'
+					closeText='Cancel'
+				></ConfirmModal>
+			)}
 			{backbtn()}
 			<div>
 				<div className={getLayoutStyle()}>
@@ -469,7 +530,7 @@ const EditPostPage = ({ match }) => {
 											>
 												<div className='relative' style={{ left: '-15px' }}>
 													<button
-														className='bg-red-400 w-4 h-4 rounded-xl my-4 cursor-pointer float-right'
+														className='bg-red-400 w-4 h-4 rounded-full my-4 cursor-pointer float-right'
 														onClick={(e) => {
 															console.log('delete image')
 															dispatch(deleteImage(id, image.name))
@@ -505,7 +566,7 @@ const EditPostPage = ({ match }) => {
 											style={{ top: '3px', left: '-3px' }}
 										>
 											<button
-												className='bg-red-400 w-4 h-4 rounded-xl my-4 cursor-pointer float-right'
+												className='bg-red-400 w-4 h-4 rounded-full my-4 cursor-pointer float-right'
 												onClick={(e) => {
 													console.log('delete video')
 													dispatch(deleteVideo(id))
@@ -540,9 +601,52 @@ const EditPostPage = ({ match }) => {
 					{/* Social auth component */}
 					<div
 						className={
-							'flex flex-col space-y-4' + (isTablet ? ' w-full' : ' w-72')
+							'flex flex-col space-y-4 w-1/2' 
 						}
-					>
+					>	
+						{/*Notes*/}
+						<div className="flex flex-col space-y-4">
+							<button
+								className={
+									'flex flex-row justify-center items-center space-x-1 rounded-md px-4 py-2 bg-green-500 text-white active:bg-green-400 text-base text-lg shadow hover:shadow-lg hover:bg-green-600 hover:text-white'
+								}
+								onClick={() => setOpen((o) => !o)}
+							>
+								<AddSVG></AddSVG>
+								<p>Add Note</p>
+
+							</button>
+							
+							{(selectedPost?.notes.length > 0) && note.notes.filter(note => selectedPost.notes.includes(note._id))
+								.map((note, index) => { 
+									return (
+										<Link key={note._id} to={`/notes/${note._id}`} className="flex flex-row bg-yellow-200 rounded-full px-3 font-semibold">
+											<div className="flex-none">{note.name}</div>
+											<div className="flex-grow"></div>
+											<button
+												className='flex-none bg-red-400 w-4 h-4 mt-1 rounded-full cursor-pointer float-right'
+												onClick={(e) => {}}
+											>
+												<svg
+													xmlns='http://www.w3.org/2000/svg'
+													width='16'
+													height='16'
+													fill='white'
+													class='bi bi-x'
+													viewBox='0 0 16 16'
+												>
+													<path d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z' />
+												</svg>
+											</button>
+										</Link>
+									) 
+								}) 
+							}
+
+						</div>
+
+						<hr/>
+
 						{/* Twitter */}
 						<div className='flex flex-col space-y-4 bg-gray-200 rounded-md p-6'>
 							<div className='flex flex-row space-x-2 items-center'>
