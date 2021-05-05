@@ -1,9 +1,11 @@
 const Publication = require("../../../models/Publication");
 const SocialNetwork = require("../../../models/SocialNetwork");
 const fbAnalyticPost = require("../../../models/AnalyticsFbPost");
+const youtubeAnalticVideo = require("../../../models/AnalyticsYoutube");
 
 const analyticByName = {
   Facebook: fbAnalyticPost,
+  YouTube: youtubeAnalticVideo,
 };
 
 class PublicationDAO extends Publication {

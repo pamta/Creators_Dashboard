@@ -14,8 +14,7 @@ function metricsInList() {
 class AnalyticsFbPageService {
   async updatePageAnalytic(fbPageID, pageAccessToken) {
     const metrics = metricsInList().join(", ");
-    const compoundID = `${fbAppId}_${fbPageID}`;
-    const requestLink = `https://graph.facebook.com/${compoundID}/insights/${metrics}?access_token=${pageAccessToken}`;
+    const requestLink = `https://graph.facebook.com/${fbPageID}/insights/${metrics}?access_token=${pageAccessToken}`;
     const answer = await axios.get(requestLink);
 
     let analyticDTO = {};
