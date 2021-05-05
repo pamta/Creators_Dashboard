@@ -23,32 +23,32 @@ class PublicationService {
     return publication;
   }
 
-	async updatePublicationName(userID, publicationID, name, callback) {
-		const publication = await this.getPublicationOfUser(publicationID, userID)
-		if (!publication) {
-			throw new ArrayError([{ msg: 'Publication does not exist' }])
-		}
+  async updatePublicationName(userID, publicationID, name, callback) {
+    const publication = await this.getPublicationOfUser(publicationID, userID);
+    if (!publication) {
+      throw new ArrayError([{ msg: "Publication does not exist" }]);
+    }
 
-		// Update publication
-		publication.name = name
-		publication.updateDate = Date.now()
+    // Update publication
+    publication.name = name;
+    publication.updateDate = Date.now();
 
-		await Publication.findByIdAndUpdate(publicationID, publication, callback)
-	}
+    await Publication.findByIdAndUpdate(publicationID, publication, callback);
+  }
 
-	async updatePublicationText(userID, publicationID, text, callback) {
-		const publication = await this.getPublicationOfUser(publicationID, userID)
-		if (!publication) {
-			throw new ArrayError([{ msg: 'Publication does not exist' }])
-		}
+  async updatePublicationText(userID, publicationID, text, callback) {
+    const publication = await this.getPublicationOfUser(publicationID, userID);
+    if (!publication) {
+      throw new ArrayError([{ msg: "Publication does not exist" }]);
+    }
 
-		// Update publication
-		publication.text = text
-		publication.updateDate = Date.now()
+    // Update publication
+    publication.text = text;
+    publication.updateDate = Date.now();
 
-		await Publication.findByIdAndUpdate(publicationID, publication, callback)
-	}
-  
+    await Publication.findByIdAndUpdate(publicationID, publication, callback);
+  }
+
   async getPostAnalytics(publicationID, userID) {
     const analytics = await Publication.getPostAnalyticsByDate({
       _id: publicationID,
@@ -56,6 +56,8 @@ class PublicationService {
     });
     return analytics;
   }
+
+  async updateAllPublicationsInSN(publicationSN, userID) {}
 
   async updatePublication(publicationID, publication, callback) {
     await Publication.findByIdAndUpdate(publicationID, publication, callback);

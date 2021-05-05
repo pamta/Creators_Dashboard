@@ -10,7 +10,7 @@ class PublicationInSNDAO extends Publication {
     return publication;
   };
 
-  static findById = async (id, populateField = null) => {
+  static findById = async (id, populateField = null, selectJSON = null) => {
     const publicationSN = await (populateField == null
       ? Publication.findById(id).exec()
       : Publication.findById(id).populate(populateField).exec());
