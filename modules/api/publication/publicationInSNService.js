@@ -27,6 +27,14 @@ class PublicationInSNService {
     return publicationSN;
   }
 
+  async getById(publicationSNID, populateField = null) {
+    const publicationSN = await PublicationInSN.findById(
+      publicationSNID,
+      populateField
+    );
+    return publicationSN;
+  }
+
   async pushAnalyticRef(publicationSNID, analyticID) {
     let publicationSN = null;
     try {
