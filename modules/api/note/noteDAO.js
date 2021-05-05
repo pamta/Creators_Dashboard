@@ -19,6 +19,7 @@ class NoteDAO extends Note {
 		await note.findByIdAndUpdate(
 			noteID,
 			note,
+			{new: true},
 			callback
 		).exec()
 	}

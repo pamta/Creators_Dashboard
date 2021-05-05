@@ -19,7 +19,7 @@ class UserDAO extends User {
   };
 
   static findByIdAndUpdate = async (userID, userDTO, callback) => {
-    await User.findByIdAndUpdate(userID, userDTO, callback).exec();
+    await User.findByIdAndUpdate(userID, userDTO, {new: true}, callback).exec();
   };
 
   static remove = async (userID, callback) => {

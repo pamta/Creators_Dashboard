@@ -13,6 +13,10 @@ const NoteSchema = new mongoose.Schema({
     text: {
         type: String
     },
+    publication: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "publication"
+    },
     creationDate: {
         type: Date,
         default: Date.now()
