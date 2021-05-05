@@ -77,7 +77,8 @@ export const createPost = (name) => async (dispatch) =>
         type: POST_CREATE,
         payload: res.data, //newly created post object
       });
-      dispatch(setCurrentPost(res.data._id));
+      
+      //dispatch(setCurrentPost(res.data._id));
       
       resolve(res.data);
 
@@ -194,6 +195,34 @@ export const updateTitle = ( name, publication_id ) => async (dispatch) => {
     handlePostError(error, dispatch);
   }
 };
+
+// Add Note to post
+export const addNote = ( publication_id, note_id ) => async (dispatch) => 
+  new Promise(async function(resolve, reject) { 
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    console.log("=================== adding Note to post")
+    try {
+      const body = JSON.stringify({ publication_id, note_id });
+      const res = await axios.post("/api/publication/note", body, config);
+
+      dispatch(setAlert("Note Added", "success"));
+      dispatch({
+        type: POST_UPDATE,
+        payload: res.data,
+      });
+
+      resolve(res.data);
+
+    } catch (error) {
+      handlePostError(error, dispatch);
+      reject(error);
+    }
+  });
 
 //Delete Actions
 

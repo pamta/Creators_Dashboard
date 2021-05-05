@@ -69,6 +69,20 @@ class PublicationService {
     );
     return publication;
   }
+  async addNoteToPublication(userID, publicationID, note_id, callback) {
+    const publication = await this.getPublicationOfUser(publicationID, userID);
+    if (!publication) {
+      throw new ArrayError([{ msg: "Publication does not exist" }]);
+    }
+    console.log("after get publication");
+
+    // Update publication
+    publication.notes = [...publication.notes, note_id];
+    publication.updateDate = Date.now();
+    console.log("updated publication: ");
+    console.log(publication);
+    await Publication.findByIdAndUpdate(publicationID, publication, callback);
+  }
 }
 
 module.exports = PublicationService;

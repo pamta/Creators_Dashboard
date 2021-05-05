@@ -193,6 +193,56 @@ router.get("/all", auth, async (req, res) => {
   }
 });
 
+// @route  POST api/publication/note
+// @access Private/requires token
+// adds a note id to the publication's array of notes
+router.post(
+	'/note', 
+	auth, 
+	[
+		check('publication_id', 'A publication is required').not().isEmpty(),
+		check('note_id', 'A note is required').not().isEmpty(),
+	],
+	async (req, res) => {
+		console.log("adding Note to post")
+
+		// Finds the validation errors in this request and wraps them in an object with handy functions
+		const errors = validationResult(req)
+		if (!errors.isEmpty()) {
+			return res.status(400).json({
+				// 400 is for a bad request
+				errors: errors.array(),
+			})
+		}
+
+		// Get the alredy checked payload
+		const { publication_id, note_id } = req.body
+		console.log("before try")
+		try {
+			const callback = (err, doc) => {
+				console.log("reached callback")
+				if (err) {
+					throw new Error(err.message)
+				}
+				// Return the saved publication
+				
+				console.log(doc)
+				return res.json(doc)
+			}
+
+			console.log("before add note")
+			await publicationService.addNoteToPublication(req.user.id, publication_id, note_id, callback)
+
+		} catch (err) {
+			if (err.name == 'ArrayError') {
+				return res.status(400).json({ errors: err.errors })
+			}
+			console.error(err)
+			res.status(500).send('Server error')
+		}
+	}
+)
+
 // @route  POST api/publication/upload/name
 // @access private, requires a user token
 router.post(
