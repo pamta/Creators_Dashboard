@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 //redux
 import { useSelector, useDispatch } from 'react-redux'
 import { setCurrentPost } from '../../actions/post'
+import videoImage from '../../assets/img/play.png'
 
 const PostsCards = () => {
 	const dispatch = useDispatch()
@@ -26,10 +27,16 @@ const PostsCards = () => {
 									<div className=' self-center md:self-auto'>
 										{post.images[0] && (
 											<img
-												className='w-80 md:h-44 rounded-md'
+												className='w-80 md:h-44 rounded-md object-cover'
 												src={post.images[0].URL}
 											/>
 										)}
+                                        {!post.images[0] && post.video && (
+                                            <img
+                                                className='w-80 md:h-44 rounded-md object-cover'
+                                                src={videoImage}
+                                            />
+                                        )}
 									</div>
 
 									<div id='body' className='flex flex-col ml-5 overflow-hidden'>

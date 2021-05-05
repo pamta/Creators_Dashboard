@@ -61,7 +61,7 @@ const NotesPage = () => {
     };
 
 	return (
-        <div className= "flex h-full">
+        <div className= "flex h-full py-4">
             <div className="relative flex flex-col w-1/4 bg-yellow-100 p-6">
                 <div className={    " flex py-4 px-2 text-center text-gray-900 text-2xl md:text-3xl font-semibold xl:" +
                                     ` border-0 border-b-2 border-red-400`}>
