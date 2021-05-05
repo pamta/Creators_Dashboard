@@ -57,10 +57,17 @@ class PublicationService {
     return analytics;
   }
 
-  async updateAllPublicationsInSN(publicationSN, userID) {}
-
   async updatePublication(publicationID, publication, callback) {
     await Publication.findByIdAndUpdate(publicationID, publication, callback);
+  }
+
+  async getById(publicationID, populateField = null, selectFields = null) {
+    const publication = await Publication.findById(
+      publicationID,
+      populateField,
+      selectFields
+    );
+    return publication;
   }
 }
 
