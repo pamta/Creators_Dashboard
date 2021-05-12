@@ -407,11 +407,12 @@ router.post(
 			for (file of req.files) {
 				const type = mime.lookup(file.originalname)
 				const regexImage = /image/g
-				if (type.search(regexImage) == -1) {
+
+				if (!type?.search || type.search(regexImage) == -1) {
 					return handleError(
 						res,
 						400,
-						'Media type not allowed, please upload a video'
+						'Media type not allowed, please upload a valid image'
 					)
 				}
 			}
@@ -521,13 +522,13 @@ router.post(
 			const type = mime.lookup(req.file.originalname)
 			//console.log(type)
 			const regexVideo = /video/g
-			if (type.search(regexVideo) == -1) {
+			if (!type?.search || type.search(regexVideo) == -1) {
 				return handleError(
 					res,
 					400,
 					'Media type not allowed, please upload a video'
 				)
-			}
+			}			
 
 			const blob = mediaStorageService.createFileBlob(type)
 			const publicURL = mediaStorageService.getUrlFromBlob(blob)
