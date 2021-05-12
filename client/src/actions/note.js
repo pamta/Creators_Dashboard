@@ -1,5 +1,6 @@
 import axios from "axios";
 import { setAlert } from "./alert";
+import { removeNote } from './post'
 import {
     LOAD_NOTES, 
     SET_CURRENT_NOTE,
@@ -56,7 +57,7 @@ export const loadNotes = () => async (dispatch) => {
 
 
 // Create new Note
-export const createNote = (name, text) => async (dispatch) => 
+export const createNote = (name, text, publication = null) => async (dispatch) => 
   new Promise(async function(resolve, reject) {     //this dispatch returns a promise as to be able ti use the res contents after calling it (I need the new post ID)
     const config = {
       headers: {
@@ -65,7 +66,7 @@ export const createNote = (name, text) => async (dispatch) =>
     };
   
     try {
-      const body = JSON.stringify({ name, text });      
+      const body = JSON.stringify({ name, text, publication });      
       //res.data contains the new note object as created in the backend
       const res = await axios.post("/api/note", body, config);
 
@@ -112,7 +113,34 @@ export const updateNote = (note_id, name, text) => async (dispatch) => {
 
 
 // Delete Note
-export const deleteNote = (note_id) => async (dispatch) => {
+export const deleteNote = (note) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      "note_id": note._id
+    },
+  };
+
+  try {
+    //res.data contains the deleted note id at res.data._id
+    console.log("removing note with action")
+    const res = await axios.delete("/api/note/", config);
+
+    if(note.publication){
+      dispatch(removeNote(note.publication, note._id))
+    }
+    dispatch(setAlert("Note Deleted", "success"));
+    dispatch({
+      type: NOTE_DELETE,
+      payload: res.data,
+    });
+
+  } catch (error) {
+    handleNoteError(error, dispatch);
+  }
+};
+
+export const deleteNoteById = (note_id) => async (dispatch) => {
   const config = {
     headers: {
       "Content-Type": "application/json",
@@ -122,14 +150,14 @@ export const deleteNote = (note_id) => async (dispatch) => {
 
   try {
     //res.data contains the deleted note id at res.data._id
+    console.log("removing note with action")
     const res = await axios.delete("/api/note/", config);
 
-    dispatch(setAlert("Note Deleted", "success"));
+    //dispatch(removeNote(publication_id, note_id))
     dispatch({
       type: NOTE_DELETE,
       payload: res.data,
     });
-    //dispatch(setCurrentNote("new"));
 
   } catch (error) {
     handleNoteError(error, dispatch);

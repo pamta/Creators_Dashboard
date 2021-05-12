@@ -1,5 +1,7 @@
 import axios from "axios";
 import { setAlert } from "./alert";
+import { deleteNoteById } from './note'
+
 import { 
     LOAD_POSTS,
     SET_CURRENT_POST,
@@ -224,22 +226,34 @@ export const addNote = ( publication_id, note_id ) => async (dispatch) =>
     }
   });
 
-//Delete Actions
+//Delete Actions =====================
 
 // Delete Post
-export const deletePost = (post_id) => async (dispatch) => {
+export const deletePost = (post) => async (dispatch) => {
   const config = {
     headers: {
       "Content-Type": "application/json",
-      "publication_id": post_id
+      "publication_id": post._id
     },
   };
 
   try {
-    //res.data contains the deleted note id at res.data._id
+    let notesNumber = post.notes.length
+
+    for (let note_id of post.notes){
+      console.log(note_id)
+      dispatch(deleteNoteById(note_id))
+    }
+
+    //res.data contains the deleted post id at res.data._id
     const res = await axios.delete("/api/publication/", config);
 
     dispatch(setAlert("Post Deleted", "success"));
+
+    if (notesNumber > 0){
+      dispatch(setAlert("Deleted Notes related to post", "success"));
+    }
+
     dispatch({
       type: POST_DELETE,
       payload: res.data,
@@ -345,3 +359,26 @@ export const deleteImage= (post_id, name) => async (dispatch) => {
   }
 };
 
+
+// remove and delete note (only when just deleting the note in the db)
+export const removeNote= (publication_id, note_id) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      "publication_id": publication_id,
+      "note_id": note_id
+    },
+  };
+
+  try {
+    const res = await axios.delete("/api/publication/note", config);
+
+    dispatch({
+      type: POST_UPDATE,
+      payload: res.data,
+    });
+
+  } catch (error) {
+    handlePostError(error, dispatch);
+  }
+};

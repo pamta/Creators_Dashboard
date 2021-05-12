@@ -26,11 +26,12 @@ import {
 	deleteImage,
 	deleteImages,
 	addNote,
+	removeNote,
 } from '../../actions/post'
 import { setAlert } from '../../actions/alert'
 import { publishPostToFb } from '../../actions/facebook'
 import { publishVideoToYT } from '../../actions/youtube'
-import { createNote } from '../../actions/note'
+import { createNote, deleteNote } from '../../actions/note'
 
 const EditPostPage = ({ match }) => {
 	const [selectedPost, setSelectedPost] = useState()
@@ -71,7 +72,7 @@ const EditPostPage = ({ match }) => {
 		}
 
 		console.log('Creating note: ' + newTitle)
-		dispatch(createNote(newTitle, "my text"))
+		dispatch(createNote(newTitle, "", id))
 			.then( (newnote) => {
 				dispatch(addNote(id, newnote._id))
 					.then((post) => { 
@@ -119,7 +120,7 @@ const EditPostPage = ({ match }) => {
 	}
 
 	const deleteCurrentPost = (e) => {
-		dispatch(deletePost(id))
+		dispatch(deletePost(selectedPost))
 		setRedirect(`/posts`)
 	}
 
@@ -523,12 +524,12 @@ const EditPostPage = ({ match }) => {
 										return (
 											<div
 												className={
-													'relative m-4 flex flex-row ' +
+													'relative m-2 ' +
 													(isTablet ? 'w-full' : 'w-1/3')
 												}
 												key={image.name}
 											>
-												<div className='relative' style={{ left: '-15px' }}>
+												<div  style={{ left: '-15px' }}>
 													<button
 														className='bg-red-400 w-4 h-4 rounded-full my-4 cursor-pointer float-right'
 														onClick={(e) => {
@@ -558,7 +559,7 @@ const EditPostPage = ({ match }) => {
 									})}
 								{selectedPost?.video?.URL && (
 									<div
-										className={'relative ' + (isTablet ? 'w-full' : 'w-1/3')}
+										className={'relative m-2 ' + (isTablet ? 'w-full' : 'w-1/3')}
 										id={selectedPost.video.name}
 									>
 										<div
@@ -620,12 +621,13 @@ const EditPostPage = ({ match }) => {
 							{(selectedPost?.notes.length > 0) && note.notes.filter(note => selectedPost.notes.includes(note._id))
 								.map((note, index) => { 
 									return (
-										<Link key={note._id} to={`/notes/${note._id}`} className="flex flex-row bg-yellow-200 rounded-full px-3 font-semibold">
-											<div className="flex-none">{note.name}</div>
-											<div className="flex-grow"></div>
+										<div className="flex flex-row bg-yellow-200 rounded-full pl-3 pr-1 font-semibold">
+											<Link key={note._id} to={`/notes/${note._id}`} className="flex-none">{note.name}</Link>
+											<Link key={note._id} to={`/notes/${note._id}`} className="flex-grow"></Link>
+											
 											<button
 												className='flex-none bg-red-400 w-4 h-4 mt-1 rounded-full cursor-pointer float-right'
-												onClick={(e) => {}}
+												onClick={(e) => dispatch(deleteNote(note))}
 											>
 												<svg
 													xmlns='http://www.w3.org/2000/svg'
@@ -638,7 +640,7 @@ const EditPostPage = ({ match }) => {
 													<path d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z' />
 												</svg>
 											</button>
-										</Link>
+										</div>
 									) 
 								}) 
 							}

@@ -62,7 +62,6 @@ router.post(
   [
     // Second parameter of check is a custom error message
     check("name", "A Title is required").not().isEmpty(),
-    check("text", "Some text is required").not().isEmpty(),
   ],
   async (req, res) => {
     // Finds the validation errors in this request and wraps them in an object with handy functions
@@ -76,7 +75,7 @@ router.post(
     }
 
     //we get the alredy checked payload
-    const { name, text } = req.body;
+    const { name, text, publication } = req.body;
 
     try {
       //user exist in req because of the auth middleware
@@ -97,6 +96,7 @@ router.post(
         user_id,
         name,
         text,
+        publication,
         creationDate,
         updateDate,
       });

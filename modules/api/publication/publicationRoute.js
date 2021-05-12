@@ -7,8 +7,8 @@ const PublicationService = require('./publicationService')
 const publicationService = new PublicationService()
 const MediaStorageService = require("../../storage/MediaStorageService")
 const mediaStorageService = new MediaStorageService()
-const NoteService = require('../note/noteService')
-const noteService = new NoteService()
+// const NoteService = require('../note/noteService')
+// const noteService = new NoteService()
 
 const { v4: uuid } = require('uuid')
 const mime = require('mime-types')
@@ -159,7 +159,6 @@ router.post(
 		console.log("before try")
 		try {
 			const callback = (err, doc) => {
-				console.log("reached callback")
 				if (err) {
 					throw new Error(err.message)
 				}
@@ -798,34 +797,27 @@ router.delete('/image', auth, async (req, res) => {
 	}
 })
 
-// @route  POST api/publication/note
+// @route  DELETE api/publication/note
 // @access Private/requires token
 // removes a note from the publication's notes array
 router.delete('/note', auth, async (req, res) => {
 		console.log("Removing Note")
 
 		const publication_id = req.header('publication_id')
-		const note_id = req.header('image_name')
-
-		const publication = await Publication.findOne({
-			_id: publication_id,
-			user_id: req.user.id,
-		}).exec()
-
-		if (!publication) {
-			return handleError(res, 400, 'Publication non existent')
-		}
+		const note_id = req.header('note_id')
 
 		try {
 			const callback = (err, doc) => {
 				if (err) {
 					throw new Error(err.message)
 				}
-				// Return the saved note
-				return res.json(doc)
+				// Return the saved publication
+				
+				console.log("finished delete of note from publication")
+			 	return res.json(doc)
 			}
-
-			noteService.updateNote(note_id, {publication: null}, callback)
+			
+			publicationService.removeNoteFromPublication(req.user.id, publication_id, note_id, callback)
 
 		} catch (err) {
 			if (err.name == 'ArrayError') {

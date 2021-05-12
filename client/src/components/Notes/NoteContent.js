@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 
 //redux
 import {useSelector, useDispatch} from "react-redux";
@@ -9,12 +9,15 @@ import {createNote, updateNote, deleteNote} from "../../actions/note"
 const NoteContent = ( ) => {
     const [name, setName] = useState();
 	const [text, setText] = useState();
+    const [selectedNote, setSelectedNote] = useState()
 
     const dispatch = useDispatch();
     let history = useHistory();
 
     //fetch the storee notes
     const notes = useSelector(state => state.note);
+    const post = useSelector(state => state.post);
+
     let { id } = useParams(); //get the params from the url
 
     const saveNote = (name, text) => { 
@@ -32,7 +35,7 @@ const NoteContent = ( ) => {
 	};
 
     const deleteCurrentNote = () => { 
-        dispatch(deleteNote(id));
+        dispatch(deleteNote(selectedNote));
         history.push("/notes/new");
 	};
     
@@ -43,6 +46,8 @@ const NoteContent = ( ) => {
                     return note._id == id;
                 });         
             console.log(selected_note);
+            setSelectedNote(selected_note);
+
             if(selected_note){
                 setName(selected_note.name);
                 setText(selected_note.text);
@@ -63,6 +68,17 @@ const NoteContent = ( ) => {
                             placeholder="Title"
                             value={name}
                         />
+                    </div>
+                    <div>
+                        {post.posts?.filter(post => post._id == selectedNote?.publication)
+                            .map((post, index) => { 
+                                return (
+                                    <Link key={post._id} to={`/post/${post._id}`} className="bg-green-200 rounded-full pl-3 pr-8 font-semibold">
+                                        {post.name}
+                                    </Link>
+                                ) 
+                            })
+                        }
                     </div>
                     <div className="relative mb-3 h-4/5">
                         <textarea

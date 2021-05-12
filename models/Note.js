@@ -8,14 +8,15 @@ const NoteSchema = new mongoose.Schema({
       },
     name: {
         type: String,
-        required: true
+        required: true,
     },
     text: {
         type: String
     },
     publication: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "publication"
+        ref: "publication",
+        default: null,
     },
     creationDate: {
         type: Date,
