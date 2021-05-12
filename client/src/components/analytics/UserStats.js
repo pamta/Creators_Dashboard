@@ -1,17 +1,16 @@
 import UserStat from './UserStat'
-import { useSelector } from "react-redux"
+import { useSelector } from 'react-redux'
 
 const UserStats = ({ isTablet }) => {
 	const getLayoutStyle = () => {
-		return isTablet ? 'flex flex-row space-x-8 overflow-x-auto' : 'flex flex-col'
+		return isTablet
+			? 'flex flex-row space-x-8 overflow-x-auto'
+			: 'flex flex-col'
 	}
 
 	return (
 		<div
-			className={
-				getLayoutStyle() +
-				' w-full rounded-lg shadow-md bg-gray-100'
-			}
+			className={getLayoutStyle() + ' w-full rounded-lg shadow-md bg-gray-100'}
 		>
 			<UserStat
 				isTablet={isTablet}
@@ -23,24 +22,24 @@ const UserStats = ({ isTablet }) => {
 			<UserStat
 				isTablet={isTablet}
 				key={'fbFollowers'}
-                icon={'facebook'}
+				icon={'facebook'}
 				name={'Page Followers'}
 				stat={'586'}
 			/>
-			<UserStat 
-                isTablet={isTablet} 
-                key={'subscribers'}
-                icon={'youtube'}
-                name={'Subscribers'} 
-                stat={'1851'} 
-            />
-            <UserStat 
-                isTablet={isTablet} 
-                key={'twFollowers'}
-                icon={'twitter'}
-                name={'Followers'} 
-                stat={'749'} 
-            />
+			<UserStat
+				isTablet={isTablet}
+				key={'subscribers'}
+				icon={'youtube'}
+				name={'Subscribers'}
+				stat={'1851'}
+			/>
+			<UserStat
+				isTablet={isTablet}
+				key={'twFollowers'}
+				icon={'twitter'}
+				name={'Followers'}
+				stat={'749'}
+			/>
 		</div>
 	)
 }

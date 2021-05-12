@@ -71,13 +71,11 @@ const EditPostPage = ({ match }) => {
 		}
 
 		console.log('Creating note: ' + newTitle)
-		dispatch(createNote(newTitle, "my text"))
-			.then( (newnote) => {
-				dispatch(addNote(id, newnote._id))
-					.then((post) => { 
-						setRedirect(`/notes/${newnote._id}`) 
-					})
-				
+		dispatch(createNote(newTitle, 'my text')).then(
+			(newnote) => {
+				dispatch(addNote(id, newnote._id)).then((post) => {
+					setRedirect(`/notes/${newnote._id}`)
+				})
 			},
 			(error) => {
 				//
@@ -316,7 +314,7 @@ const EditPostPage = ({ match }) => {
 			<div>
 				<div className={getLayoutStyle()}>
 					{/* Blog post component */}
-					<div className="w-full">
+					<div className='w-full'>
 						<div
 							className={
 								'w-full flex flex-col space-y-8 justify-between rounded-md bg-gray-200 p-6'
@@ -599,13 +597,9 @@ const EditPostPage = ({ match }) => {
 					</div>
 
 					{/* Social auth component */}
-					<div
-						className={
-							'flex flex-col space-y-4 w-1/2' 
-						}
-					>	
+					<div className={'flex flex-col space-y-4 w-1/2'}>
 						{/*Notes*/}
-						<div className="flex flex-col space-y-4">
+						<div className='flex flex-col space-y-4'>
 							<button
 								className={
 									'flex flex-row justify-center items-center space-x-1 rounded-md px-4 py-2 bg-green-500 text-white active:bg-green-400 text-base text-lg shadow hover:shadow-lg hover:bg-green-600 hover:text-white'
@@ -614,38 +608,41 @@ const EditPostPage = ({ match }) => {
 							>
 								<AddSVG></AddSVG>
 								<p>Add Note</p>
-
 							</button>
-							
-							{(selectedPost?.notes.length > 0) && note.notes.filter(note => selectedPost.notes.includes(note._id))
-								.map((note, index) => { 
-									return (
-										<Link key={note._id} to={`/notes/${note._id}`} className="flex flex-row bg-yellow-200 rounded-full px-3 font-semibold">
-											<div className="flex-none">{note.name}</div>
-											<div className="flex-grow"></div>
-											<button
-												className='flex-none bg-red-400 w-4 h-4 mt-1 rounded-full cursor-pointer float-right'
-												onClick={(e) => {}}
-											>
-												<svg
-													xmlns='http://www.w3.org/2000/svg'
-													width='16'
-													height='16'
-													fill='white'
-													class='bi bi-x'
-													viewBox='0 0 16 16'
-												>
-													<path d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z' />
-												</svg>
-											</button>
-										</Link>
-									) 
-								}) 
-							}
 
+							{selectedPost?.notes.length > 0 &&
+								note.notes
+									.filter((note) => selectedPost.notes.includes(note._id))
+									.map((note, index) => {
+										return (
+											<Link
+												key={note._id}
+												to={`/notes/${note._id}`}
+												className='flex flex-row bg-yellow-200 rounded-full px-3 font-semibold'
+											>
+												<div className='flex-none'>{note.name}</div>
+												<div className='flex-grow'></div>
+												<button
+													className='flex-none bg-red-400 w-4 h-4 mt-1 rounded-full cursor-pointer float-right'
+													onClick={(e) => {}}
+												>
+													<svg
+														xmlns='http://www.w3.org/2000/svg'
+														width='16'
+														height='16'
+														fill='white'
+														class='bi bi-x'
+														viewBox='0 0 16 16'
+													>
+														<path d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z' />
+													</svg>
+												</button>
+											</Link>
+										)
+									})}
 						</div>
 
-						<hr/>
+						<hr />
 
 						{/* Twitter */}
 						<div className='flex flex-col space-y-4 bg-gray-200 rounded-md p-6'>

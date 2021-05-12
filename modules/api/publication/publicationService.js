@@ -1,88 +1,88 @@
-const ArrayError = require("../../../utils/ArrayError");
-const Publication = require("./publicationDAO");
+const ArrayError = require('../../../utils/ArrayError')
+const Publication = require('./publicationDAO')
 
 class PublicationService {
-  async getAllPublicationsForUser(userID) {
-    const publications = await Publication.find({ user_id: userID });
-    if (!publications) {
-      throw new ArrayError([{ msg: "No publications found for this user" }]);
-    }
-    return publications;
-  }
+	async getAllPublicationsForUser(userID) {
+		const publications = await Publication.find({ user_id: userID })
+		if (!publications) {
+			throw new ArrayError([{ msg: 'No publications found for this user' }])
+		}
+		return publications
+	}
 
-  async getPublicationOfUser(publicationID, userID) {
-    const publication = await Publication.findOne({
-      _id: publicationID,
-      user_id: userID,
-    });
+	async getPublicationOfUser(publicationID, userID) {
+		const publication = await Publication.findOne({
+			_id: publicationID,
+			user_id: userID,
+		})
 
-    if (publication == null) {
-      throw new ArrayError([{ msg: "No publications found for this user" }]);
-    }
+		if (publication == null) {
+			throw new ArrayError([{ msg: 'No publications found for this user' }])
+		}
 
-    return publication;
-  }
+		return publication
+	}
 
-  async updatePublicationName(userID, publicationID, name, callback) {
-    const publication = await this.getPublicationOfUser(publicationID, userID);
-    if (!publication) {
-      throw new ArrayError([{ msg: "Publication does not exist" }]);
-    }
+	async updatePublicationName(userID, publicationID, name, callback) {
+		const publication = await this.getPublicationOfUser(publicationID, userID)
+		if (!publication) {
+			throw new ArrayError([{ msg: 'Publication does not exist' }])
+		}
 
-    // Update publication
-    publication.name = name;
-    publication.updateDate = Date.now();
+		// Update publication
+		publication.name = name
+		publication.updateDate = Date.now()
 
-    await Publication.findByIdAndUpdate(publicationID, publication, callback);
-  }
+		await Publication.findByIdAndUpdate(publicationID, publication, callback)
+	}
 
-  async updatePublicationText(userID, publicationID, text, callback) {
-    const publication = await this.getPublicationOfUser(publicationID, userID);
-    if (!publication) {
-      throw new ArrayError([{ msg: "Publication does not exist" }]);
-    }
+	async updatePublicationText(userID, publicationID, text, callback) {
+		const publication = await this.getPublicationOfUser(publicationID, userID)
+		if (!publication) {
+			throw new ArrayError([{ msg: 'Publication does not exist' }])
+		}
 
-    // Update publication
-    publication.text = text;
-    publication.updateDate = Date.now();
+		// Update publication
+		publication.text = text
+		publication.updateDate = Date.now()
 
-    await Publication.findByIdAndUpdate(publicationID, publication, callback);
-  }
+		await Publication.findByIdAndUpdate(publicationID, publication, callback)
+	}
 
-  async getPostAnalytics(publicationID, userID) {
-    const analytics = await Publication.getPostAnalyticsByDate({
-      _id: publicationID,
-      user_id: userID,
-    });
-    return analytics;
-  }
+	async getPostAnalytics(publicationID, userID) {
+		const analytics = await Publication.getPostAnalyticsByDate({
+			_id: publicationID,
+			user_id: userID,
+		})
+		return analytics
+	}
 
-  async updatePublication(publicationID, publication, callback) {
-    await Publication.findByIdAndUpdate(publicationID, publication, callback);
-  }
+	async updatePublication(publicationID, publication, callback) {
+		await Publication.findByIdAndUpdate(publicationID, publication, callback)
+	}
 
-  async getById(publicationID, populateField = null, selectFields = null) {
-    const publication = await Publication.findById(
-      publicationID,
-      populateField,
-      selectFields
-    );
-    return publication;
-  }
-  async addNoteToPublication(userID, publicationID, note_id, callback) {
-    const publication = await this.getPublicationOfUser(publicationID, userID);
-    if (!publication) {
-      throw new ArrayError([{ msg: "Publication does not exist" }]);
-    }
-    console.log("after get publication");
+	async getById(publicationID, populateField = null, selectFields = null) {
+		const publication = await Publication.findById(
+			publicationID,
+			populateField,
+			selectFields
+		)
+		return publication
+	}
+	async addNoteToPublication(userID, publicationID, note_id, callback) {
+		const publication = await this.getPublicationOfUser(publicationID, userID)
+		if (!publication) {
+			throw new ArrayError([{ msg: 'Publication does not exist' }])
+		}
+		console.log('after get publication')
 
-    // Update publication
-    publication.notes = [...publication.notes, note_id];
-    publication.updateDate = Date.now();
-    console.log("updated publication: ");
-    console.log(publication);
-    await Publication.findByIdAndUpdate(publicationID, publication, callback);
-  }
+		// Update publication
+		publication.notes = [...publication.notes, note_id]
+		publication.updateDate = Date.now()
+		console.log('updated publication: ')
+		console.log(publication)
+		await Publication.findByIdAndUpdate(publicationID, publication, callback)
+	}
 }
 
-module.exports = PublicationService;
+module.exports = PublicationService
