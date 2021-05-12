@@ -98,6 +98,9 @@ const PostAnalytics = () => {
 
     const setAnalytics = (postsInSN) => {
                 postsInSN.forEach(elem => {
+                    if (!elem[0]) {
+                        return;
+                    }
                     if (elem[0].socialNetwork == "Facebook") {
                         isOnFb(true);
                         setFbStats({
@@ -111,7 +114,7 @@ const PostAnalytics = () => {
                                     totalReactions: Number(elem[0].data.post_reactions_like_total) + Number(elem[0].data.post_reactions_love_total) + Number(elem[0].data.post_reactions_wow_total) + Number(elem[0].data.post_reactions_haha_total) + Number(elem[0].data.post_reactions_sorry_total) + Number(elem[0].data.post_reactions_anger_total),
                                 });
                     }
-                    else if (elem[0].socialNetwork == "Youtube") {
+                    else if (elem[0].socialNetwork == "YouTube") {
                         isOnYt(true);
                         setYtStats({
                             view_count: elem[0].data.viewCount,
