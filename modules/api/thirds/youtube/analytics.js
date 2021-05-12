@@ -3,6 +3,8 @@ const router = express.Router()
 const auth = require('../../../../middleware/auth')
 const { google } = require('googleapis')
 // const { authenticate } = require('@google-cloud/local-auth')
+const UserYouTubeAnalytics = require('./userYTAnalyticsService')
+const userYouTubeAnalyticsService = new UserYouTubeAnalytics()
 
 // Initialize the Youtube API library
 const youtube = google.youtube('v3')
@@ -115,6 +117,16 @@ router.get('/user', async (req, res) => {
 				: {}
 
 		res.send(channelStats)
+	} catch (err) {
+		console.error(err.message)
+		res.status(500).send('Server Error')
+	}
+})
+
+router.get('/service', async (req, res) => {
+	try {
+		const stats = await userYouTubeAnalyticsService.create()
+		res.send(stats)
 	} catch (err) {
 		console.error(err.message)
 		res.status(500).send('Server Error')

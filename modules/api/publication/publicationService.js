@@ -25,31 +25,31 @@ class PublicationService {
 	}
 
 	async updatePublicationName(userID, publicationID, name, callback) {
-		const publication = await this.getPublicationOfUser(publicationID, userID)
+		const publication = await this.getPublicationOfUser(publicationID, userID);
 		if (!publication) {
-			throw new ArrayError([{ msg: 'Publication does not exist' }])
+		throw new ArrayError([{ msg: "Publication does not exist" }]);
 		}
 
 		// Update publication
-		publication.name = name
-		publication.updateDate = Date.now()
+		publication.name = name;
+		publication.updateDate = Date.now();
 
-		await Publication.findByIdAndUpdate(publicationID, publication, callback)
+		await Publication.findByIdAndUpdate(publicationID, publication, callback);
 	}
 
 	async updatePublicationText(userID, publicationID, text, callback) {
-		const publication = await this.getPublicationOfUser(publicationID, userID)
+		const publication = await this.getPublicationOfUser(publicationID, userID);
 		if (!publication) {
-			throw new ArrayError([{ msg: 'Publication does not exist' }])
+		throw new ArrayError([{ msg: "Publication does not exist" }]);
 		}
 
 		// Update publication
-		publication.text = text
-		publication.updateDate = Date.now()
+		publication.text = text;
+		publication.updateDate = Date.now();
 
-		await Publication.findByIdAndUpdate(publicationID, publication, callback)
+		await Publication.findByIdAndUpdate(publicationID, publication, callback);
 	}
-  
+
 	async getPostAnalytics(publicationID, userID) {
 		const analytics = await Publication.getPostAnalyticsByDate({
 		_id: publicationID,
@@ -61,6 +61,15 @@ class PublicationService {
 	async updatePublication(publicationID, publication, callback) {
 		await Publication.findByIdAndUpdate(publicationID, publication, callback);
 	}
+
+	async getById(publicationID, populateField = null, selectFields = null) {
+		const publication = await Publication.findById(
+		  publicationID,
+		  populateField,
+		  selectFields
+		);
+		return publication;
+	  }
 
 	async addNoteToPublication(userID, publicationID, note_id, callback) {
 		const publication = await this.getPublicationOfUser(publicationID, userID)
@@ -75,6 +84,21 @@ class PublicationService {
 		console.log("updated publication: ")
 
 		await Publication.findByIdAndUpdate(publicationID, publication, callback)
+	}
+
+	async addNoteToPublication(userID, publicationID, note_id, callback) {
+		const publication = await this.getPublicationOfUser(publicationID, userID);
+		if (!publication) {
+		  throw new ArrayError([{ msg: "Publication does not exist" }]);
+		}
+		console.log("after get publication");
+	
+		// Update publication
+		publication.notes = [...publication.notes, note_id];
+		publication.updateDate = Date.now();
+		console.log("updated publication: ");
+		console.log(publication);
+		await Publication.findByIdAndUpdate(publicationID, publication, callback);
 	}
 
 	async removeNoteFromPublication(userID, publicationID, note_id, callback) {

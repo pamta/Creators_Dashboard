@@ -12,10 +12,9 @@ function metricsInList() {
 }
 
 class AnalyticsFbPostService {
-  async create(fbPostID, pageAccessToken, useVideo) {
+  async create(fbPostID, pageAccessToken) {
     const metrics = metricsInList().join(", ");
-    const compoundID = useVideo ? `${fbAppId}_${fbPostID}` : `${fbPostID}`;
-    const requestLink = `https://graph.facebook.com/${compoundID}/insights/${metrics}?access_token=${pageAccessToken}`;
+    const requestLink = `https://graph.facebook.com/${fbPostID}/insights/${metrics}?access_token=${pageAccessToken}`;
     const answer = await axios.get(requestLink);
 
     let analyticDTO = {};

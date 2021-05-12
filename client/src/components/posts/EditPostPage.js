@@ -317,7 +317,7 @@ const EditPostPage = ({ match }) => {
 			<div>
 				<div className={getLayoutStyle()}>
 					{/* Blog post component */}
-					<div>
+					<div className="w-full">
 						<div
 							className={
 								'w-full flex flex-col space-y-8 justify-between rounded-md bg-gray-200 p-6'

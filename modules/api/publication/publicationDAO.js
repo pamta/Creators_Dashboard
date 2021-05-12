@@ -1,9 +1,11 @@
 const Publication = require("../../../models/Publication");
 const SocialNetwork = require("../../../models/SocialNetwork");
 const fbAnalyticPost = require("../../../models/AnalyticsFbPost");
+const youtubeAnalticVideo = require("../../../models/AnalyticsYoutube");
 
 const analyticByName = {
   Facebook: fbAnalyticPost,
+  YouTube: youtubeAnalticVideo,
 };
 
 class PublicationDAO extends Publication {
@@ -18,6 +20,31 @@ class PublicationDAO extends Publication {
 
   static findOne = async (jsonParams) => {
     const publication = await Publication.findOne(jsonParams).exec();
+    return publication;
+  };
+
+  static findById = async (id, populateField = null, selectFields = null) => {
+    let publication = null;
+    if (populateField == null) {
+      if (selectFields == null) {
+        publication = await Publication.findById(id).exec();
+      } else {
+        publication = await Publication.findById(id)
+          .select(selectFields)
+          .exec();
+      }
+    } else {
+      if (selectFields == null) {
+        publication = await Publication.findById(id)
+          .populate(populateField)
+          .exec();
+      } else {
+        publication = await Publication.findById(id)
+          .select(selectFields)
+          .populate(populateField)
+          .exec();
+      }
+    }
     return publication;
   };
 

@@ -11,7 +11,11 @@ module.exports = {
 			borderRadius: {
 				DEFAULT: '0.25rem',
 				md: '0.375rem'
-			}
+			},
+            width: {
+                '9/10': '90%',
+                '19/20': '95%',
+            }
 		},
         minWidth: {
             '0': '0',
