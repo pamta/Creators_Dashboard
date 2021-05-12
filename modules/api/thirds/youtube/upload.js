@@ -59,13 +59,8 @@ async function createFile(fileURL) {
 // @access Private/requires token
 router.post('/', auth, async (req, res) => {
 	try {
-		const {
-			fileURL,
-			title,
-			description,
-			privacyStatus,
-			publicationID,
-		} = req.body
+		const { fileURL, title, description, privacyStatus, publicationID } =
+			req.body
 		await createFile(fileURL)
 
 		const publication = await Publication.findOne({

@@ -15,12 +15,14 @@ class TweetAnalyticDAO extends TweetAnalytic {
 		return tweetAnalytic
 	}
 
-	static findByIdAndUpdate = async (tweetAnalyticID, tweetAnalytic, callback) => {
-		await tweetAnalytic.findByIdAndUpdate(
-			tweetAnalyticID,
-			tweetAnalytic,
-			callback
-		).exec()
+	static findByIdAndUpdate = async (
+		tweetAnalyticID,
+		tweetAnalytic,
+		callback
+	) => {
+		await tweetAnalytic
+			.findByIdAndUpdate(tweetAnalyticID, tweetAnalytic, callback)
+			.exec()
 	}
 
 	static remove = async (jsonParams, callback) => {

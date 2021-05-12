@@ -1,6 +1,7 @@
-html, body {
-    overflow: hidden; 
-    width: 100%; /* restrict the page width to viewport */
-    max-width: 100%;
-    overflow-x: hidden;
+html,
+body {
+	overflow: hidden;
+	width: 100%; /* restrict the page width to viewport */
+	max-width: 100%;
+	overflow-x: hidden;
 }
