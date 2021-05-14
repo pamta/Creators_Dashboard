@@ -27,3 +27,9 @@ exports.auth = [
 	check('password', 'Please, a password is required').exists(),
 	validateResults,
 ]
+
+exports.facebookInfo = [
+	check('fbPageId', 'Please include a valid FB page ID').exists(),
+	check('fbPageAccessToken', 'Please include a fb page access token').exists(),
+	validateResults,
+]
