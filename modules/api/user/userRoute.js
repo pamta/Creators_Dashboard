@@ -4,6 +4,8 @@ const router = express.Router()
 const auth = require('../../../middleware/auth')
 const UserService = require('./userService')
 const AnalyticsFbPageService = require('../thirds/facebook/analyticsFbPageService')
+const UserYTAnalyticsService = require('../thirds/youtube/userYTAnalyticsService')
+const ytUserSerivce = new UserYTAnalyticsService()
 const fbPageSerivce = new AnalyticsFbPageService()
 const userService = new UserService()
 const userValidators = require('./userValidators')
@@ -20,15 +22,21 @@ router.patch(
 			const userId = req.user.id
 			const { fbPageId, fbPageAccessToken } = req.body
 			const user = await userService.deleteUserAnalytics(userId)
+			const dateNow = Date.now()
 
 			const fbPageAnalytic = await fbPageSerivce.createPageAnalytic(
 				fbPageId,
 				fbPageAccessToken
 			)
+			//const ytUserAnalytic = await ytUserSerivce.create()
 			const userAnalytics = {
 				fbUserAnalytics: {
 					data: fbPageAnalytic._id,
-					date: Date.now(),
+					date: dateNow,
+				},
+				ytUserAnalytics: {
+					data: null,
+					date: dateNow,
 				},
 			}
 
