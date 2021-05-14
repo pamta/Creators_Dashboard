@@ -17,6 +17,8 @@ import {
 	USER_UPDATE_FAIL,
 	USER_DELETE_SUCCESS,
 	USER_DELETE_FAIL,
+	USER_ANALYTICS_UPDATE_SUCCESS,
+	USER_ANALYTICS_UPDATE_FAIL,
 } from './types'
 import {
 	setAuthToken,
@@ -53,6 +55,34 @@ export const loadUser = () => async (dispatch) => {
 	} catch (error) {
 		dispatch({
 			type: AUTH_ERROR,
+		})
+	}
+}
+
+export const updateUserAnalytics = () => async (dispatch, getState) => {
+	try {
+		const fbPageAccessToken =
+			getState().facebook.pages.selectedPageInfo.longLivedToken ?? ''
+		const fbPageId = getState().facebook.pages.selectedPageInfo.id ?? ''
+
+		const config = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		}
+		const body = JSON.stringify({
+			fbPageAccessToken,
+			fbPageId,
+		})
+		console.log(body)
+		const res = await axios.patch('/api/user/updateAnalytics', body, config)
+		dispatch({
+			type: USER_ANALYTICS_UPDATE_SUCCESS,
+			payload: res.data,
+		})
+	} catch (err) {
+		dispatch({
+			type: USER_ANALYTICS_UPDATE_FAIL,
 		})
 	}
 }
