@@ -38,6 +38,16 @@ const UserSchema = new mongoose.Schema({
 				default: Date.now(),
 			},
 		},
+		ytUserAnalytics: {
+			data: {
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'youtubeUserAnalytic',
+			},
+			date: {
+				type: Date,
+				default: Date.now(),
+			},
+		},
 	},
 })
 
