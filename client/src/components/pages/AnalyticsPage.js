@@ -1,6 +1,8 @@
+import { useEffect } from 'react'
 import useWindowSize from '../../lib/useWindowSize'
 import UserStats from '../analytics/UserStats'
-
+import { useDispatch } from 'react-redux'
+import { updateUserAnalytics } from '../../actions/auth'
 const AnalyticsPage = () => {
 	const isTablet = useWindowSize().width <= 1080
 
@@ -13,6 +15,12 @@ const AnalyticsPage = () => {
 	const getComponentsStyle = () => {
 		return 'flex flex-col justify-left rounded-md p-4 w-full'
 	}
+
+	const dispatch = useDispatch()
+
+	useEffect(() => {
+		dispatch(updateUserAnalytics())
+	}, [updateUserAnalytics])
 
 	return (
 		<div className='p-4'>
