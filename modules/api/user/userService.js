@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 const User = require('./userDAO')
 const ArrayError = require('../../../utils/ArrayError')
 const AnalyticsFbPage = require('../thirds/facebook/analyticsFbPageDAO')
+const AnalyticsYtUser = require('../thirds/youtube/userYTAnalyticsDAO')
 
 class UserService {
 	async signUp(userDTO) {
@@ -56,17 +57,25 @@ class UserService {
 		if (!userFound) {
 			throw new ArrayError([{ msg: 'User non existent' }])
 		}
-		if (!userFound.analytics) {
+		const analytics = userFound.analytics
+		if (!analytics) {
 			return userFound
 		}
 
-		if (userFound.analytics.fbUserAnalytics) {
+		if (analytics.fbUserAnalytics && analytics.fbUserAnalytics.data) {
 			await AnalyticsFbPage.deleteMany({
-				_id: userFound.analytics.fbUserAnalytics.data,
+				_id: analytics.fbUserAnalytics.data,
 			})
 			userFound.analytics.fbUserAnalytics = {}
-			await userFound.save()
 		}
+		if (analytics.ytUserAnalytics && analytics.ytUserAnalytics.data) {
+			await AnalyticsYtUser.deleteMany({
+				_id: analytics.ytUserAnalytics.data,
+			})
+			userFound.analytics.ytUserAnalytics = {}
+		}
+
+		await userFound.save()
 		return userFound
 	}
 
