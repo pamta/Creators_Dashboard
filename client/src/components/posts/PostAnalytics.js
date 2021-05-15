@@ -58,6 +58,30 @@ const yDomain = myDATA.reduce(
 // };
 
 const PostAnalytics = () => {
+	const fbPageAccessToken =
+		useSelector(
+			(state) => state.facebook.pages.selectedPageInfo.longLivedToken
+		) ?? ''
+	const getPostAnalytics = async (postId) => {
+		try {
+			const config = {
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			}
+			const body = JSON.stringify({
+				fbPageAccessToken,
+			})
+
+			const requestLink = `/api/publication/${postId}/update/analytics`
+			const res = await axios.put(requestLink, body, config)
+			return res.data
+		} catch (err) {
+			console.log(err.response.data.error)
+			return null
+		}
+	}
+
 	const post = useSelector((state) => state.post)
 	const [selectedPost, setSelectedPost] = useState()
 	const [fbStats, setFbStats] = useState({
@@ -100,9 +124,11 @@ const PostAnalytics = () => {
 		}
 		;(async function () {
 			try {
-				const res = await axios.get('/api/publication/' + id + '/analytics')
-				console.log(res.data)
-				setAnalytics(res.data)
+				let x = await getPostAnalytics(id)
+				console.log(x)
+				//const res = await axios.get('/api/publication/' + id + '/analytics')
+				//console.log(res.data)
+				//setAnalytics(res.data)
 			} catch (error) {
 				console.log(error)
 			}
