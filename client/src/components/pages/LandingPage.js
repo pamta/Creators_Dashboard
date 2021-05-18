@@ -139,7 +139,7 @@ const LandingPage = () => {
 		)
 
 	return (
-		<div className='p-4'>
+		<div className='p-4 py-6'>
 			<section className='p-4 rounded-lg w-full h-full bg-gradient-to-r from-yellow-200 via-green-200 to-blue-200 text-center'>
 				<h1 className='font-semibold text-3xl my-2'>Welcome back, {name}!</h1>
 			</section>
