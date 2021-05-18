@@ -146,6 +146,9 @@ const PostAnalytics = () => {
 					retweet_count: elem[0].data.retweet_count,
 					favorite_count: elem[0].data.favorite_count,
 				})
+			} else if (elem[0].socialNetwork == 'Compound') {
+				console.log('received compound')
+				console.log(elem[0])
 			}
 		})
 	}
