@@ -74,4 +74,44 @@ router.post('/access_token', async (req, res) => {
 		})
 })
 
+router.post('/tweet', async (req, res) => {
+	const client = axios.create()
+	let twConsumerKey = req.body.twConsumerKey
+	let twConsumerSecret = req.body.twConsumerSecret
+	let twToken = req.body.twToken
+	let twTokenSecret = req.body.twTokenSecret
+	let tweet = req.body.tweet
+
+	const request = {
+		url: 'https://api.twitter.com/1.1/statuses/update.json',
+		method: 'POST',
+	}
+
+	const authHeader = helper.getAuthHeaderForRequest(
+		request,
+		twConsumerKey,
+		twConsumerSecret,
+		twToken,
+		twTokenSecret,
+	)
+	client
+		.request({
+			url: request.url,
+			method: 'post',
+			headers: authHeader,
+			params: {
+				status: tweet,
+			},
+		})
+		.then(function (reS) {
+			console.log(reS)
+			let tweet = reS.data
+			res.send(tweet)
+		})
+		.catch(function (e) {
+			console.log(e)
+			res.send(e)
+		})
+})
+
 module.exports = router
