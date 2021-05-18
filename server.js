@@ -42,9 +42,10 @@ app.use(
 app.use("/youtube/upload", require("./modules/api/thirds/youtube/upload"));
 app.use("/api/facebook", require("./modules/api/thirds/facebook/facebook"));
 app.use(
-    "/admin/socialnetworks",
-    require("./modules/admin/socialNetworks/socialnetworks")
-);
+	'/admin/socialnetworks',
+	require('./modules/admin/socialNetworks/socialnetworks')
+)
+app.use('/api/twitter', require('./modules/api/thirds/twitter/twitter'))
 
 const server = https
     .createServer(
