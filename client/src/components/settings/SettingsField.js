@@ -14,9 +14,6 @@ const SettingsField = ({
 			: 'flex flex-row space-x-8 justify-between'
 	}
 
-	// If it received the handler name, it means user is authenticated
-	const isAuthenticated = true
-
 	return (
 		<div className={getLayoutStyle()}>
 			<div className='flex flex-row items-center space-x-4'>
@@ -52,24 +49,26 @@ const SettingsField = ({
 						</label>
 					</div>
 				</div>
-				<button onClick={authenticate}>
-					<div className={'bg-red-400 p-2 rounded-md hover:bg-red-600'}>
-						<svg
-							className='w-4 h-4'
-							fill='none'
-							stroke='white'
-							viewBox='0 0 24 24'
-							xmlns='http://www.w3.org/2000/svg'
-						>
-							<path
-								strokeLinecap='round'
-								strokeLinejoin='round'
-								strokeWidth='2'
-								d='M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z'
-							></path>
-						</svg>
-					</div>
-				</button>
+				{authenticate == null ? null : (
+					<button onClick={authenticate}>
+						<div className={'bg-red-400 p-2 rounded-md hover:bg-red-600'}>
+							<svg
+								className='w-4 h-4'
+								fill='none'
+								stroke='white'
+								viewBox='0 0 24 24'
+								xmlns='http://www.w3.org/2000/svg'
+							>
+								<path
+									strokeLinecap='round'
+									strokeLinejoin='round'
+									strokeWidth='2'
+									d='M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z'
+								></path>
+							</svg>
+						</div>
+					</button>
+				)}
 			</div>
 		</div>
 	)

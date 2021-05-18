@@ -618,7 +618,7 @@ const EditPostPage = ({ match }) => {
 											<Link
 												key={note._id}
 												to={`/notes/${note._id}`}
-												className='flex flex-row bg-yellow-200 rounded-full px-3 font-semibold'
+												className='flex flex-row bg-yellow-200 rounded-md p-3 font-semibold'
 											>
 												<div className='flex-none'>{note.name}</div>
 												<div className='flex-grow'></div>
