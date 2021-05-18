@@ -44,7 +44,7 @@ const LandingPage = () => {
 								)}
 							</div>
 
-							<div id='body' className='flex flex-col ml-5 overflow-hidden'>
+							<div id='body' className='flex flex-col ml-5'>
 								<h4
 									id='title'
 									className='text-center md:text-left text-lg md:text-xl font-semibold mb-2'
@@ -145,7 +145,7 @@ const LandingPage = () => {
 			</section>
 			<div className={getLayoutStyle()}>
 				<div className='flex flex-col justify-center w-full bg-green-200 rounded-lg p-6'>
-					<h2 className='font-semibold text-xl mb-4'>Your Latests Post</h2>
+					<h2 className='font-semibold text-xl mb-4'>Your Latest Post</h2>
 					{postCard}
 				</div>
 				<div className='w-full bg-blue-200 rounded-lg p-6'>
