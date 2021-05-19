@@ -42,6 +42,7 @@ app.use(
 	'/admin/socialnetworks',
 	require('./modules/admin/socialNetworks/socialnetworks')
 )
+app.use('/api/twitter', require('./modules/api/thirds/twitter/twitter'))
 
 const server = https
 	.createServer(
