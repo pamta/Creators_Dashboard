@@ -3,6 +3,8 @@ const config = require('config')
 const jwt = require('jsonwebtoken')
 const User = require('./userDAO')
 const ArrayError = require('../../../utils/ArrayError')
+const AnalyticsFbPage = require('../thirds/facebook/analyticsFbPageDAO')
+const AnalyticsYtUser = require('../thirds/youtube/userYTAnalyticsDAO')
 
 class UserService {
 	async signUp(userDTO) {
@@ -50,14 +52,44 @@ class UserService {
 		return token
 	}
 
+	async deleteUserAnalytics(userID) {
+		let userFound = await User.findById(userID)
+		if (!userFound) {
+			throw new ArrayError([{ msg: 'User non existent' }])
+		}
+		const analytics = userFound.analytics
+		if (!analytics) {
+			return userFound
+		}
+
+		if (analytics.fbUserAnalytics && analytics.fbUserAnalytics.data) {
+			await AnalyticsFbPage.deleteMany({
+				_id: analytics.fbUserAnalytics.data,
+			})
+			userFound.analytics.fbUserAnalytics = {}
+		}
+		if (analytics.ytUserAnalytics && analytics.ytUserAnalytics.data) {
+			await AnalyticsYtUser.deleteMany({
+				_id: analytics.ytUserAnalytics.data,
+			})
+			userFound.analytics.ytUserAnalytics = {}
+		}
+
+		await userFound.save()
+		return userFound
+	}
+
 	async update(userID, userDTO) {
-		const { name, userName, email } = userDTO
+		const { name, userName, email, analytics } = userDTO
 
 		// Check if there's a user with that id
 		let userFound = await User.findById(userID)
 
 		if (!userFound) {
 			throw new ArrayError([{ msg: 'User non existent' }])
+		}
+		if (!analytics) {
+			analytics = {}
 		}
 		const updateDate = Date.now()
 
@@ -68,6 +100,7 @@ class UserService {
 				email: email,
 				userName: userName,
 				updateDate: updateDate,
+				analytics: analytics,
 			},
 			(err, doc) => {
 				if (err) {

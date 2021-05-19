@@ -58,6 +58,29 @@ const yDomain = myDATA.reduce(
 // };
 
 const PostAnalytics = () => {
+	const facebook = useSelector((state) => state.facebook)
+
+	const getPostAnalytics = async (postId) => {
+		try {
+			const config = {
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			}
+			const body = JSON.stringify({
+				fbPageAccessToken: facebook.pages.selectedPageInfo.longLivedToken,
+			})
+
+			const requestLink = `/api/publication/${postId}/update/analytics`
+			const res = await axios.put(requestLink, body, config)
+			return res.data
+		} catch (err) {
+			const requestLink = `/api/publication/${postId}/analytics`
+			const res = await axios.get(requestLink)
+			return res.data
+		}
+	}
+
 	const post = useSelector((state) => state.post)
 	const [selectedPost, setSelectedPost] = useState()
 	const [fbStats, setFbStats] = useState({
@@ -100,9 +123,11 @@ const PostAnalytics = () => {
 		}
 		;(async function () {
 			try {
-				const res = await axios.get('/api/publication/' + id + '/analytics')
-				console.log(res.data)
-				setAnalytics(res.data)
+				let x = await getPostAnalytics(id)
+				console.log(x)
+				//const res = await axios.get('/api/publication/' + id + '/analytics')
+				//console.log(res.data)
+				setAnalytics(x)
 			} catch (error) {
 				console.log(error)
 			}
@@ -129,7 +154,7 @@ const PostAnalytics = () => {
 						Number(elem[0].data.post_reactions_sorry_total) +
 						Number(elem[0].data.post_reactions_anger_total),
 				})
-			} else if (elem[0].socialNetwork == 'Youtube') {
+			} else if (elem[0].socialNetwork == 'YouTube') {
 				isOnYt(true)
 				setYtStats({
 					view_count: elem[0].data.viewCount,
@@ -146,6 +171,9 @@ const PostAnalytics = () => {
 					retweet_count: elem[0].data.retweet_count,
 					favorite_count: elem[0].data.favorite_count,
 				})
+			} else if (elem[0].socialNetwork == 'Compound') {
+				console.log('received compound')
+				console.log(elem[0])
 			}
 		})
 	}

@@ -1,11 +1,12 @@
 import useWindowSize from '../../lib/useWindowSize'
 
-const SettingsField = ({
+const SettingsEditableField = ({
 	fieldName,
 	inputTag,
 	icon,
 	textValue,
 	authenticate,
+	updateState,
 }) => {
 	const isTablet = useWindowSize().width <= 1080
 	const getLayoutStyle = () => {
@@ -13,6 +14,9 @@ const SettingsField = ({
 			? 'flex flex-col w-full'
 			: 'flex flex-row space-x-8 justify-between'
 	}
+
+	// If it received the handler name, it means user is authenticated
+	const isAuthenticated = true
 
 	return (
 		<div className={getLayoutStyle()}>
@@ -39,9 +43,9 @@ const SettingsField = ({
 						name={inputTag}
 						id={inputTag}
 						className='focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md h-8'
+						defaultValue={textValue}
 						placeholder={fieldName + ' handler'}
-						value={textValue ? textValue : ''}
-						readOnly
+						onChange={(e) => updateState(e.target.value)}
 					></input>
 					<div className='absolute inset-y-0 right-0 flex items-center h-8'>
 						<label htmlFor={inputTag} className='sr-only'>
@@ -49,29 +53,27 @@ const SettingsField = ({
 						</label>
 					</div>
 				</div>
-				{authenticate == null ? null : (
-					<button onClick={authenticate}>
-						<div className={'bg-red-400 p-2 rounded-md hover:bg-red-600'}>
-							<svg
-								className='w-4 h-4'
-								fill='none'
-								stroke='white'
-								viewBox='0 0 24 24'
-								xmlns='http://www.w3.org/2000/svg'
-							>
-								<path
-									strokeLinecap='round'
-									strokeLinejoin='round'
-									strokeWidth='2'
-									d='M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z'
-								></path>
-							</svg>
-						</div>
-					</button>
-				)}
+				<button onClick={() => authenticate()}>
+					<div className={'bg-red-400 p-2 rounded-md hover:bg-red-600'}>
+						<svg
+							className='w-4 h-4'
+							fill='none'
+							stroke='white'
+							viewBox='0 0 24 24'
+							xmlns='http://www.w3.org/2000/svg'
+						>
+							<path
+								strokeLinecap='round'
+								strokeLinejoin='round'
+								strokeWidth='2'
+								d='M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z'
+							></path>
+						</svg>
+					</div>
+				</button>
 			</div>
 		</div>
 	)
 }
 
-export default SettingsField
+export default SettingsEditableField

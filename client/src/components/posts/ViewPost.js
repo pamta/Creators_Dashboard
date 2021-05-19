@@ -114,7 +114,7 @@ const ViewPost = () => {
 			<div className='rounded shadow-lg bg-white w-1/2 max-h-3/4'>
 				<div className='w-full max-h-1/2'>{mediaDisplay()}</div>
 				<div className='px-5 py-2 space-y-2'>
-					<div className='flex items-center space-x-2'>
+					<div className='flex items-center space-x-2 mt-4'>
 						<svg
 							xmlns='http://www.w3.org/2000/svg'
 							width='24'
@@ -134,7 +134,7 @@ const ViewPost = () => {
 							{user.name}
 						</div>
 					</div>
-					<div className='text-gray-900 text-xl md:text-2xl'>
+					<div className='text-gray-900 text-xl md:text-xl'>
 						{selectedPost && selectedPost.text}
 					</div>
 					<div className='flex items-center pb-5 float-right'>
@@ -155,9 +155,7 @@ const ViewPost = () => {
 								<line x1='8' y1='2' x2='8' y2='6'></line>
 								<line x1='3' y1='10' x2='21' y2='10'></line>
 							</svg>
-							<div className='text-base font-thin text-gray-700'>
-								{creationDate}
-							</div>
+							<div className='text-base text-gray-700'>{creationDate}</div>
 						</div>
 					</div>
 				</div>

@@ -9,6 +9,7 @@ import { Provider } from 'react-redux'
 import store from './store'
 import { loadUser } from './actions/auth'
 import { loadFbDataFromStorage } from './actions/facebook'
+import { loadTWDataFromStorage } from './actions/twitter'
 import { loadYTDataFromStorage } from './actions/youtube'
 //Style
 import './App.css'
@@ -51,6 +52,7 @@ const App = () => {
 		fbSDKInit()
 		store.dispatch(loadFbDataFromStorage())
 		store.dispatch(loadYTDataFromStorage())
+		store.dispatch(loadTWDataFromStorage())
 		store.dispatch(loadUser())
 	}, [fbSDKInit, loadUser, loadFbDataFromStorage, loadYTDataFromStorage])
 

@@ -12,7 +12,11 @@ const userValidators = require('./userValidators')
 // Passing the 'auth' middleware will execute the middleware function that will be executed before the callback.
 router.get('/', auth, async (req, res) => {
 	try {
-		const user = await userService.getById(req.user.id)
+		let user = await userService.getById(req.user.id)
+		user = await user
+			.populate('analytics.fbUserAnalytics.data')
+			.populate('analytics.ytUserAnalytics.data')
+			.execPopulate()
 		res.json(user)
 	} catch (err) {
 		console.error(err.message)
