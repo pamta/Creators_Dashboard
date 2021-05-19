@@ -9,7 +9,6 @@ const ytUserSerivce = new UserYTAnalyticsService()
 const fbPageSerivce = new AnalyticsFbPageService()
 const userService = new UserService()
 const userValidators = require('./userValidators')
-
 // route to validate social network user info
 // @route  PATCH api/user/updateAnalytics
 // @desct  Updates user analytics from social networks

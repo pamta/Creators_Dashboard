@@ -154,7 +154,7 @@ const PostAnalytics = () => {
 						Number(elem[0].data.post_reactions_sorry_total) +
 						Number(elem[0].data.post_reactions_anger_total),
 				})
-			} else if (elem[0].socialNetwork == 'Youtube') {
+			} else if (elem[0].socialNetwork == 'YouTube') {
 				isOnYt(true)
 				setYtStats({
 					view_count: elem[0].data.viewCount,
@@ -171,6 +171,9 @@ const PostAnalytics = () => {
 					retweet_count: elem[0].data.retweet_count,
 					favorite_count: elem[0].data.favorite_count,
 				})
+			} else if (elem[0].socialNetwork == 'Compound') {
+				console.log('received compound')
+				console.log(elem[0])
 			}
 		})
 	}

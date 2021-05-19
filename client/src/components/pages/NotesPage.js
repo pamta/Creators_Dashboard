@@ -50,13 +50,13 @@ const NotesPage = () => {
 					<div
 						onClick={(e) => selectNote(note._id)}
 						className={
-							'flex flex-row p-2 border-0 border-b border-gray-400 border-opacity-50 hover:bg-yellow-300 hover:bg-opacity-40 cursor-pointer' +
+							'flex flex-col p-2 border-0 border-b border-gray-400 border-opacity-50 hover:bg-yellow-300 hover:bg-opacity-40 cursor-pointer' +
 							selectedNoteBG(note._id)
 						}
 						key={note._id}
 					>
 						<div className='flex-1 flex-shrink '>{note.name}</div>
-						<div className='flex-none text-yellow-900 text-opacity-90 text-right text-sm '>
+						<div className='flex-none text-yellow-900 text-opacity-90 text-sm '>
 							{note.creationDate.substring(0, 10)}
 						</div>
 					</div>
@@ -67,7 +67,7 @@ const NotesPage = () => {
 
 	return (
 		<div className='flex h-full py-4'>
-			<div className='relative flex flex-col w-1/4 bg-yellow-100 p-6'>
+			<div className='relative flex flex-col w-1/4 bg-yellow-100 p-6 rounded-lg'>
 				<div
 					className={
 						' flex py-4 px-2 text-center text-gray-900 text-2xl md:text-3xl font-semibold xl:' +

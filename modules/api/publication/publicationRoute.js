@@ -220,6 +220,7 @@ router.post(
 		console.log('before try')
 		try {
 			const callback = (err, doc) => {
+				console.log('reached callback')
 				if (err) {
 					throw new Error(err.message)
 				}
@@ -808,7 +809,6 @@ router.delete('/images', auth, async (req, res) => {
 router.delete('/image', auth, async (req, res) => {
 	try {
 		console.log('requested image deletion')
-
 		const publication_id = req.header('publication_id')
 		const image_name = req.header('image_name')
 		const publication = await Publication.findOne({
