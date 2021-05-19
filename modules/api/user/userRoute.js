@@ -28,15 +28,17 @@ router.patch(
 					fbPageId,
 					fbPageAccessToken
 				)
-				if (
-					user.analytics.fbUserAnalytics &&
-					user.analytics.fbUserAnalytics._id
-				) {
-					fbPageSerivce.remove(user.analytics.fbUserAnalytics._id)
-				}
-				user.analytics.fbUserAnalytics = {
-					data: fbPageAnalytic._id,
-					date: dateNow,
+				if (fbPageAnalytic && fbPageAnalytic._id) {
+					if (
+						user.analytics.fbUserAnalytics &&
+						user.analytics.fbUserAnalytics._id
+					) {
+						fbPageSerivce.remove(user.analytics.fbUserAnalytics._id)
+					}
+					user.analytics.fbUserAnalytics = {
+						data: fbPageAnalytic._id,
+						date: dateNow,
+					}
 				}
 			} catch (err) {
 				console.log(err)
@@ -44,15 +46,17 @@ router.patch(
 
 			try {
 				const ytUserAnalytic = await ytUserSerivce.create()
-				if (
-					user.analytics.ytUserAnalytics &&
-					user.analytics.ytUserAnalytics._id
-				) {
-					ytUserSerivce.remove(user.analytics.ytUserAnalytics._id)
-				}
-				user.analytics.ytUserAnalytics = {
-					data: ytUserAnalytic._id,
-					date: dateNow,
+				if (ytUserAnalytic && ytUserAnalytic._id) {
+					if (
+						user.analytics.ytUserAnalytics &&
+						user.analytics.ytUserAnalytics._id
+					) {
+						ytUserSerivce.remove(user.analytics.ytUserAnalytics._id)
+					}
+					user.analytics.ytUserAnalytics = {
+						data: ytUserAnalytic._id,
+						date: dateNow,
+					}
 				}
 			} catch (err) {}
 			await user.save()
