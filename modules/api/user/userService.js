@@ -1,135 +1,168 @@
-const bcrypt = require("bcryptjs");
-const config = require("config");
-const jwt = require("jsonwebtoken");
-const User = require("./userDAO");
-const ArrayError = require("../../../utils/ArrayError");
+const bcrypt = require('bcryptjs')
+const config = require('config')
+const jwt = require('jsonwebtoken')
+const User = require('./userDAO')
+const ArrayError = require('../../../utils/ArrayError')
+const AnalyticsFbPage = require('../thirds/facebook/analyticsFbPageDAO')
+const AnalyticsYtUser = require('../thirds/youtube/userYTAnalyticsDAO')
 
 class UserService {
-  async signUp(userDTO) {
-    const { name, userName, email, password } = userDTO;
-    // Check if there's a user with that email o that userName (since we put emails and usernames as unique)
-    let mailFound = await User.findOne({ email });
-    let userNameFound = await User.findOne({ userName });
-    if (userNameFound || mailFound) {
-      throw new ArrayError([{ msg: "User already exists" }]);
-    }
+	async signUp(userDTO) {
+		const { name, userName, email, password } = userDTO
+		// Check if there's a user with that email o that userName (since we put emails and usernames as unique)
+		let mailFound = await User.findOne({ email })
+		let userNameFound = await User.findOne({ userName })
+		if (userNameFound || mailFound) {
+			throw new ArrayError([{ msg: 'User already exists' }])
+		}
 
-    //save current date in the created use. May use some other format so it is up to changes
-    const registrationDate = Date.now();
-    const updateDate = registrationDate;
+		//save current date in the created use. May use some other format so it is up to changes
+		const registrationDate = Date.now()
+		const updateDate = registrationDate
 
-    const user = new User({
-      name,
-      email,
-      userName,
-      password,
-      registrationDate,
-      updateDate,
-    });
+		const user = new User({
+			name,
+			email,
+			userName,
+			password,
+			registrationDate,
+			updateDate,
+		})
 
-    // 10 is recommended in documentation, the bigger the number means more security
-    const salt = await bcrypt.genSalt(10);
+		// 10 is recommended in documentation, the bigger the number means more security
+		const salt = await bcrypt.genSalt(10)
 
-    // // Encrypt the password
-    user.password = await bcrypt.hash(password, salt);
-    // // Remember that User is a moongose model and we connected moongose with our database
-    await user.upload();
+		// // Encrypt the password
+		user.password = await bcrypt.hash(password, salt)
+		// // Remember that User is a moongose model and we connected moongose with our database
+		await user.upload()
 
-    const payload = {
-      user: {
-        id: user.id, // Moongose gets the id of the database
-      },
-    };
+		const payload = {
+			user: {
+				id: user.id, // Moongose gets the id of the database
+			},
+		}
 
-    // // Generate a JSON Web Token (encrypted payload with signature)
-    const token = jwt.sign(
-      payload,
-      config.get("jwtSecret"), // encryption key
-      { expiresIn: 360000 }
-    );
-    return token;
-  }
+		// // Generate a JSON Web Token (encrypted payload with signature)
+		const token = jwt.sign(
+			payload,
+			config.get('jwtSecret'), // encryption key
+			{ expiresIn: 360000 }
+		)
+		return token
+	}
 
-  async update(userID, userDTO) {
-    const { name, userName, email } = userDTO;
+	async deleteUserAnalytics(userID) {
+		let userFound = await User.findById(userID)
+		if (!userFound) {
+			throw new ArrayError([{ msg: 'User non existent' }])
+		}
+		const analytics = userFound.analytics
+		if (!analytics) {
+			return userFound
+		}
 
-    // Check if there's a user with that id
-    let userFound = await User.findById(userID);
+		if (analytics.fbUserAnalytics && analytics.fbUserAnalytics.data) {
+			await AnalyticsFbPage.deleteMany({
+				_id: analytics.fbUserAnalytics.data,
+			})
+			userFound.analytics.fbUserAnalytics = {}
+		}
+		if (analytics.ytUserAnalytics && analytics.ytUserAnalytics.data) {
+			await AnalyticsYtUser.deleteMany({
+				_id: analytics.ytUserAnalytics.data,
+			})
+			userFound.analytics.ytUserAnalytics = {}
+		}
 
-    if (!userFound) {
-      throw new ArrayError([{ msg: "User non existent" }]);
-    }
-    const updateDate = Date.now();
+		await userFound.save()
+		return userFound
+	}
 
-    await User.findByIdAndUpdate(
-      userID,
-      {
-        name: name,
-        email: email,
-        userName: userName,
-        updateDate: updateDate,
-      },
-      (err, doc) => {
-        if (err) {
-          throw new Error(err.message);
-        }
-      }
-    );
-  }
+	async update(userID, userDTO) {
+		const { name, userName, email, analytics } = userDTO
 
-  async delete(userID) {
-    // Check if there's a user with that id
-    let userFound = await User.findById(userID);
-    if (!userFound) {
-      throw new ArrayError([{ msg: "User non existent" }]);
-    }
+		// Check if there's a user with that id
+		let userFound = await User.findById(userID)
 
-    await User.remove({ _id: userID }, (err, doc) => {
-      if (err) {
-        throw new Error(err.message);
-      }
-    });
-  }
+		if (!userFound) {
+			throw new ArrayError([{ msg: 'User non existent' }])
+		}
+		if (!analytics) {
+			analytics = {}
+		}
+		const updateDate = Date.now()
 
-  async authenticate(userIdentifier, password) {
-    //We try to find a user, first by mail, and then by userName.
-    //there is no posibility for a user name to have the same format as an email or the other way around,
-    //so no user should be incorrectly identified
-    let mailFound = await User.findOne({ email: userIdentifier });
-    let userNameFound = await User.findOne({
-      userName: userIdentifier,
-    });
+		await User.findByIdAndUpdate(
+			userID,
+			{
+				name: name,
+				email: email,
+				userName: userName,
+				updateDate: updateDate,
+				analytics: analytics,
+			},
+			(err, doc) => {
+				if (err) {
+					throw new Error(err.message)
+				}
+			}
+		)
+	}
 
-    let user = mailFound || userNameFound;
-    if (!user) {
-      throw new ArrayError([{ msg: "Invalid credentials" }]);
-    }
+	async delete(userID) {
+		// Check if there's a user with that id
+		let userFound = await User.findById(userID)
+		if (!userFound) {
+			throw new ArrayError([{ msg: 'User non existent' }])
+		}
 
-    // Check if the hash version of a non-encrypted text equals to a hash
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      throw new ArrayError([{ msg: "Invalid credentials" }]);
-    }
+		await User.remove({ _id: userID }, (err, doc) => {
+			if (err) {
+				throw new Error(err.message)
+			}
+		})
+	}
 
-    const payload = {
-      user: {
-        id: user.id, // Moongose gets the id of the database
-      },
-    };
-    // Generate a JSON Web Token (encrypted payload with signature)
-    const token = jwt.sign(
-      payload,
-      config.get("jwtSecret"), // encryption key
-      { expiresIn: 360000 }
-    );
+	async authenticate(userIdentifier, password) {
+		//We try to find a user, first by mail, and then by userName.
+		//there is no posibility for a user name to have the same format as an email or the other way around,
+		//so no user should be incorrectly identified
+		let mailFound = await User.findOne({ email: userIdentifier })
+		let userNameFound = await User.findOne({
+			userName: userIdentifier,
+		})
 
-    return token;
-  }
+		let user = mailFound || userNameFound
+		if (!user) {
+			throw new ArrayError([{ msg: 'Invalid credentials' }])
+		}
 
-  async getById(userID) {
-    const user = await User.findByIdAndSelect(userID, "-password");
-    return user;
-  }
+		// Check if the hash version of a non-encrypted text equals to a hash
+		const isMatch = await bcrypt.compare(password, user.password)
+		if (!isMatch) {
+			throw new ArrayError([{ msg: 'Invalid credentials' }])
+		}
+
+		const payload = {
+			user: {
+				id: user.id, // Moongose gets the id of the database
+			},
+		}
+		// Generate a JSON Web Token (encrypted payload with signature)
+		const token = jwt.sign(
+			payload,
+			config.get('jwtSecret'), // encryption key
+			{ expiresIn: 360000 }
+		)
+
+		return token
+	}
+
+	async getById(userID) {
+		const user = await User.findByIdAndSelect(userID, '-password')
+		return user
+	}
 }
 
-module.exports = UserService;
+module.exports = UserService

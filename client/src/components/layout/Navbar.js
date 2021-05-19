@@ -8,7 +8,7 @@ const Navbar = ({ logout }) => {
 	const currentPage = useLocation().pathname.split('/')[1]
 
 	return (
-		<div className='w-72 p-4 bg-gray-100'>
+		<div className='w-72 flex-shrink-0 p-4 bg-gray-100'>
 			<div className='flex flex-col justify-between h-full'>
 				<div className='flex flex-col space-y-2'>
 					<h1 className='font-semibold text-xl text-center mb-4'>

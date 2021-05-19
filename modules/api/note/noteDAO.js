@@ -16,11 +16,7 @@ class NoteDAO extends Note {
 	}
 
 	static findByIdAndUpdate = async (noteID, note, callback) => {
-		await note.findByIdAndUpdate(
-			noteID,
-			note,
-			callback
-		).exec()
+		await note.findByIdAndUpdate(noteID, note, { new: true }, callback).exec()
 	}
 
 	static remove = async (jsonParams, callback) => {

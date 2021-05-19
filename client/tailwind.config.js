@@ -1,4 +1,4 @@
-const colors = require('tailwindcss/colors');
+const colors = require('tailwindcss/colors')
 
 module.exports = {
 	purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
@@ -10,35 +10,37 @@ module.exports = {
 			},
 			borderRadius: {
 				DEFAULT: '0.25rem',
-				md: '0.375rem'
-			}
+				md: '0.375rem',
+			},
+			width: {
+				'9/10': '90%',
+				'19/20': '95%',
+			},
 		},
-        minWidth: {
-            '0': '0',
-            '1/4': '25%',
-            '1/2': '50%',
-            '3/4': '75%',
-            'full': '100%',
-        },
-        maxHeight: {
-            '0': '0',
-            '1/4': '25%',
-            '1/2': '50%',
-            '3/4': '75%',
-            'full': '100%',
-        },
-        maxWidth: {
-            '0': '0',
-            '1/4': '25%',
-            '1/2': '50%',
-            '3/4': '75%',
-            'full': '100%',
-        },
+		minWidth: {
+			0: '0',
+			'1/4': '25%',
+			'1/2': '50%',
+			'3/4': '75%',
+			full: '100%',
+		},
+		maxHeight: {
+			0: '0',
+			'1/4': '25%',
+			'1/2': '50%',
+			'3/4': '75%',
+			full: '100%',
+		},
+		maxWidth: {
+			0: '0',
+			'1/4': '25%',
+			'1/2': '50%',
+			'3/4': '75%',
+			full: '100%',
+		},
 	},
 	variants: {
 		scrollbar: ['rounded'],
 	},
-	plugins: [
-		require('tailwind-scrollbar'),
-	],
+	plugins: [require('tailwind-scrollbar')],
 }

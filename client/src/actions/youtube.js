@@ -53,42 +53,38 @@ export const loadYTDataFromStorage = () => (dispatch) => {
 	}
 }
 
-export const publishVideoToYT = (
-	fileURL,
-	title,
-	description,
-	privacyStatus,
-	publicationID
-) => async (dispatch, getState) => {
-	console.log('Going to publish video to YouTube...')
-	privacyStatus = privacyStatus ? 'public' : 'private'
-	try {
-		const body = JSON.stringify({
-			fileURL,
-			title,
-			description,
-			privacyStatus,
-			publicationID,
-		})
-		const config = {
-			headers: {
-				'Content-Type': 'application/json',
-			},
+export const publishVideoToYT =
+	(fileURL, title, description, privacyStatus, publicationID) =>
+	async (dispatch, getState) => {
+		console.log('Going to publish video to YouTube...')
+		privacyStatus = privacyStatus ? 'public' : 'private'
+		try {
+			const body = JSON.stringify({
+				fileURL,
+				title,
+				description,
+				privacyStatus,
+				publicationID,
+			})
+			const config = {
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			}
+			const res = await axios.post('/youtube/upload', body, config)
+			dispatch({
+				type: YT_PUBLISH_SUCCESS,
+				payload: res.data,
+			})
+		} catch (err) {
+			const errors = err.response.data.errors
+				? err.response.data.errors
+				: [err.response.data]
+			if (errors) {
+				errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')))
+			}
+			dispatch({
+				type: YT_PUBLISH_FAIL,
+			})
 		}
-		const res = await axios.post('/youtube/upload', body, config)
-		dispatch({
-			type: YT_PUBLISH_SUCCESS,
-			payload: res.data,
-		})
-	} catch (err) {
-		const errors = err.response.data.errors
-			? err.response.data.errors
-			: [err.response.data]
-		if (errors) {
-			errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')))
-		}
-		dispatch({
-			type: YT_PUBLISH_FAIL,
-		})
 	}
-}

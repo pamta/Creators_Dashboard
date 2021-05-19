@@ -1,7 +1,12 @@
 import useWindowSize from '../../lib/useWindowSize'
 
-const SimpleSettingsField = ({type, fieldName, value, inputTag, updateState}) => { 
-
+const SimpleSettingsField = ({
+	type,
+	fieldName,
+	value,
+	inputTag,
+	updateState,
+}) => {
 	const isTablet = useWindowSize().width <= 1080
 	const getLayoutStyle = () => {
 		return isTablet
@@ -37,8 +42,8 @@ const SimpleSettingsField = ({type, fieldName, value, inputTag, updateState}) =>
 }
 
 SimpleSettingsField.defaultProps = {
-	type: "text",
-	value: ""
-};
+	type: 'text',
+	value: '',
+}
 
 export default SimpleSettingsField
