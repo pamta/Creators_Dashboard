@@ -7,7 +7,6 @@ import {
 } from "./types";
 import { twConsumerKey, twConsumerSecret } from "../config/secrets";
 import { TWITTER_TOKEN } from "../utils/localStorageTypes";
-import { analyticsreporting } from "googleapis/build/src/apis/analyticsreporting";
 
 export const loadTWDataFromStorage = () => (dispatch) => {
   const twData = localStorage.getItem(TWITTER_TOKEN);
