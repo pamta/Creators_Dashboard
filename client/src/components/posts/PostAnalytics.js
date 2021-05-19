@@ -127,7 +127,7 @@ const PostAnalytics = () => {
 				console.log(x)
 				//const res = await axios.get('/api/publication/' + id + '/analytics')
 				//console.log(res.data)
-				setAnalytics(x)
+				//setAnalytics(res.data)
 			} catch (error) {
 				console.log(error)
 			}
