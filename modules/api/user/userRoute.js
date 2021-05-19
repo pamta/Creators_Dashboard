@@ -23,23 +23,26 @@ router.patch(
 			const user = await userService.deleteUserAnalytics(userId)
 			const dateNow = Date.now()
 
-			const fbPageAnalytic = await fbPageSerivce.createPageAnalytic(
-				fbPageId,
-				fbPageAccessToken
-			)
-			//const ytUserAnalytic = await ytUserSerivce.create()
-			const userAnalytics = {
-				fbUserAnalytics: {
+			try {
+				const fbPageAnalytic = await fbPageSerivce.createPageAnalytic(
+					fbPageId,
+					fbPageAccessToken
+				)
+				user.analytics.fbUserAnalytics = {
 					data: fbPageAnalytic._id,
 					date: dateNow,
-				},
-				ytUserAnalytics: {
-					data: null,
-					date: dateNow,
-				},
+				}
+			} catch (err) {
+				console.log(err)
 			}
 
-			user.analytics = userAnalytics
+			try {
+				const ytUserAnalytic = await ytUserSerivce.create()
+				user.analytics.ytUserAnalytics = {
+					data: ytUserAnalytic._id,
+					date: dateNow,
+				}
+			} catch (err) {}
 			await user.save()
 			res.send(user)
 		} catch (err) {
