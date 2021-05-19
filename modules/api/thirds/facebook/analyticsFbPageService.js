@@ -29,6 +29,10 @@ class AnalyticsFbPageService {
 		await analytic.upload()
 		return analytic
 	}
+
+	async remove(analyticId) {
+		await AnalyticsFbPage.remove({ _id: analyticId })
+	}
 }
 
 module.exports = AnalyticsFbPageService

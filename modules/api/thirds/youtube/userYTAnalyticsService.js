@@ -35,6 +35,10 @@ class UserYouTubeAnalyticsService {
 
 		return analytic
 	}
+
+	async remove(analyticId) {
+		await UserYouTubeAnalytics.remove({ _id: analyticId })
+	}
 }
 
 async function getVideosAnalytics() {
