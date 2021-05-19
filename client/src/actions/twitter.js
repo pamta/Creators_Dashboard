@@ -65,16 +65,11 @@ export const twitterCodeVerify =
         verifierToken: code,
       })
       .then(function (res) {
-        let data = res.data;
-        let token = data.substring(12, 62);
-        let secret = data.substring(82, 127);
-        let user_id = data.substring(136, 145);
-        let screen_name = data.substring(158);
-        console.log(token);
-        console.log(secret);
-        console.log(user_id);
-        console.log(screen_name);
-        console.log(data);
+        let data = res.data.split("&");
+        let token = data[0].substring(12)
+        let secret = data[1].substring(19);
+        let user_id = data[2].substring(8);
+        let screen_name = data[3].substring(12);
         dispatch({
           type: TW_LOGIN_SUCCESS,
           payload: {
