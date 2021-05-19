@@ -20,7 +20,7 @@ router.patch(
 		try {
 			const userId = req.user.id
 			const { fbPageId, fbPageAccessToken } = req.body
-			const user = await userService.deleteUserAnalytics(userId)
+			let user = await userService.deleteUserAnalytics(userId)
 			const dateNow = Date.now()
 
 			try {
@@ -44,6 +44,10 @@ router.patch(
 				}
 			} catch (err) {}
 			await user.save()
+			user = await user
+				.populate('analytics.fbUserAnalytics.data')
+				.populate('analytics.ytUserAnalytics.data')
+				.execPopulate()
 			res.send(user)
 		} catch (err) {
 			if (err.name == 'ArrayError') {
