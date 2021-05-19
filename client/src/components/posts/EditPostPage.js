@@ -617,7 +617,7 @@ const EditPostPage = ({ match }) => {
 									.filter((note) => selectedPost.notes.includes(note._id))
 									.map((note, index) => {
 										return (
-											<div className='flex flex-row bg-yellow-200 rounded-full pl-3 pr-1 font-semibold'>
+											<div className='flex flex-row bg-yellow-200 rounded-md  font-semibold p-4'>
 												<Link
 													key={note._id}
 													to={`/notes/${note._id}`}
