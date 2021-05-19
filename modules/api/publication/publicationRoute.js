@@ -94,14 +94,22 @@ router.put(
 					const socialNetworkName = pubSn.socialNetwork.name
 					let analytic = null
 					if (socialNetworkName == 'Facebook') {
-						analytic = await facebookPostAnalytic.create(
-							pubSn.reference,
-							fbPageAccessToken
-						)
-						await publicationSNService.pushAnalyticRef(pubSnId, analytic.id)
+						try {
+							analytic = await facebookPostAnalytic.create(
+								pubSn.reference,
+								fbPageAccessToken
+							)
+							await publicationSNService.pushAnalyticRef(pubSnId, analytic.id)
+						} catch (err) {
+							console.log(err)
+						}
 					} else if (socialNetworkName == 'YouTube') {
-						//analytic = await youtubeVideoAnalytic.create(pubSn.reference);
-						//await publicationSNService.pushAnalyticRef(pubSnId, analytic.id);
+						try {
+							analytic = await youtubeVideoAnalytic.create(pubSn.reference)
+							await publicationSNService.pushAnalyticRef(pubSnId, analytic.id)
+						} catch (err) {
+							console.log(err)
+						}
 					}
 				})
 			)
