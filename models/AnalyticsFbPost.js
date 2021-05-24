@@ -7,6 +7,9 @@ const AnalyticsFbPostSchema = new mongoose.Schema({
 	post_negative_feedback: {
 		type: String,
 	},
+	post_comments: {
+		type: Number,
+	},
 	post_negative_feedback_unique: {
 		type: String,
 	},
