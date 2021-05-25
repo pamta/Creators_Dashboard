@@ -20,27 +20,50 @@ router.patch(
 		try {
 			const userId = req.user.id
 			const { fbPageId, fbPageAccessToken } = req.body
-			const user = await userService.deleteUserAnalytics(userId)
+			let user = await userService.getById(userId)
 			const dateNow = Date.now()
 
-			const fbPageAnalytic = await fbPageSerivce.createPageAnalytic(
-				fbPageId,
-				fbPageAccessToken
-			)
-			//const ytUserAnalytic = await ytUserSerivce.create()
-			const userAnalytics = {
-				fbUserAnalytics: {
-					data: fbPageAnalytic._id,
-					date: dateNow,
-				},
-				ytUserAnalytics: {
-					data: null,
-					date: dateNow,
-				},
+			try {
+				const fbPageAnalytic = await fbPageSerivce.createPageAnalytic(
+					fbPageId,
+					fbPageAccessToken
+				)
+				if (fbPageAnalytic && fbPageAnalytic._id) {
+					if (
+						user.analytics.fbUserAnalytics &&
+						user.analytics.fbUserAnalytics._id
+					) {
+						fbPageSerivce.remove(user.analytics.fbUserAnalytics._id)
+					}
+					user.analytics.fbUserAnalytics = {
+						data: fbPageAnalytic._id,
+						date: dateNow,
+					}
+				}
+			} catch (err) {
+				console.log(err)
 			}
 
-			user.analytics = userAnalytics
+			try {
+				const ytUserAnalytic = await ytUserSerivce.create()
+				if (ytUserAnalytic && ytUserAnalytic._id) {
+					if (
+						user.analytics.ytUserAnalytics &&
+						user.analytics.ytUserAnalytics._id
+					) {
+						ytUserSerivce.remove(user.analytics.ytUserAnalytics._id)
+					}
+					user.analytics.ytUserAnalytics = {
+						data: ytUserAnalytic._id,
+						date: dateNow,
+					}
+				}
+			} catch (err) {}
 			await user.save()
+			user = await user
+				.populate('analytics.fbUserAnalytics.data')
+				.populate('analytics.ytUserAnalytics.data')
+				.execPopulate()
 			res.send(user)
 		} catch (err) {
 			if (err.name == 'ArrayError') {

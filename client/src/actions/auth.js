@@ -110,6 +110,9 @@ export const login = (userIdentifier, password) => async (dispatch) => {
 		if (errors) {
 			errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')))
 		}
+		dispatch(
+			setAlert('User not found. Please verify your credentials', 'danger')
+		)
 		dispatch({
 			type: LOGIN_FAIL,
 		})
