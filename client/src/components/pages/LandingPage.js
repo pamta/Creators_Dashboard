@@ -18,6 +18,7 @@ const LandingPage = () => {
 	const ytHandler = useSelector((state) => state.youtube.user.channelName) ?? ''
 	const fbPageHandler =
 		useSelector((state) => state.facebook.pages.selectedPageInfo) ?? ''
+	const twScreenName = useSelector((state) => state.twitter.user.screen_name) ?? ''
 
 	const postCard =
 		post == null ? null : (
@@ -76,6 +77,7 @@ const LandingPage = () => {
 			<SettingsField
 				fieldName='Twitter'
 				inputTag='twitter-handler'
+				textValue={twScreenName}
 				icon={
 					<svg
 						className='w-6 h-6'
