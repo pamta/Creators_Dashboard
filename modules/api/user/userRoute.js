@@ -20,7 +20,7 @@ router.patch(
 		try {
 			const userId = req.user.id
 			const { fbPageId, fbPageAccessToken } = req.body
-			let user = await userService.deleteUserAnalytics(userId)
+			let user = await userService.getById(userId)
 			const dateNow = Date.now()
 
 			try {
