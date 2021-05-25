@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import useWindowSize from '../../lib/useWindowSize'
 import UserStats from '../analytics/UserStats'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { updateUserAnalytics } from '../../actions/auth'
 const AnalyticsPage = () => {
 	const [fbStats, setFbStats] = useState({
@@ -37,11 +37,21 @@ const AnalyticsPage = () => {
 
 	const dispatch = useDispatch()
 
+	// Check if user is authenticated in each social network
+	const fbUser = useSelector((store) => store.facebook.user.id) !== null
+	const ytUser = useSelector((store) => store.youtube.user.accessToken) !== null
+	const twUser =
+		useSelector((store) => store.twitter.user.request_token) !== null
+
 	useEffect(() => {
 		dispatch(updateUserAnalytics())
 	}, [updateUserAnalytics])
+
 	const renderFbTableData = () => {
-		if (!fbStats) return
+		if (!fbStats) {
+			fbUser = true
+			return
+		}
 		return (
 			<tbody className='bg-gray-200'>
 				<tr className='bg-white border-4 border-gray-200'>
@@ -80,7 +90,10 @@ const AnalyticsPage = () => {
 	}
 
 	const renderYtTableData = () => {
-		if (!ytStats) return
+		if (!ytStats) {
+			ytUser = true
+			return
+		}
 		return (
 			<tbody className='bg-gray-200'>
 				<tr className='bg-white border-4 border-gray-200'>
@@ -125,7 +138,10 @@ const AnalyticsPage = () => {
 	}
 
 	const renderTwTableData = () => {
-		if (!twStats) return
+		if (!twStats) {
+			twUser = true
+			return
+		}
 		return (
 			<tbody className='bg-gray-200'>
 				<tr className='bg-white border-4 border-gray-200'>
@@ -163,10 +179,37 @@ const AnalyticsPage = () => {
 		)
 	}
 
+	const isUserAuthenticated = fbUser && ytUser && twUser
+
 	return (
 		<div className='p-4'>
 			<h1 className='font-semibold text-3xl mb-4'>Analytics</h1>
 			{/* Compounded User analytics */}
+			{isUserAuthenticated ? null : (
+				<div
+					className={
+						'bg-yellow-100 rounded-md text-gray-600 text-sm p-2 items-center mb-4 text-center'
+					}
+				>
+					<span>
+						<svg
+							className='w-5 h-5 relative inline-block mr-1'
+							fill='none'
+							stroke='currentColor'
+							viewBox='0 0 24 24'
+							xmlns='http://www.w3.org/2000/svg'
+						>
+							<path
+								strokeLinecap='round'
+								strokeLinejoin='round'
+								strokeWidth='2'
+								d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'
+							></path>
+						</svg>
+						Please authenticate in your accounts to see updated analytics!
+					</span>
+				</div>
+			)}
 
 			<div className={getLayoutStyle() + ' mb-8'}>
 				<div
