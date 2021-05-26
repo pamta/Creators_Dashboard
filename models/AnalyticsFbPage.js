@@ -1,6 +1,9 @@
 const mongoose = require('mongoose')
 
 const AnalyticsFbPageSchema = new mongoose.Schema({
+	page_fans: {
+		type: String,
+	},
 	page_engaged_users: {
 		type: String,
 	},

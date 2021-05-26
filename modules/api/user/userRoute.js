@@ -9,6 +9,64 @@ const ytUserSerivce = new UserYTAnalyticsService()
 const fbPageSerivce = new AnalyticsFbPageService()
 const userService = new UserService()
 const userValidators = require('./userValidators')
+
+function calculateCompoundAnalytics(facebook, youtube) {
+	// Objects to calculate compound analytics
+	const total_favorite_analytics = {
+		fb: 0,
+		yt: 0,
+		tw: 0,
+	}
+
+	const total_like_analytics = {
+		fb: 0,
+		yt: 0,
+		tw: 0,
+	}
+
+	const total_comment_analytics = {
+		fb: 0,
+		yt: 0,
+		tw: 0,
+	}
+
+	const total_audience_analytics = {
+		fb: 0,
+		yt: 0,
+		tw: 0,
+	}
+
+	if (youtube != null) {
+		total_favorite_analytics.yt += youtube.totalFavoriteCount
+		total_like_analytics.yt += youtube.totalLikeCount
+		total_comment_analytics.yt += youtube.totalCommentCount
+		total_audience_analytics.yt +=
+			youtube.subscriberCount + youtube.totalVideoViewCount
+	}
+
+	// Calculate totals
+	total_favorite_analytics.total =
+		total_favorite_analytics.fb +
+		total_favorite_analytics.yt +
+		total_favorite_analytics.tw
+	total_like_analytics.total =
+		total_like_analytics.fb + total_like_analytics.yt + total_like_analytics.tw
+	total_comment_analytics.total =
+		total_comment_analytics.fb +
+		total_comment_analytics.yt +
+		total_comment_analytics.tw
+	total_audience_analytics.total =
+		total_audience_analytics.fb +
+		total_audience_analytics.yt +
+		total_audience_analytics.tw
+
+	return {
+		total_audience_analytics,
+		total_favorite_analytics,
+		total_like_analytics,
+		total_comment_analytics,
+	}
+}
 // route to validate social network user info
 // @route  PATCH api/user/updateAnalytics
 // @desct  Updates user analytics from social networks
@@ -17,6 +75,7 @@ router.patch(
 	'/updateAnalytics',
 	[auth, userValidators.facebookInfo],
 	async (req, res) => {
+		console.log('inside update analytics')
 		try {
 			const userId = req.user.id
 			const { fbPageId, fbPageAccessToken } = req.body
@@ -64,7 +123,45 @@ router.patch(
 				.populate('analytics.fbUserAnalytics.data')
 				.populate('analytics.ytUserAnalytics.data')
 				.execPopulate()
-			res.send(user)
+
+			const {
+				analytics,
+				registrationDate,
+				updateDate,
+				_id,
+				name,
+				email,
+				userName,
+			} = user
+
+			const fbUserAnalytics = analytics.fbUserAnalytics.data
+				? analytics.fbUserAnalytics.data
+				: null
+			const ytUserAnalytics = analytics.ytUserAnalytics.data
+
+			const compoundUserAnalytics = calculateCompoundAnalytics(
+				fbUserAnalytics,
+				ytUserAnalytics
+			)
+
+			const newAnalytics = {
+				fbUserAnalytics,
+				ytUserAnalytics,
+				compoundUserAnalytics,
+			}
+
+			let newUser = {
+				analytics: newAnalytics,
+				registrationDate,
+				updateDate,
+				_id,
+				name,
+				email,
+				userName,
+			}
+			console.log('reading new userrrrr ')
+			console.log(newUser)
+			res.send(newUser)
 		} catch (err) {
 			if (err.name == 'ArrayError') {
 				return res.status(400).json({ errors: err.errors })
