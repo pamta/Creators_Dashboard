@@ -231,6 +231,7 @@ const PostAnalytics = () => {
 				isOnFb(true)
 				setFbStats({
 					engaged_users: elem[0].data.post_engaged_users,
+					comment_count: elem[0].data.post_comments,
 					likes: elem[0].data.post_reactions_like_total,
 					love: elem[0].data.post_reactions_love_total,
 					wow: elem[0].data.post_reactions_wow_total,
@@ -292,6 +293,10 @@ const PostAnalytics = () => {
 				<tr className='bg-white border-4 border-gray-200'>
 					<th className='px-4 py-2 flex justify-start'>Engaged Users</th>
 					<td className='px-4 py-2 '>{fbStats.engaged_users}</td>
+				</tr>
+				<tr className='bg-white border-4 border-gray-200'>
+					<th className='px-4 py-2 flex justify-start'>Comments</th>
+					<td className='px-4 py-2 '>{fbStats.comment_count}</td>
 				</tr>
 				<tr className='bg-white border-4 border-gray-200'>
 					<th className='px-4 py-2 flex justify-start space-x-4'>
