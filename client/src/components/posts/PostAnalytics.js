@@ -138,6 +138,7 @@ const PostAnalytics = () => {
 							]),
 							color: fbColor,
 							label: 'Facebook',
+							subLabel: compoundA.total_comments.fb,
 						},
 						{
 							angle: normalizeData(compoundA.total_comments.tw, [
@@ -147,6 +148,7 @@ const PostAnalytics = () => {
 							]),
 							color: twColor,
 							label: 'Twitter',
+							subLabel: compoundA.total_comments.tw,
 						},
 						{
 							angle: normalizeData(compoundA.total_comments.yt, [
@@ -156,6 +158,7 @@ const PostAnalytics = () => {
 							]),
 							color: ytColor,
 							label: 'Youtube',
+							subLabel: compoundA.total_comments.yt,
 						},
 				  ]
 		const favoriteData =
@@ -170,6 +173,7 @@ const PostAnalytics = () => {
 							]),
 							color: fbColor,
 							label: 'Facebook',
+							subLabel: compoundA.total_favorites.fb,
 						},
 						{
 							angle: normalizeData(compoundA.total_favorites.tw, [
@@ -179,6 +183,7 @@ const PostAnalytics = () => {
 							]),
 							color: twColor,
 							label: 'Twitter',
+							subLabel: compoundA.total_favorites.tw,
 						},
 						{
 							angle: normalizeData(compoundA.total_favorites.yt, [
@@ -188,6 +193,7 @@ const PostAnalytics = () => {
 							]),
 							color: ytColor,
 							label: 'Youtube',
+							subLabel: compoundA.total_favorites.yt,
 						},
 				  ]
 		const likesData =
@@ -202,6 +208,7 @@ const PostAnalytics = () => {
 							]),
 							color: fbColor,
 							label: 'Facebook',
+							subLabel: compoundA.total_likes.fb,
 						},
 						{
 							angle: normalizeData(compoundA.total_likes.tw, [
@@ -211,6 +218,7 @@ const PostAnalytics = () => {
 							]),
 							color: twColor,
 							label: 'Twitter',
+							subLabel: compoundA.total_likes.tw,
 						},
 						{
 							angle: normalizeData(compoundA.total_likes.yt, [
@@ -220,6 +228,7 @@ const PostAnalytics = () => {
 							]),
 							color: ytColor,
 							label: 'Youtube',
+							subLabel: compoundA.total_likes.yt,
 						},
 				  ]
 		setCompoundData([commentsData, favoriteData, likesData])
@@ -503,6 +512,17 @@ const PostAnalytics = () => {
 														x: 0,
 														y: 0,
 														label: labelComments.label,
+														animation: 'gentle',
+														style: {
+															textAnchor: 'middle',
+															fontFamily: 'Montserrat',
+														},
+													},
+													{
+														x: 0,
+														y: -0.25,
+														label: labelComments.subLabel,
+														animation: 'gentle',
 														style: {
 															textAnchor: 'middle',
 															fontFamily: 'Montserrat',
@@ -542,6 +562,17 @@ const PostAnalytics = () => {
 														x: 0,
 														y: 0,
 														label: labelFavorites.label,
+														animation: 'gentle',
+														style: {
+															textAnchor: 'middle',
+															fontFamily: 'Montserrat',
+														},
+													},
+													{
+														x: 0,
+														y: -0.25,
+														label: labelFavorites.subLabel,
+														animation: 'gentle',
 														style: {
 															textAnchor: 'middle',
 															fontFamily: 'Montserrat',
@@ -578,6 +609,17 @@ const PostAnalytics = () => {
 														x: 0,
 														y: 0,
 														label: labelLikes.label,
+														animation: 'gentle',
+														style: {
+															textAnchor: 'middle',
+															fontFamily: 'Montserrat',
+														},
+													},
+													{
+														x: 0,
+														y: -0.25,
+														label: labelLikes.subLabel,
+														animation: 'gentle',
 														style: {
 															textAnchor: 'middle',
 															fontFamily: 'Montserrat',
