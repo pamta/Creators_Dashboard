@@ -62,8 +62,8 @@ export const loadUser = () => async (dispatch) => {
 export const updateUserAnalytics = () => async (dispatch, getState) => {
 	try {
 		const fbPageAccessToken =
-			getState().facebook.pages.selectedPageInfo.longLivedToken ?? ''
-		const fbPageId = getState().facebook.pages.selectedPageInfo.id ?? ''
+			getState().facebook?.pages?.selectedPageInfo?.longLivedToken ?? ''
+		const fbPageId = getState().facebook?.pages?.selectedPageInfo?.id ?? ''
 
 		const config = {
 			headers: {
@@ -76,6 +76,7 @@ export const updateUserAnalytics = () => async (dispatch, getState) => {
 		})
 		console.log(body)
 		const res = await axios.patch('/api/user/updateAnalytics', body, config)
+
 		dispatch({
 			type: USER_ANALYTICS_UPDATE_SUCCESS,
 			payload: res.data,
