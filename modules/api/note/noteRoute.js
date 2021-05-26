@@ -62,7 +62,6 @@ router.post(
 	[
 		// Second parameter of check is a custom error message
 		check('name', 'A Title is required').not().isEmpty(),
-		check('text', 'Some text is required').not().isEmpty(),
 	],
 	async (req, res) => {
 		// Finds the validation errors in this request and wraps them in an object with handy functions
