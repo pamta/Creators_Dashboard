@@ -96,17 +96,17 @@ class PublicationDAO extends Publication {
 
 						// Update analytics for compound
 						if (socialNet.name === 'Facebook') {
-							favorite_analytics.fb += element.post_reactions_love_total
-							like_analytics.fb += element.post_reactions_like_total
-							comment_analytics.fb += element.post_engaged_users
+							favorite_analytics.fb = Number(element.post_reactions_love_total)
+							like_analytics.fb = Number(element.post_reactions_like_total)
+							comment_analytics.fb = Number(element.post_comments)
 						} else if (socialNet.name === 'YouTube') {
-							favorite_analytics.yt += element.favoriteCount
-							like_analytics.yt += element.likeCount
-							comment_analytics.yt += element.commentCount
+							favorite_analytics.yt = Number(element.favoriteCount)
+							like_analytics.yt = Number(element.likeCount)
+							comment_analytics.yt = Number(element.commentCount)
 						} else if (socialNet.name === 'Twitter') {
-							favorite_analytics.tw += element.favorite_count
-							like_analytics.tw += element.favorite_count
-							comment_analytics.tw += element.reply_count
+							favorite_analytics.tw = Number(element.favorite_count)
+							like_analytics.tw = Number(element.favorite_count)
+							comment_analytics.tw = Number(element.reply_count)
 						}
 
 						arrAnalytics.push({

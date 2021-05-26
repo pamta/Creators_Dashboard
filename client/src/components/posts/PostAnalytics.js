@@ -1,6 +1,7 @@
 import useWindowSize from '../../lib/useWindowSize'
 import axios from 'axios'
-import { FlexibleWidthXYPlot, XAxis, YAxis, VerticalBarSeries } from 'react-vis'
+import { RadialChart, LabelSeries, Hint } from 'react-vis'
+import AutoSizer from 'react-virtualized-auto-sizer'
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
@@ -20,42 +21,23 @@ import reply from '../../assets/img/twtIcons/reply.svg'
 import retweet from '../../assets/img/twtIcons/retweet.png'
 import twFav from '../../assets/img/twtIcons/twFav.png'
 
+const fbColor = '#4267B2'
+const twColor = '#1DA1F2'
+const ytColor = '#FF0000'
+
 const myDATA = [
-	{ id: '00036', y: 200400, x: 1504121437 },
-	{ id: '00036', y: 200350, x: 1504121156 },
-	{ id: '00036', y: 200310, x: 1504120874 },
-	{ id: '00036', y: 200260, x: 1504120590 },
-	{ id: '00036', y: 200210, x: 1504120306 },
-	{ id: '00036', y: 200160, x: 1504120024 },
-	{ id: '00036', y: 200120, x: 1504119740 },
-	{ id: '00036', y: 200070, x: 1504119458 },
-	{ id: '00036', y: 200020, x: 1504119177 },
-	{ id: '00036', y: 199980, x: 1504118893 },
-	{ id: '00036', y: 199930, x: 1504118611 },
-	{ id: '00036', y: 199880, x: 1504118330 },
-	{ id: '00036', y: 199830, x: 1504118048 },
-	{ id: '00036', y: 199790, x: 1504117763 },
-	{ id: '00036', y: 199740, x: 1504117481 },
+	{ angle: 2, color: fbColor },
+	{ angle: 2, color: twColor },
+	{ angle: 2, color: ytColor },
 ]
 
-const yDomain = myDATA.reduce(
-	(res, row) => {
-		return {
-			max: Math.max(res.max, row.y),
-			min: Math.min(res.min, row.y),
-		}
-	},
-	{ max: -Infinity, min: Infinity }
-)
-
-// const analytics = (postId) => async () => {
-//     try {
-//         const res = await axios.get("/api/publication/" + postId + "/analytics");
-//         return res.data;
-//     } catch (error) {
-//         console.log(error.response.data.error);
-//     }
-// };
+const normalizeData = (value, data) => {
+	let min = Math.min(...data)
+	let max = Math.max(...data)
+	let normalizedV = (value - min) / (max - min)
+	// return value in a scale of 0-10 instead of 0-1
+	return Math.round(normalizedV * 10)
+}
 
 const PostAnalytics = () => {
 	const facebook = useSelector((state) => state.facebook)
@@ -109,6 +91,15 @@ const PostAnalytics = () => {
 	const [onFb, isOnFb] = useState(false)
 	const [onTw, isOnTw] = useState(false)
 	const [onYt, isOnYt] = useState(false)
+	const [compoundA, setCompound] = useState({
+		total_comments: { fb: 1, yt: 1, tw: 1, total: 3 },
+		total_favorites: { fb: 1, yt: 1, tw: 1, total: 3 },
+		total_likes: { fb: 1, yt: 1, tw: 1, total: 3 },
+	})
+	const [compoundData, setCompoundData] = useState([myDATA, myDATA, myDATA])
+	const [labelLikes, setLbLikes] = useState(false)
+	const [labelFavorites, setLbFavorites] = useState(false)
+	const [labelComments, setLbComments] = useState(false)
 
 	let { id } = useParams()
 
@@ -133,6 +124,106 @@ const PostAnalytics = () => {
 			}
 		})()
 	}, [post.posts])
+	useEffect(() => {
+		console.log(compoundA)
+		const commentsData =
+			compoundA.total_comments.total == 0
+				? [{ angle: 10, color: '#FFFFFF', label: 'No Comments' }]
+				: [
+						{
+							angle: normalizeData(compoundA.total_comments.fb, [
+								compoundA.total_comments.fb,
+								compoundA.total_comments.tw,
+								compoundA.total_comments.yt,
+							]),
+							color: fbColor,
+							label: 'Facebook',
+						},
+						{
+							angle: normalizeData(compoundA.total_comments.tw, [
+								compoundA.total_comments.fb,
+								compoundA.total_comments.tw,
+								compoundA.total_comments.yt,
+							]),
+							color: twColor,
+							label: 'Twitter',
+						},
+						{
+							angle: normalizeData(compoundA.total_comments.yt, [
+								compoundA.total_comments.fb,
+								compoundA.total_comments.tw,
+								compoundA.total_comments.yt,
+							]),
+							color: ytColor,
+							label: 'Youtube',
+						},
+				  ]
+		const favoriteData =
+			compoundA.total_favorites.total == 0
+				? [{ angle: 10, color: '#FFFFFF', label: 'No Favorites' }]
+				: [
+						{
+							angle: normalizeData(compoundA.total_favorites.fb, [
+								compoundA.total_favorites.fb,
+								compoundA.total_favorites.tw,
+								compoundA.total_favorites.yt,
+							]),
+							color: fbColor,
+							label: 'Facebook',
+						},
+						{
+							angle: normalizeData(compoundA.total_favorites.tw, [
+								compoundA.total_favorites.fb,
+								compoundA.total_favorites.tw,
+								compoundA.total_favorites.yt,
+							]),
+							color: twColor,
+							label: 'Twitter',
+						},
+						{
+							angle: normalizeData(compoundA.total_favorites.yt, [
+								compoundA.total_favorites.fb,
+								compoundA.total_favorites.tw,
+								compoundA.total_favorites.yt,
+							]),
+							color: ytColor,
+							label: 'Youtube',
+						},
+				  ]
+		const likesData =
+			compoundA.total_likes.total == 0
+				? [{ angle: 10, color: '#FFFFFF', label: 'No Likes' }]
+				: [
+						{
+							angle: normalizeData(compoundA.total_likes.fb, [
+								compoundA.total_likes.fb,
+								compoundA.total_likes.tw,
+								compoundA.total_likes.yt,
+							]),
+							color: fbColor,
+							label: 'Facebook',
+						},
+						{
+							angle: normalizeData(compoundA.total_likes.tw, [
+								compoundA.total_likes.fb,
+								compoundA.total_likes.tw,
+								compoundA.total_likes.yt,
+							]),
+							color: twColor,
+							label: 'Twitter',
+						},
+						{
+							angle: normalizeData(compoundA.total_likes.yt, [
+								compoundA.total_likes.fb,
+								compoundA.total_likes.tw,
+								compoundA.total_likes.yt,
+							]),
+							color: ytColor,
+							label: 'Youtube',
+						},
+				  ]
+		setCompoundData([commentsData, favoriteData, likesData])
+	}, [compoundA])
 
 	const setAnalytics = (postsInSN) => {
 		postsInSN.forEach((elem) => {
@@ -140,6 +231,7 @@ const PostAnalytics = () => {
 				isOnFb(true)
 				setFbStats({
 					engaged_users: elem[0].data.post_engaged_users,
+					comment_count: elem[0].data.post_comments,
 					likes: elem[0].data.post_reactions_like_total,
 					love: elem[0].data.post_reactions_love_total,
 					wow: elem[0].data.post_reactions_wow_total,
@@ -174,6 +266,7 @@ const PostAnalytics = () => {
 			} else if (elem[0].socialNetwork == 'Compound') {
 				console.log('received compound')
 				console.log(elem[0])
+				setCompound(elem[0].data)
 			}
 		})
 	}
@@ -200,6 +293,10 @@ const PostAnalytics = () => {
 				<tr className='bg-white border-4 border-gray-200'>
 					<th className='px-4 py-2 flex justify-start'>Engaged Users</th>
 					<td className='px-4 py-2 '>{fbStats.engaged_users}</td>
+				</tr>
+				<tr className='bg-white border-4 border-gray-200'>
+					<th className='px-4 py-2 flex justify-start'>Comments</th>
+					<td className='px-4 py-2 '>{fbStats.comment_count}</td>
 				</tr>
 				<tr className='bg-white border-4 border-gray-200'>
 					<th className='px-4 py-2 flex justify-start space-x-4'>
@@ -366,25 +463,133 @@ const PostAnalytics = () => {
 			{/* Compounded post analytics */}
 			<div
 				className={
-					'rounded-md p-4 bg-green-200' + (isTablet ? ' mb-8' : ' m-4')
+					showStats(onFb || onTw || onYt) +
+					'rounded-md p-4 bg-green-200' +
+					(isTablet ? ' mb-8' : ' m-4')
 				}
 			>
 				<div className='flex flex-col justify-center'>
-					<h2 className='font-semibold text-xl mb-4'>Analytics</h2>
-					<div className='w-19/20 self-center'>
-						<FlexibleWidthXYPlot
-							margin={{ left: 75 }}
-							xType='time'
-							height={300}
-							yDomain={[yDomain.min, yDomain.max]}
-						>
-							<VerticalBarSeries
-								className='vertical-bar-series-example'
-								data={myDATA}
-							/>
-							<XAxis />
-							<YAxis />
-						</FlexibleWidthXYPlot>
+					<h2 className='font-semibold text-2xl mb-4'>Analytics</h2>
+					<div
+						className={
+							(isTablet ? 'flex flex-col ' : 'flex flex-row ') +
+							'w-19/20 self-center'
+						}
+						style={{ height: isTablet ? '600px' : '450px' }}
+					>
+						<div className={isTablet ? ' w-full h-1/3 pb-5 ' : 'w-1/3 h-full'}>
+							<h1 className='text-center text-xl font-labels'>
+								Total Comments
+							</h1>
+							<AutoSizer>
+								{({ height, width }) => (
+									<RadialChart
+										colorType='literal'
+										innerRadius={isTablet ? height / 4 : width / 6}
+										radius={isTablet ? height / 3 : width / 4}
+										data={compoundData[0]}
+										color={(d) => d.color}
+										width={width}
+										height={height}
+										animation={'gentle'}
+										onValueMouseOver={(v) => setLbComments(v)}
+										onSeriesMouseOut={(v) => setLbComments(false)}
+										padAngle={0.04}
+									>
+										{labelComments !== false && (
+											<LabelSeries
+												data={[
+													{
+														x: 0,
+														y: 0,
+														label: labelComments.label,
+														style: {
+															textAnchor: 'middle',
+															fontFamily: 'Montserrat',
+														},
+													},
+												]}
+											/>
+										)}
+									</RadialChart>
+								)}
+							</AutoSizer>
+						</div>
+						<div className={isTablet ? ' w-full h-1/3 pb-5 ' : 'w-1/3 h-full'}>
+							<h1 className='text-center text-xl font-labels'>
+								Total Favorites
+							</h1>
+							<AutoSizer>
+								{({ height, width }) => (
+									<RadialChart
+										className='flex self-center'
+										colorType='literal'
+										innerRadius={isTablet ? height / 4 : width / 6}
+										radius={isTablet ? height / 3 : width / 4}
+										data={compoundData[1]}
+										color={(d) => d.color}
+										width={width}
+										height={height}
+										animation={'gentle'}
+										onValueMouseOver={(v) => setLbFavorites(v)}
+										onSeriesMouseOut={(v) => setLbFavorites(false)}
+										padAngle={0.04}
+									>
+										{labelFavorites !== false && (
+											<LabelSeries
+												data={[
+													{
+														x: 0,
+														y: 0,
+														label: labelFavorites.label,
+														style: {
+															textAnchor: 'middle',
+															fontFamily: 'Montserrat',
+														},
+													},
+												]}
+											/>
+										)}
+									</RadialChart>
+								)}
+							</AutoSizer>
+						</div>
+						<div className={isTablet ? ' w-full h-1/3 ' : 'w-1/3 h-full'}>
+							<h1 className='text-center text-xl font-labels'>Total Likes</h1>
+							<AutoSizer>
+								{({ height, width }) => (
+									<RadialChart
+										colorType='literal'
+										innerRadius={isTablet ? height / 4 : width / 6}
+										radius={isTablet ? height / 3 : width / 4}
+										data={compoundData[2]}
+										color={(d) => d.color}
+										width={width}
+										height={height}
+										animation={'gentle'}
+										onValueMouseOver={(v) => setLbLikes(v)}
+										onSeriesMouseOut={(v) => setLbLikes(false)}
+										padAngle={0.04}
+									>
+										{labelLikes !== false && (
+											<LabelSeries
+												data={[
+													{
+														x: 0,
+														y: 0,
+														label: labelLikes.label,
+														style: {
+															textAnchor: 'middle',
+															fontFamily: 'Montserrat',
+														},
+													},
+												]}
+											/>
+										)}
+									</RadialChart>
+								)}
+							</AutoSizer>
+						</div>
 					</div>
 				</div>
 			</div>
