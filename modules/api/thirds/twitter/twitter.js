@@ -83,7 +83,7 @@ router.post("/tweet", async (req, res) => {
   let tweet = req.body.tweet;
 
   const request = {
-    url: "https://api.twitter.com/1.1/statuses/update.json",
+    url: "https://api.twitter.com/1.1/statuses/update.json?status=" + tweet,
     method: "POST",
   };
 
@@ -99,9 +99,6 @@ router.post("/tweet", async (req, res) => {
       url: request.url,
       method: "post",
       headers: authHeader,
-      params: {
-        status: tweet,
-      },
     })
     .then(function (reS) {
       console.log(reS);

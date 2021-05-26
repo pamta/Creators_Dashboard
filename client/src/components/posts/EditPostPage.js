@@ -31,6 +31,7 @@ import {
 import { setAlert } from '../../actions/alert'
 import { publishPostToFb } from '../../actions/facebook'
 import { publishVideoToYT } from '../../actions/youtube'
+import { tweet } from '../../actions/twitter'
 import { createNote, deleteNote } from '../../actions/note'
 
 const EditPostPage = ({ match }) => {
@@ -57,6 +58,13 @@ const EditPostPage = ({ match }) => {
 
 	let history = useHistory()
 	let { id } = useParams()
+
+	const twToken = useSelector(
+		(state) => state.twitter.user.token ?? ''
+	)
+	const twTokenSecret = useSelector(
+		(state) => state.twitter.user.tokenSecret ?? ''
+	)
 
 	const isTablet = useWindowSize().width <= 1080
 
@@ -158,6 +166,9 @@ const EditPostPage = ({ match }) => {
 				)
 			}
 			if (isTwitterSelected) {
+				if (twToken != '') {
+					dispatch(tweet(content, twToken, twTokenSecret))
+				}
 			}
 			//TODO wait for async dispatchs
 			dispatch(setAlert('Succesful publish', 'success'))
