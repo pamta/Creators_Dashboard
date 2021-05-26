@@ -37,11 +37,22 @@ function calculateCompoundAnalytics(facebook, youtube) {
 	}
 
 	if (youtube != null) {
-		total_favorite_analytics.yt += youtube.totalFavoriteCount
-		total_like_analytics.yt += youtube.totalLikeCount
-		total_comment_analytics.yt += youtube.totalCommentCount
-		total_audience_analytics.yt +=
+		total_favorite_analytics.yt = youtube.totalFavoriteCount
+		total_like_analytics.yt = youtube.totalLikeCount
+		total_comment_analytics.yt = youtube.totalCommentCount
+		total_audience_analytics.yt =
 			youtube.subscriberCount + youtube.totalVideoViewCount
+	}
+
+	if (facebook != null) {
+		total_favorite_analytics.fb = Number(
+			facebook.page_actions_post_reactions_love_total
+		)
+		total_like_analytics.fb = Number(
+			facebook.page_actions_post_reactions_like_total
+		)
+		total_comment_analytics.fb = Number(facebook.page_post_engagements)
+		total_audience_analytics.fb = Number(facebook.page_engaged_users)
 	}
 
 	// Calculate totals

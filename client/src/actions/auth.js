@@ -76,7 +76,8 @@ export const updateUserAnalytics = () => async (dispatch, getState) => {
 		})
 		console.log(body)
 		const res = await axios.patch('/api/user/updateAnalytics', body, config)
-
+		console.log('fbLog')
+		console.log(res)
 		dispatch({
 			type: USER_ANALYTICS_UPDATE_SUCCESS,
 			payload: res.data,

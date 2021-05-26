@@ -15,10 +15,12 @@ const LandingPage = () => {
 	const name = useSelector((state) => state.auth.user.name)
 	const note = useSelector((state) => state.note.notes[0])
 	const post = useSelector((state) => state.post.posts[0])
-	const ytHandler = useSelector((state) => state.youtube.user.channelName) ?? ''
+	const ytHandler =
+		useSelector((state) => state.youtube.user?.channelName) ?? ''
 	const fbPageHandler =
-		useSelector((state) => state.facebook.pages.selectedPageInfo) ?? ''
-	const twScreenName = useSelector((state) => state.twitter.user.screen_name) ?? ''
+		useSelector((state) => state.facebook.pages.selectedPageInfo?.handler) ?? ''
+	const twScreenName =
+		useSelector((state) => state.twitter.user.screen_name) ?? ''
 
 	const postCard =
 		post == null ? null : (

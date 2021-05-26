@@ -6,7 +6,7 @@ import { updateUserAnalytics } from '../../actions/auth'
 const AnalyticsPage = () => {
 	const analytics = useSelector((state) => state.auth.user.analytics)
 	const [fbStats, setFbStats] = useState(
-		analytics.fbUserAnalytics.data
+		analytics?.fbUserAnalytics?.data
 			? {
 					engaged_users: analytics.fbUserAnalytics.data.page_engaged_users,
 					post_engagements:
@@ -19,7 +19,7 @@ const AnalyticsPage = () => {
 			: false
 	)
 	const [ytStats, setYtStats] = useState(
-		analytics.ytUserAnalytics.data
+		analytics?.ytUserAnalytics?.data
 			? {
 					viewCount: analytics.ytUserAnalytics.data.viewCount,
 					subscriberCount: analytics.ytUserAnalytics.data.subscriberCount,
@@ -53,10 +53,11 @@ const AnalyticsPage = () => {
 	const dispatch = useDispatch()
 
 	// Check if user is authenticated in each social network
-	const fbUser = useSelector((store) => store.facebook.user.id) !== null
-	const ytUser = useSelector((store) => store.youtube.user.accessToken) !== null
+	const fbUser = useSelector((store) => store.facebook?.user?.id) !== null
+	const ytUser =
+		useSelector((store) => store.youtube?.user?.accessToken) !== null
 	const twUser =
-		useSelector((store) => store.twitter.user.request_token) !== null
+		useSelector((store) => store.twitter?.user?.request_token) !== null
 
 	useEffect(() => {
 		dispatch(updateUserAnalytics())

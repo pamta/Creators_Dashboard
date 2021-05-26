@@ -27,8 +27,8 @@ const UserStats = ({ isTablet }) => {
 				icon={'facebook'}
 				name={'Page Followers'}
 				stat={
-					analytics.fbUserAnalytics.data != null
-						? analytics.fbUserAnalytics.data.page_fans
+					analytics.fbUserAnalytics?.data != null
+						? analytics.fbUserAnalytics?.data.page_fans
 						: '0'
 				}
 			/>
@@ -38,8 +38,8 @@ const UserStats = ({ isTablet }) => {
 				icon={'youtube'}
 				name={'Subscribers'}
 				stat={
-					analytics.ytUserAnalytics.data != null
-						? analytics.ytUserAnalytics.data.subscriberCount
+					analytics.ytUserAnalytics?.data != null
+						? analytics.ytUserAnalytics?.data?.subscriberCount
 						: '0'
 				}
 			/>
