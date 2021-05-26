@@ -145,10 +145,12 @@ router.patch(
 				userName,
 			} = user
 
-			const fbUserAnalytics = analytics.fbUserAnalytics.data
-				? analytics.fbUserAnalytics.data
+			const fbUserAnalytics = analytics.fbUserAnalytics
+				? analytics.fbUserAnalytics
 				: null
-			const ytUserAnalytics = analytics.ytUserAnalytics.data
+			const ytUserAnalytics = analytics.ytUserAnalytics
+				? analytics.ytUserAnalytics
+				: null
 
 			const compoundUserAnalytics = calculateCompoundAnalytics(
 				fbUserAnalytics,

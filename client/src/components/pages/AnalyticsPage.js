@@ -61,6 +61,34 @@ const AnalyticsPage = () => {
 
 	useEffect(() => {
 		dispatch(updateUserAnalytics())
+		const fbAnalytics = analytics?.fbUserAnalytics?.data
+			? {
+					engaged_users: analytics.fbUserAnalytics.data.page_engaged_users,
+					post_engagements:
+						analytics.fbUserAnalytics.data.page_post_engagements,
+					page_consumptions: analytics.fbUserAnalytics.data.page_consumptions,
+					page_negative_feedback:
+						analytics.fbUserAnalytics.data.page_negative_feedback,
+					page_impressions: analytics.fbUserAnalytics.data.page_impressions,
+			  }
+			: false
+
+		const ytAnalytics = analytics?.ytUserAnalytics?.data
+			? {
+					viewCount: analytics.ytUserAnalytics.data.viewCount,
+					subscriberCount: analytics.ytUserAnalytics.data.subscriberCount,
+					videoCount: analytics.ytUserAnalytics.data.videoCount,
+					totalVideoViewCount:
+						analytics.ytUserAnalytics.data.totalVideoViewCount,
+					totalLikeCount: analytics.ytUserAnalytics.data.totalLikeCount,
+					totalDislikeCount: analytics.ytUserAnalytics.data.totalDislikeCount,
+					totalFavoriteCount: analytics.ytUserAnalytics.data.totalFavoriteCount,
+					totalCommentCount: analytics.ytUserAnalytics.data.totalCommentCount,
+			  }
+			: false
+
+		setYtStats(ytAnalytics)
+		setFbStats(fbAnalytics)
 	}, [updateUserAnalytics])
 
 	const renderFbTableData = () => {
