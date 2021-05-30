@@ -111,4 +111,29 @@ router.post("/tweet", async (req, res) => {
     });
 });
 
+router.get("/userData", async (req, res) => {
+  const client = axios.create();
+  let twConsumerKey = req.body.twConsumerKey;
+  let twConsumerSecret = req.body.twConsumerSecret;
+  let userId = req.body.userId;
+
+  oauth1a.default(client, {
+    key: twConsumerKey,
+    secret: twConsumerSecret,
+    algorithm: "HMAC-SHA1",
+  });
+
+  client.request({
+    url: "https://api.twitter.com/1.1/users/lookup.json?user_id=" + userId,
+    method: "get",
+  })
+    .then(function (reS) {
+      let data = reS.data
+      res.send(data)
+    })
+    .catch(function (e) {
+      res.send(e)
+    })
+})
+
 module.exports = router;
