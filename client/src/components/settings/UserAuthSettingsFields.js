@@ -33,10 +33,14 @@ const UserAuthFields = ({
 
 	const genFbModalBody = () =>
 		fbUserPages.map((page) => (
-			<div key={page.id}>
-				<p>{page.handler}</p>{' '}
+			<div
+				className='flex flex-row p-2 border-0 border-b border-gray-400 border-opacity-50'
+				key={page.id}
+			>
+				<p className='flex'>{page.handler}</p>{' '}
+				<div className='flex flex-grow'></div>
 				<button
-					className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+					className='flex bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
 					onClick={() => {
 						selectFbPage(page.id)
 						setFbPagesModal(false)
