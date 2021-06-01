@@ -4,6 +4,7 @@ import {
   TW_LOGIN_SUCCESS,
   TW_TOKEN_REQUESTED,
   TW_LOAD_STORED_DATA_SUCCESS,
+  TW_USER_ANALYTICS_SUCCESS,
 } from "./types";
 import { twConsumerKey, twConsumerSecret } from "../config/secrets";
 import { TWITTER_TOKEN } from "../utils/localStorageTypes";
@@ -80,6 +81,7 @@ export const twitterCodeVerify =
             screen_name: screen_name,
           },
         });
+        dispatch(getUserData(user_id))
         localStorage.setItem(TWITTER_TOKEN, JSON.stringify(getState().twitter));
       })
       .catch(function (e) {
@@ -107,3 +109,27 @@ export const tweet = (tweet, token, tokenSecret) => async (dispatch) => {
       console.log(e);
     });
 };
+
+export const getUserData = (userId) => async (dispatch) => {
+  axios.post("/api/twitter/userData", {
+    twConsumerKey: twConsumerKey,
+    twConsumerSecret: twConsumerSecret,
+    userId: userId,
+  })
+    .then(function (res) {
+    console.log(res.data)
+    dispatch({
+      type: TW_USER_ANALYTICS_SUCCESS,
+      payload: {
+        followers_count: res.data.followers_count,
+        friends_count: res.data.friends_count,
+        listed_count: res.data.listed_count,
+        favourites_count: res.data.favourites_count,
+        statuses_count: res.data.statuses_count,
+      }
+    })
+  })
+  .catch(function (e) {
+
+  })
+}

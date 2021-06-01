@@ -3,6 +3,7 @@ import {
 	TW_LOGIN_FAILURE,
 	TW_TOKEN_REQUESTED,
 	TW_LOAD_STORED_DATA_SUCCESS,
+	TW_USER_ANALYTICS_SUCCESS,
 } from '../actions/types'
 
 const initialState = {
@@ -13,6 +14,13 @@ const initialState = {
 		user_id: null,
 		screen_name: null,
 	},
+	analytics: {
+		followers_count: null,
+		friends_count: null,
+		listed_count: null,
+		favourites_count: null,
+		statuses_count: null,
+	}
 }
 
 export default (state = initialState, { type, payload }) => {
@@ -28,6 +36,13 @@ export default (state = initialState, { type, payload }) => {
 			return {
 				...state,
 				user: payload,
+				analytics: {
+					followers_count: null,
+					friends_count: null,
+					listed_count: null,
+					favourites_count: null,
+					statuses_count: null,
+				}
 			}
 		case TW_LOGIN_FAILURE:
 			return {
@@ -39,6 +54,18 @@ export default (state = initialState, { type, payload }) => {
 					user_id: null,
 					screen_name: null,
 				},
+				analytics: {
+					followers_count: null,
+					friends_count: null,
+					listed_count: null,
+					favourites_count: null,
+					statuses_count: null,
+				}
+			}
+		case TW_USER_ANALYTICS_SUCCESS:
+			return {
+				...state,
+				analytics: payload
 			}
 		default:
 			return state

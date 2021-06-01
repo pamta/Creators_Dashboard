@@ -111,7 +111,7 @@ router.post("/tweet", async (req, res) => {
     });
 });
 
-router.get("/userData", async (req, res) => {
+router.post("/userData", async (req, res) => {
   const client = axios.create();
   let twConsumerKey = req.body.twConsumerKey;
   let twConsumerSecret = req.body.twConsumerSecret;
@@ -128,8 +128,16 @@ router.get("/userData", async (req, res) => {
     method: "get",
   })
     .then(function (reS) {
-      let data = reS.data
-      res.send(data)
+      let data = reS.data[0]
+      let processedData = {
+        followers_count: data.followers_count,
+        friends_count: data.friends_count,
+        listed_count: data.listed_count,
+        favourites_count: data.favourites_count,
+        statuses_count: data.statuses_count,
+      }
+      console.log(processedData)
+      res.send(processedData)
     })
     .catch(function (e) {
       res.send(e)

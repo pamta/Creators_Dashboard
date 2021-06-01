@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { updateUserAnalytics } from '../../actions/auth'
 const AnalyticsPage = () => {
 	const analytics = useSelector((state) => state.auth.user.analytics)
+	const twFollowers = useSelector((state) => state.twitter.analytics.followers_count)
+	const twFavourites = useSelector((state) => state.twitter.analytics.favourites_count)
 	const [fbStats, setFbStats] = useState(
 		analytics?.fbUserAnalytics?.data
 			? {
@@ -34,8 +36,8 @@ const AnalyticsPage = () => {
 			: false
 	)
 	const [twStats, setTwStats] = useState({
-		followers: '749 (placeholder',
-		likeCount: '3590 (placeholder)',
+		followers: twFollowers ? twFollowers : '0',
+		likeCount: twFavourites ? twFavourites : '0',
 	})
 
 	const isTablet = useWindowSize().width <= 1080

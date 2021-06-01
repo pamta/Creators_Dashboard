@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 const UserStats = ({ isTablet }) => {
 	const posts = useSelector((state) => state.post.posts)
 	const analytics = useSelector((state) => state.auth.user.analytics)
+	const twFollowers = useSelector((state) => state.twitter.analytics.followers_count)
 	const getLayoutStyle = () => {
 		return isTablet
 			? 'flex flex-row space-x-8 overflow-x-auto'
@@ -48,7 +49,7 @@ const UserStats = ({ isTablet }) => {
 				key={'twFollowers'}
 				icon={'twitter'}
 				name={'Followers'}
-				stat={'749 (placeholder)'}
+				stat={twFollowers != null ? twFollowers : '0'}
 			/>
 		</div>
 	)
