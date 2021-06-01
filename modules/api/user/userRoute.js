@@ -91,11 +91,12 @@ router.patch(
 		console.log('inside update analytics')
 		try {
 			const userId = req.user.id
-			const { fbPageId, fbPageAccessToken, twConsumerKey, twConsumerSecret } = req.body
+			const { fbPageId, fbPageAccessToken, twConsumerKey, twConsumerSecret } =
+				req.body
 			const twUserId = req.body.userId
 			let user = await userService.getById(userId)
 			const dateNow = Date.now()
-			const twitterAnalytics = null
+			let twitterAnalytics = null
 			try {
 				const fbPageAnalytic = await fbPageSerivce.createPageAnalytic(
 					fbPageId,
@@ -118,7 +119,11 @@ router.patch(
 			}
 
 			try {
-				twitterAnalytics = await twUserService.getUserData(twConsumerKey, twConsumerSecret, twUserId)
+				twitterAnalytics = await twUserService.getUserData(
+					twConsumerKey,
+					twConsumerSecret,
+					twUserId
+				)
 			} catch (err) {
 				console.log(err)
 			}

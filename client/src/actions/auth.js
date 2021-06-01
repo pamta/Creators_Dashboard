@@ -4,7 +4,7 @@ import axios from 'axios'
 import { setAlert } from './alert'
 import { loadNotes } from './note'
 import { loadPosts } from './post'
-import {twConsumerKey, twConsumerSecret}  from '../config/secrets'
+import { twConsumerKey, twConsumerSecret } from '../config/secrets'
 
 import {
 	LOGIN_SUCCESS,
@@ -74,13 +74,12 @@ export const updateUserAnalytics = () => async (dispatch, getState) => {
 			},
 		}
 
-		{twConsumerKey, twConsumerSecret} 
 		const body = JSON.stringify({
 			fbPageAccessToken,
 			fbPageId,
 			twConsumerKey,
 			twConsumerSecret,
-			userId: twUserId
+			userId: twUserId,
 		})
 		console.log(body)
 		const res = await axios.patch('/api/user/updateAnalytics', body, config)

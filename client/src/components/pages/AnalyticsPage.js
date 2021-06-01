@@ -3,7 +3,27 @@ import useWindowSize from '../../lib/useWindowSize'
 import UserStats from '../analytics/UserStats'
 import { useDispatch, useSelector } from 'react-redux'
 import { updateUserAnalytics } from '../../actions/auth'
+import { RadialChart, LabelSeries } from 'react-vis'
+import AutoSizer from 'react-virtualized-auto-sizer'
 import Tooltip from '@material-ui/core/Tooltip'
+
+const fbColor = '#4267B2'
+const twColor = '#1DA1F2'
+const ytColor = '#FF0000'
+
+const myDATA = [
+	{ angle: 2, color: fbColor },
+	{ angle: 2, color: twColor },
+	{ angle: 2, color: ytColor },
+]
+
+const normalizeData = (value, data) => {
+	let min = Math.min(...data)
+	let max = Math.max(...data)
+	let normalizedV = (value - min) / (max - min)
+	// return value in a scale of 0-10 instead of 0-1
+	return Math.round(normalizedV * 10)
+}
 
 const AnalyticsPage = () => {
 	const analytics = useSelector((state) => state.auth.user.analytics)
@@ -54,6 +74,22 @@ const AnalyticsPage = () => {
 			  }
 			: false
 	)
+	const [compoundA, setCompound] = useState({
+		total_audience_analytics: { fb: 0, tw: 0, yt: 0, total: 0 },
+		total_likes_analytics: { fb: 0, tw: 0, yt: 0, total: 0 },
+		total_comment_analytics: { fb: 0, tw: 0, yt: 0, total: 0 },
+		total_favorite_analytics: { fb: 0, tw: 0, yt: 0, total: 0 },
+	})
+	const [compoundData, setCompoundData] = useState([
+		myDATA,
+		myDATA,
+		myDATA,
+		myDATA,
+	])
+	const [labelAudience, setLbAudience] = useState(false)
+	const [labelLikes, setLbLikes] = useState(false)
+	const [labelFavorites, setLbFavorites] = useState(false)
+	const [labelComments, setLbComments] = useState(false)
 
 	const isTablet = useWindowSize().width <= 1080
 
@@ -120,6 +156,147 @@ const AnalyticsPage = () => {
 			  }
 			: false
 
+		const commentsData =
+			compoundA.total_comment_analytics.total == 0
+				? [{ angle: 10, color: '#FFFFFF', label: 'No Comments' }]
+				: [
+						{
+							angle: normalizeData(compoundA.total_comment_analytics.fb, [
+								compoundA.total_comment_analytics.fb,
+								compoundA.total_comment_analytics.tw,
+								compoundA.total_comment_analytics.yt,
+							]),
+							color: fbColor,
+							label: 'Facebook',
+							subLabel: compoundA.total_comment_analytics.fb,
+						},
+						{
+							angle: normalizeData(compoundA.total_comment_analytics.tw, [
+								compoundA.total_comment_analytics.fb,
+								compoundA.total_comment_analytics.tw,
+								compoundA.total_comment_analytics.yt,
+							]),
+							color: twColor,
+							label: 'Twitter',
+							subLabel: compoundA.total_comment_analytics.tw,
+						},
+						{
+							angle: normalizeData(compoundA.total_comment_analytics.yt, [
+								compoundA.total_comment_analytics.fb,
+								compoundA.total_comment_analytics.tw,
+								compoundA.total_comment_analytics.yt,
+							]),
+							color: ytColor,
+							label: 'Youtube',
+							subLabel: compoundA.total_comment_analytics.yt,
+						},
+				  ]
+		const favoriteData =
+			compoundA.total_favorite_analytics.total == 0
+				? [{ angle: 10, color: '#FFFFFF', label: 'No Favorites' }]
+				: [
+						{
+							angle: normalizeData(compoundA.total_favorite_analytics.fb, [
+								compoundA.total_favorite_analytics.fb,
+								compoundA.total_favorite_analytics.tw,
+								compoundA.total_favorite_analytics.yt,
+							]),
+							color: fbColor,
+							label: 'Facebook',
+							subLabel: compoundA.total_favorite_analytics.fb,
+						},
+						{
+							angle: normalizeData(compoundA.total_favorite_analytics.tw, [
+								compoundA.total_favorite_analytics.fb,
+								compoundA.total_favorite_analytics.tw,
+								compoundA.total_favorite_analytics.yt,
+							]),
+							color: twColor,
+							label: 'Twitter',
+							subLabel: compoundA.total_favorite_analytics.tw,
+						},
+						{
+							angle: normalizeData(compoundA.total_favorite_analytics.yt, [
+								compoundA.total_favorite_analytics.fb,
+								compoundA.total_favorite_analytics.tw,
+								compoundA.total_favorite_analytics.yt,
+							]),
+							color: ytColor,
+							label: 'Youtube',
+							subLabel: compoundA.total_favorite_analytics.yt,
+						},
+				  ]
+		const likesData =
+			compoundA.total_likes_analytics.total == 0
+				? [{ angle: 10, color: '#FFFFFF', label: 'No Likes' }]
+				: [
+						{
+							angle: normalizeData(compoundA.total_likes_analytics.fb, [
+								compoundA.total_likes_analytics.fb,
+								compoundA.total_likes_analytics.tw,
+								compoundA.total_likes_analytics.yt,
+							]),
+							color: fbColor,
+							label: 'Facebook',
+							subLabel: compoundA.total_likes_analytics.fb,
+						},
+						{
+							angle: normalizeData(compoundA.total_likes_analytics.tw, [
+								compoundA.total_likes_analytics.fb,
+								compoundA.total_likes_analytics.tw,
+								compoundA.total_likes_analytics.yt,
+							]),
+							color: twColor,
+							label: 'Twitter',
+							subLabel: compoundA.total_likes_analytics.tw,
+						},
+						{
+							angle: normalizeData(compoundA.total_likes_analytics.yt, [
+								compoundA.total_likes_analytics.fb,
+								compoundA.total_likes_analytics.tw,
+								compoundA.total_likes_analytics.yt,
+							]),
+							color: ytColor,
+							label: 'Youtube',
+							subLabel: compoundA.total_likes_analytics.yt,
+						},
+				  ]
+		const audienceData =
+			compoundA.total_audience_analytics.total == 0
+				? [{ angle: 10, color: '#FFFFFF', label: 'No Audience' }]
+				: [
+						{
+							angle: normalizeData(compoundA.total_audience_analytics.fb, [
+								compoundA.total_audience_analytics.fb,
+								compoundA.total_audience_analytics.tw,
+								compoundA.total_audience_analytics.yt,
+							]),
+							color: fbColor,
+							label: 'Facebook',
+							subLabel: compoundA.total_audience_analytics.fb,
+						},
+						{
+							angle: normalizeData(compoundA.total_audience_analytics.tw, [
+								compoundA.total_audience_analytics.fb,
+								compoundA.total_audience_analytics.tw,
+								compoundA.total_audience_analytics.yt,
+							]),
+							color: twColor,
+							label: 'Twitter',
+							subLabel: compoundA.total_audience_analytics.tw,
+						},
+						{
+							angle: normalizeData(compoundA.total_audience_analytics.yt, [
+								compoundA.total_audience_analytics.fb,
+								compoundA.total_audience_analytics.tw,
+								compoundA.total_audience_analytics.yt,
+							]),
+							color: ytColor,
+							label: 'Youtube',
+							subLabel: compoundA.total_audience_analytics.yt,
+						},
+				  ]
+		setCompoundData([audienceData, likesData, favoriteData, commentsData])
 		setYtStats(ytAnalytics)
 		setFbStats(fbAnalytics)
 		setTwStats(twAn)
@@ -315,7 +492,7 @@ const AnalyticsPage = () => {
 				<div
 					className={
 						'flex flex-col justify-left rounded-md p-4 ' +
-						(isTablet ? ' w-full' : ' w-1/3')
+						(isTablet ? ' w-full' : ' w-1/4')
 					}
 				>
 					<UserStats isTablet={isTablet} />
@@ -323,10 +500,214 @@ const AnalyticsPage = () => {
 				<div
 					className={
 						'flex flex-col justify-left rounded-md p-4 bg-green-200' +
-						(isTablet ? ' w-full' : ' w-2/3')
+						(isTablet ? ' w-full' : ' w-3/4')
 					}
 				>
 					<h2 className='font-semibold text-xl mb-4'>User Analytics</h2>
+					<div
+						className={
+							(isTablet ? 'flex flex-col ' : 'flex flex-row ') +
+							'w-19/20 self-center'
+						}
+						style={{ height: isTablet ? '600px' : '450px' }}
+					>
+						<div className={isTablet ? ' w-full h-1/4 ' : 'w-1/4 h-full'}>
+							<AutoSizer>
+								{({ height, width }) => (
+									<RadialChart
+										colorType='literal'
+										innerRadius={isTablet ? height / 4 : width / 6}
+										radius={isTablet ? height / 3 : width / 4}
+										data={compoundData[0]}
+										color={(d) => d.color}
+										width={width}
+										height={height}
+										animation={'gentle'}
+										onValueMouseOver={(v) => setLbAudience(v)}
+										onSeriesMouseOut={(v) => setLbAudience(false)}
+										padAngle={0.04}
+									>
+										{labelAudience !== false && (
+											<LabelSeries
+												data={[
+													{
+														x: 0,
+														y: 0,
+														label: labelAudience.label,
+														animation: 'gentle',
+														style: {
+															textAnchor: 'middle',
+															fontFamily: 'Montserrat',
+														},
+													},
+													{
+														x: 0,
+														y: -0.25,
+														label: labelAudience.subLabel,
+														animation: 'gentle',
+														style: {
+															textAnchor: 'middle',
+															fontFamily: 'Montserrat',
+														},
+													},
+												]}
+											/>
+										)}
+									</RadialChart>
+								)}
+							</AutoSizer>
+							<h1 className='text-center text-xl font-labels'>
+								Total Audience
+							</h1>
+						</div>
+						<div className={isTablet ? ' w-full h-1/4 ' : 'w-1/4 h-full'}>
+							<AutoSizer>
+								{({ height, width }) => (
+									<RadialChart
+										colorType='literal'
+										innerRadius={isTablet ? height / 4 : width / 6}
+										radius={isTablet ? height / 3 : width / 4}
+										data={compoundData[1]}
+										color={(d) => d.color}
+										width={width}
+										height={height}
+										animation={'gentle'}
+										onValueMouseOver={(v) => setLbLikes(v)}
+										onSeriesMouseOut={(v) => setLbLikes(false)}
+										padAngle={0.04}
+									>
+										{labelLikes !== false && (
+											<LabelSeries
+												data={[
+													{
+														x: 0,
+														y: 0,
+														label: labelLikes.label,
+														animation: 'gentle',
+														style: {
+															textAnchor: 'middle',
+															fontFamily: 'Montserrat',
+														},
+													},
+													{
+														x: 0,
+														y: -0.25,
+														label: labelLikes.subLabel,
+														animation: 'gentle',
+														style: {
+															textAnchor: 'middle',
+															fontFamily: 'Montserrat',
+														},
+													},
+												]}
+											/>
+										)}
+									</RadialChart>
+								)}
+							</AutoSizer>
+							<h1 className='text-center text-xl font-labels'>Total Likes</h1>
+						</div>
+						<div className={isTablet ? ' w-full h-1/4' : 'w-1/4 h-full'}>
+							<AutoSizer>
+								{({ height, width }) => (
+									<RadialChart
+										className='flex self-center'
+										colorType='literal'
+										innerRadius={isTablet ? height / 4 : width / 6}
+										radius={isTablet ? height / 3 : width / 4}
+										data={compoundData[2]}
+										color={(d) => d.color}
+										width={width}
+										height={height}
+										animation={'gentle'}
+										onValueMouseOver={(v) => setLbFavorites(v)}
+										onSeriesMouseOut={(v) => setLbFavorites(false)}
+										padAngle={0.04}
+									>
+										{labelFavorites !== false && (
+											<LabelSeries
+												data={[
+													{
+														x: 0,
+														y: 0,
+														label: labelFavorites.label,
+														animation: 'gentle',
+														style: {
+															textAnchor: 'middle',
+															fontFamily: 'Montserrat',
+														},
+													},
+													{
+														x: 0,
+														y: -0.25,
+														label: labelFavorites.subLabel,
+														animation: 'gentle',
+														style: {
+															textAnchor: 'middle',
+															fontFamily: 'Montserrat',
+														},
+													},
+												]}
+											/>
+										)}
+									</RadialChart>
+								)}
+							</AutoSizer>
+							<h1 className='text-center text-xl font-labels'>
+								Total Favorites
+							</h1>
+						</div>
+						<div className={isTablet ? ' w-full h-1/4 ' : 'w-1/4 h-full'}>
+							<AutoSizer>
+								{({ height, width }) => (
+									<RadialChart
+										className='flex self-center'
+										colorType='literal'
+										innerRadius={isTablet ? height / 4 : width / 6}
+										radius={isTablet ? height / 3 : width / 4}
+										data={compoundData[3]}
+										color={(d) => d.color}
+										width={width}
+										height={height}
+										animation={'gentle'}
+										onValueMouseOver={(v) => setLbComments(v)}
+										onSeriesMouseOut={(v) => setLbComments(false)}
+										padAngle={0.04}
+									>
+										{labelComments !== false && (
+											<LabelSeries
+												data={[
+													{
+														x: 0,
+														y: 0,
+														label: labelComments.label,
+														animation: 'gentle',
+														style: {
+															textAnchor: 'middle',
+															fontFamily: 'Montserrat',
+														},
+													},
+													{
+														x: 0,
+														y: -0.25,
+														label: labelComments.subLabel,
+														animation: 'gentle',
+														style: {
+															textAnchor: 'middle',
+															fontFamily: 'Montserrat',
+														},
+													},
+												]}
+											/>
+										)}
+									</RadialChart>
+								)}
+							</AutoSizer>
+							<h1 className='text-center text-xl font-labels'>
+								Total Comments
+							</h1>
+						</div>
+					</div>
 				</div>
 			</div>
 			{/* Social specific analytics */}
