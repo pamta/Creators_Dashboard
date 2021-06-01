@@ -3,10 +3,11 @@ import useWindowSize from '../../lib/useWindowSize'
 import UserStats from '../analytics/UserStats'
 import { useDispatch, useSelector } from 'react-redux'
 import { updateUserAnalytics } from '../../actions/auth'
+import Tooltip from '@material-ui/core/Tooltip'
+
 const AnalyticsPage = () => {
 	const analytics = useSelector((state) => state.auth.user.analytics)
-	const twFollowers = useSelector((state) => state.twitter.analytics.followers_count)
-	const twFavourites = useSelector((state) => state.twitter.analytics.favourites_count)
+	const twAnalytics = useSelector((state) => state.twitter.analytics)
 	const [fbStats, setFbStats] = useState(
 		analytics?.fbUserAnalytics?.data
 			? {
@@ -35,10 +36,24 @@ const AnalyticsPage = () => {
 			  }
 			: false
 	)
-	const [twStats, setTwStats] = useState({
-		followers: twFollowers ? twFollowers : '0',
-		likeCount: twFavourites ? twFavourites : '0',
-	})
+	const [twStats, setTwStats] = useState(
+		twAnalytics
+			? {
+					followers: twAnalytics?.followers_count
+						? twAnalytics.followers_count
+						: '0',
+					likeCount: twAnalytics?.favourites_count
+						? twAnalytics.favourites_count
+						: '0',
+					friendsCount: twAnalytics?.friends_count
+						? twAnalytics.friends_count
+						: '0',
+					statusesCount: twAnalytics?.statuses_count
+						? twAnalytics.statuses_count
+						: '0',
+			  }
+			: false
+	)
 
 	const isTablet = useWindowSize().width <= 1080
 
@@ -88,9 +103,26 @@ const AnalyticsPage = () => {
 					totalCommentCount: analytics.ytUserAnalytics.data.totalCommentCount,
 			  }
 			: false
+		const twAn = twAnalytics
+			? {
+					followers: twAnalytics?.followers_count
+						? twAnalytics.followers_count
+						: '0',
+					likeCount: twAnalytics?.favourites_count
+						? twAnalytics.favourites_count
+						: '0',
+					friendsCount: twAnalytics?.friends_count
+						? twAnalytics.friends_count
+						: '0',
+					statusesCount: twAnalytics?.statuses_count
+						? twAnalytics.statuses_count
+						: '0',
+			  }
+			: false
 
 		setYtStats(ytAnalytics)
 		setFbStats(fbAnalytics)
+		setTwStats(twAn)
 	}, [updateUserAnalytics])
 
 	const renderFbTableData = () => {
@@ -107,27 +139,46 @@ const AnalyticsPage = () => {
 					<td className='px-4 py-2 '>{fbStats.engaged_users}</td>
 				</tr>
 				<tr className='bg-white border-4 border-gray-200'>
-					<th className='px-4 py-2 flex justify-start capitalize space-x-4'>
+					<th className='px-4 py-2 flex justify-start capitalize'>
 						<span>post engagements</span>
 					</th>
 					<td className='px-4 py-2 '>{fbStats.post_engagements}</td>
 				</tr>
 				<tr className='bg-white border-4 border-gray-200'>
-					<th className='px-4 py-2 flex justify-start capitalize space-x-4'>
+					<th className='px-4 py-2 flex justify-start capitalize'>
 						{' '}
 						<span>page consumptions</span>
 					</th>
 					<td className='px-4 py-2 '>{fbStats.page_consumptions}</td>
 				</tr>
 				<tr className='bg-white border-4 border-gray-200'>
-					<th className='px-4 py-2 flex justify-start capitalize space-x-4'>
+					<th className='px-4 py-2 flex justify-start capitalize'>
 						<span>page impressions</span>
 					</th>
 					<td className='px-4 py-2 '>{fbStats.page_impressions}</td>
 				</tr>
 				<tr className='bg-white border-4 border-gray-200'>
-					<th className='px-4 py-2 flex justify-start capitalize space-x-4'>
-						<span>negative feedback</span>
+					<th className='px-4 py-2 flex items-center space-x-1 justify-start capitalize'>
+						<div>negative feedback</div>
+						<div>
+							<Tooltip
+								title='Number of times people took a negative action (for example, indicating that they no longer like a post or hide it).'
+								arrow
+							>
+								<svg
+									className='w-5 h-5 text-gray-400'
+									xmlns='http://www.w3.org/2000/svg'
+									viewBox='0 0 20 20'
+									fill='currentColor'
+								>
+									<path
+										fill-rule='evenodd'
+										d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z'
+										clip-rule='evenodd'
+									/>
+								</svg>
+							</Tooltip>
+						</div>
 					</th>
 					<td className='px-4 py-2 '>{fbStats.page_negative_feedback}</td>
 				</tr>
@@ -195,6 +246,34 @@ const AnalyticsPage = () => {
 						Total Likes
 					</th>
 					<td className='px-4 py-2 '>{twStats.likeCount}</td>
+				</tr>
+				<tr className='bg-white border-4 border-gray-200'>
+					<th className='px-4 py-2 flex items-center space-x-1 capitalize justify-start'>
+						<div>Total friends{'  '}</div>
+						<div>
+							<Tooltip title='Accounts you follow' arrow>
+								<svg
+									className='w-5 h-5 text-gray-400'
+									xmlns='http://www.w3.org/2000/svg'
+									viewBox='0 0 20 20'
+									fill='currentColor'
+								>
+									<path
+										fill-rule='evenodd'
+										d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z'
+										clip-rule='evenodd'
+									/>
+								</svg>
+							</Tooltip>
+						</div>
+					</th>
+					<td className='px-4 py-2 '>{twStats.friendsCount}</td>
+				</tr>
+				<tr className='bg-white border-4 border-gray-200'>
+					<th className='px-4 py-2 flex capitalize justify-start'>
+						Total statuses
+					</th>
+					<td className='px-4 py-2 '>{twStats.statusesCount}</td>
 				</tr>
 			</tbody>
 		)
