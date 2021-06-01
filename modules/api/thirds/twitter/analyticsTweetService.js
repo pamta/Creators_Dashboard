@@ -1,5 +1,8 @@
 const ArrayError = require('../../../utils/ArrayError')
 const TweetAnalytic = require('./TweetAnalyticDAO')
+const axios = require("axios");
+const oauth1a = require("axios-oauth-1.0a");
+const helper = require("../../../../utils/Oauth1Helper");
 
 class TweetAnalyticService {
 	async getAllTweetAnalyticsForUser(userID) {
@@ -69,6 +72,35 @@ class TweetAnalyticService {
 			tweetAnalytic,
 			callback
 		)
+	}
+
+	async getUserData(twConsumerKey, twConsumerSecret, userId){
+		const client = axios.create();
+		oauth1a.default(client, {
+		  key: twConsumerKey,
+		  secret: twConsumerSecret,
+		  algorithm: "HMAC-SHA1",
+		});
+	  
+		client.request({
+		  url: "https://api.twitter.com/1.1/users/lookup.json?user_id=" + userId,
+		  method: "get",
+		})
+		  .then(function (reS) {
+			let data = reS.data[0]
+			let processedData = {
+			  followers_count: data.followers_count,
+			  friends_count: data.friends_count,
+			  listed_count: data.listed_count,
+			  favourites_count: data.favourites_count,
+			  statuses_count: data.statuses_count,
+			}
+			console.log(processedData)
+			res.send(processedData)
+		  })
+		  .catch(function (e) {
+			res.send(e)
+		  })
 	}
 }
 

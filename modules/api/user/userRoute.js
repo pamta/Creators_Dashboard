@@ -5,7 +5,9 @@ const auth = require('../../../middleware/auth')
 const UserService = require('./userService')
 const AnalyticsFbPageService = require('../thirds/facebook/analyticsFbPageService')
 const UserYTAnalyticsService = require('../thirds/youtube/userYTAnalyticsService')
+const UserTWAnalyticsService = require('../thirds/twitter/analyticsTweetService')
 const ytUserSerivce = new UserYTAnalyticsService()
+const twUserService = new UserTWAnalyticsService()
 const fbPageSerivce = new AnalyticsFbPageService()
 const userService = new UserService()
 const userValidators = require('./userValidators')
@@ -84,15 +86,16 @@ function calculateCompoundAnalytics(facebook, youtube) {
 // @access Private/requires token
 router.patch(
 	'/updateAnalytics',
-	[auth, userValidators.facebookInfo],
+	[auth, userValidators.facebookInfo, userValidators.twitterInfo],
 	async (req, res) => {
 		console.log('inside update analytics')
 		try {
 			const userId = req.user.id
-			const { fbPageId, fbPageAccessToken } = req.body
+			const { fbPageId, fbPageAccessToken, twConsumerKey, twConsumerSecret } = req.body
+			const twUserId = req.body.userId
 			let user = await userService.getById(userId)
 			const dateNow = Date.now()
-
+			const twitterAnalytics = null
 			try {
 				const fbPageAnalytic = await fbPageSerivce.createPageAnalytic(
 					fbPageId,
@@ -110,6 +113,12 @@ router.patch(
 						date: dateNow,
 					}
 				}
+			} catch (err) {
+				console.log(err)
+			}
+
+			try {
+				twitterAnalytics = await twUserService.getUserData(twConsumerKey, twConsumerSecret, twUserId)
 			} catch (err) {
 				console.log(err)
 			}
@@ -160,6 +169,7 @@ router.patch(
 			const newAnalytics = {
 				fbUserAnalytics,
 				ytUserAnalytics,
+				twitterAnalytics,
 				compoundUserAnalytics,
 			}
 

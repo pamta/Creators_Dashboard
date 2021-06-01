@@ -33,3 +33,10 @@ exports.facebookInfo = [
 	check('fbPageAccessToken', 'Please include a fb page access token').exists(),
 	validateResults,
 ]
+
+exports.twitterInfo = [
+	check('twConsumerKey', 'Please include a twitter consumer key').exists(),
+	check('twConsumerSecret', 'Please include a valid consumer secret').exists(),
+	check('userId', "pleaseInclude a valid user ID"),
+	validateResults,
+]
