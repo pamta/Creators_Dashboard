@@ -44,7 +44,7 @@ const PostsPage = () => {
 	const newPostModalBody = () => {
 		return (
 			<div>
-				<h4>To begin, first give your new post a tite:</h4>
+				<h4>To begin, first give your new post a title:</h4>
 				<br></br>
 				<input
 					type='text'
