@@ -13,6 +13,10 @@ const userService = new UserService()
 const userValidators = require('./userValidators')
 
 function calculateCompoundAnalytics(facebook, youtube) {
+	console.log("In calculate compound")
+	console.log(facebook)
+	console.log(youtube)
+	
 	// Objects to calculate compound analytics
 	const total_favorite_analytics = {
 		fb: 0,
@@ -39,11 +43,11 @@ function calculateCompoundAnalytics(facebook, youtube) {
 	}
 
 	if (youtube != null) {
-		total_favorite_analytics.yt = youtube.totalFavoriteCount
-		total_like_analytics.yt = youtube.totalLikeCount
-		total_comment_analytics.yt = youtube.totalCommentCount
+		total_favorite_analytics.yt = Number(youtube.totalFavoriteCount)
+		total_like_analytics.yt = Number(youtube.totalLikeCount)
+		total_comment_analytics.yt = Number(youtube.totalCommentCount)
 		total_audience_analytics.yt =
-			youtube.subscriberCount + youtube.totalVideoViewCount
+			Number(youtube.subscriberCount) + Number(youtube.totalVideoViewCount)
 	}
 
 	if (facebook != null) {
