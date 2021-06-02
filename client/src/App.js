@@ -82,7 +82,7 @@ const App = () => {
 					)}
 					<div
 						className={
-							'h-full w-full bg-white rounded-tl-xl px-4' +
+							'h-full w-full bg-white rounded-tl-xl pl-4 overflow-hidden' +
 							(!isTablet ? ' border shadow-xl' : '')
 						}
 					>
