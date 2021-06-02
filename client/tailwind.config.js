@@ -40,7 +40,7 @@ module.exports = {
 		},
 		fontFamily: {
 			labels: 'Montserrat',
-			labels: 'Roboto',
+			roboto: 'Roboto',
 		},
 	},
 	variants: {
