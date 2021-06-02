@@ -1,4 +1,4 @@
-const TweetAnalytic = require('../../../models/TwitterAnalytic')
+const TweetAnalytic = require('../../../../models/AnalyticsTwitter')
 
 class TweetAnalyticDAO extends TweetAnalytic {
 	constructor(tweetAnalyticDTO) {
