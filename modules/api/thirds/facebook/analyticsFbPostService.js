@@ -20,17 +20,33 @@ class AnalyticsFbPostService {
 		const requestLink = `https://graph.facebook.com/${fbPostID}/insights/${metrics}?access_token=${pageAccessToken}`
 		const commentsLink = `https://graph.facebook.com/${fbPostID}/comments?access_token=${pageAccessToken}`
 		const answer = await axios.get(requestLink)
-		const commentAnswer = await axios.get(commentsLink)
-
 		let analyticDTO = {}
-		answer.data.data.forEach((attributeData) => {
-			let value = attributeData.values[0].value
-			if (typeof value == 'object') {
-				value = ''
-			}
-			analyticDTO[attributeData.name] = value
-		})
-		analyticDTO['post_comments'] = commentAnswer.data.data.length
+
+		try {
+			const commentAnswer = await axios.get(commentsLink)
+			analyticDTO['post_comments'] = commentAnswer.data.data.length
+		} catch (err) {
+			analyticDTO['post_comments'] = 0
+			console.log(err)
+		}
+
+		try {
+			answer.data.data.forEach((attributeData) => {
+				let value = attributeData.values[0].value
+				if (typeof value == 'object') {
+					value = ''
+				}
+				analyticDTO[attributeData.name] = value
+			})
+		} catch (err) {
+			console.log(err)
+		}
+
+		
+
+		
+
+		
 		// console.log(commentAnswer.data.data.length)
 		const analytic = new AnalyticsFbPost(analyticDTO)
 		await analytic.upload()
