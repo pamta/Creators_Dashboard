@@ -154,6 +154,7 @@ const LandingPage = () => {
 				</div>
 				<div className='w-full bg-blue-200 rounded-lg p-6'>
 					<h2 className='font-semibold text-xl mb-4'>How you're doing</h2>
+					<p>Coming soon...</p>
 				</div>
 			</div>
 			<div className={getLayoutStyle()}>
