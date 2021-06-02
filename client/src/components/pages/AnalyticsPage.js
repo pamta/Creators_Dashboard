@@ -156,8 +156,34 @@ const AnalyticsPage = () => {
 			  }
 			: false
 
+		const compound = analytics?.compoundUserAnalytics
+			? {
+					total_audience_analytics:
+						analytics.compoundUserAnalytics.total_audience_analytics,
+					total_likes_analytics:
+						analytics.compoundUserAnalytics.total_favorite_analytics,
+					total_favorite_analytics:
+						analytics.compoundUserAnalytics.total_favorite_analytics,
+					total_comment_analytics:
+						analytics.compoundUserAnalytics.total_comment_analytics,
+			  }
+			: {
+					total_audience_analytics: { fb: 0, tw: 0, yt: 0, total: 0 },
+					total_likes_analytics: { fb: 0, tw: 0, yt: 0, total: 0 },
+					total_comment_analytics: { fb: 0, tw: 0, yt: 0, total: 0 },
+					total_favorite_analytics: { fb: 0, tw: 0, yt: 0, total: 0 },
+			  }
+
+		setYtStats(ytAnalytics)
+		setFbStats(fbAnalytics)
+		setTwStats(twAn)
+		setCompound(compound)
+	}, [updateUserAnalytics])
+
+	useEffect(() => {
+		console.log(compoundA)
 		const commentsData =
-			compoundA.total_comment_analytics.total == 0
+			compoundA.total_comment_analytics?.total == 0
 				? [{ angle: 10, color: '#FFFFFF', label: 'No Comments' }]
 				: [
 						{
@@ -192,7 +218,7 @@ const AnalyticsPage = () => {
 						},
 				  ]
 		const favoriteData =
-			compoundA.total_favorite_analytics.total == 0
+			compoundA.total_favorite_analytics?.total == 0
 				? [{ angle: 10, color: '#FFFFFF', label: 'No Favorites' }]
 				: [
 						{
@@ -227,7 +253,7 @@ const AnalyticsPage = () => {
 						},
 				  ]
 		const likesData =
-			compoundA.total_likes_analytics.total == 0
+			compoundA.total_likes_analytics?.total == 0
 				? [{ angle: 10, color: '#FFFFFF', label: 'No Likes' }]
 				: [
 						{
@@ -262,7 +288,7 @@ const AnalyticsPage = () => {
 						},
 				  ]
 		const audienceData =
-			compoundA.total_audience_analytics.total == 0
+			compoundA.total_audience_analytics?.total == 0
 				? [{ angle: 10, color: '#FFFFFF', label: 'No Audience' }]
 				: [
 						{
@@ -297,10 +323,7 @@ const AnalyticsPage = () => {
 						},
 				  ]
 		setCompoundData([audienceData, likesData, favoriteData, commentsData])
-		setYtStats(ytAnalytics)
-		setFbStats(fbAnalytics)
-		setTwStats(twAn)
-	}, [updateUserAnalytics])
+	}, [compoundA])
 
 	const renderFbTableData = () => {
 		if (!fbStats) {
