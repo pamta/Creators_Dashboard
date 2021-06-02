@@ -59,9 +59,7 @@ const EditPostPage = ({ match }) => {
 	let history = useHistory()
 	let { id } = useParams()
 
-	const twToken = useSelector(
-		(state) => state.twitter.user.token ?? ''
-	)
+	const twToken = useSelector((state) => state.twitter.user.token ?? '')
 	const twTokenSecret = useSelector(
 		(state) => state.twitter.user.tokenSecret ?? ''
 	)
@@ -95,7 +93,7 @@ const EditPostPage = ({ match }) => {
 	const newNoteModalBody = () => {
 		return (
 			<div>
-				<h4>Give this Note a tite:</h4>
+				<h4>Give this Note a title:</h4>
 				<br></br>
 				<input
 					type='text'

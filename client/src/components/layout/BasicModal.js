@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 const BasicModal = ({ title, body, closeFunction, closeText }) => {
 	return (
 		<div class='fixed z-10 inset-0 overflow-y-auto'>
-			<div class='flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0'>
+			<div class='flex items-end justify-center min-h-screen pt-4 px-4 pb-64 text-center sm:block sm:p-0'>
 				{/**Background overlay, show/hide based on modal state.
         
               Entering: "ease-out duration-300"
@@ -32,7 +32,7 @@ const BasicModal = ({ title, body, closeFunction, closeText }) => {
                 From: "opacity-100 translate-y-0 sm:scale-100"
                 To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" */}
 				<div
-					class='inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full'
+					class='inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-lg sm:max-w-lg w-5/6 sm:w-3/5 md:w-1/2 lg:w-2/5 xl:w-1/3 2xl:w-3/12'
 					role='dialog'
 					aria-modal='true'
 					aria-labelledby='modal-headline'
@@ -56,7 +56,7 @@ const BasicModal = ({ title, body, closeFunction, closeText }) => {
 									/>
 								</svg>
 							</div>
-							<div class='mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left'>
+							<div class='mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full'>
 								<h3
 									class='text-lg leading-6 font-medium text-gray-900'
 									id='modal-headline'
