@@ -16,6 +16,15 @@ function calculateCompoundAnalytics(facebook, youtube) {
 	console.log("In calculate compound")
 	console.log(facebook)
 	console.log(youtube)
+	console.log("compound data")
+	if(facebook.data){
+		facebook = facebook.data
+	}
+	if(youtube.data){
+		youtube = youtube.data
+	}
+	console.log(facebook)
+	console.log(youtube)
 	
 	// Objects to calculate compound analytics
 	const total_favorite_analytics = {
