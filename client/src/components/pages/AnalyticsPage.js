@@ -459,13 +459,13 @@ const AnalyticsPage = () => {
 	const isUserAuthenticated = fbUser && ytUser && twUser
 
 	return (
-		<div className='p-4'>
+		<div className='p-4 overflow-x-hidden overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-gray-300 h-full pr-2'>
 			<h1 className='font-semibold text-3xl mb-4'>Analytics</h1>
 			{/* Compounded User analytics */}
 			{isUserAuthenticated ? null : (
 				<div
 					className={
-						'bg-yellow-100 rounded-md text-gray-600 text-sm p-2 items-center mb-4 text-center'
+						'pr-2 bg-yellow-100 rounded-md text-gray-600 text-sm p-2 items-center mb-4 text-center'
 					}
 				>
 					<span>
@@ -488,7 +488,7 @@ const AnalyticsPage = () => {
 				</div>
 			)}
 
-			<div className={getLayoutStyle() + ' mb-8'}>
+			<div className={getLayoutStyle() + ' pr-2 mb-8'}>
 				<div
 					className={
 						'flex flex-col justify-left rounded-md p-4 ' +
@@ -711,7 +711,7 @@ const AnalyticsPage = () => {
 				</div>
 			</div>
 			{/* Social specific analytics */}
-			<div className={getLayoutStyle()}>
+			<div className={getLayoutStyle() + ' pr-2'}>
 				{fbStats && (
 					<div className={getComponentsStyle() + ' bg-indigo-200'}>
 						<h2 className='font-semibold text-xl mb-4'>Facebook</h2>
