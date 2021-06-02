@@ -235,47 +235,52 @@ const PostAnalytics = () => {
 	}, [compoundA])
 
 	const setAnalytics = (postsInSN) => {
+		console.log("aaab")
+		console.log(postsInSN)
 		postsInSN.forEach((elem) => {
-			if (elem[0].socialNetwork == 'Facebook') {
+			const e = elem[elem.length - 1]
+			if (e?.socialNetwork == 'Facebook') {
+				
+				console.log(e)
 				isOnFb(true)
 				setFbStats({
-					engaged_users: elem[0].data.post_engaged_users,
-					comment_count: elem[0].data.post_comments,
-					likes: elem[0].data.post_reactions_like_total,
-					love: elem[0].data.post_reactions_love_total,
-					wow: elem[0].data.post_reactions_wow_total,
-					haha: elem[0].data.post_reactions_haha_total,
-					sorry: elem[0].data.post_reactions_sorry_total,
-					anger: elem[0].data.post_reactions_anger_total,
+					engaged_users: e.data.post_engaged_users,
+					comment_count: e.data.post_comments,
+					likes: e.data.post_reactions_like_total,
+					love: e.data.post_reactions_love_total,
+					wow: e.data.post_reactions_wow_total,
+					haha: e.data.post_reactions_haha_total,
+					sorry: e.data.post_reactions_sorry_total,
+					anger: e.data.post_reactions_anger_total,
 					totalReactions:
-						Number(elem[0].data.post_reactions_like_total) +
-						Number(elem[0].data.post_reactions_love_total) +
-						Number(elem[0].data.post_reactions_wow_total) +
-						Number(elem[0].data.post_reactions_haha_total) +
-						Number(elem[0].data.post_reactions_sorry_total) +
-						Number(elem[0].data.post_reactions_anger_total),
+						Number(e.data.post_reactions_like_total) +
+						Number(e.data.post_reactions_love_total) +
+						Number(e.data.post_reactions_wow_total) +
+						Number(e.data.post_reactions_haha_total) +
+						Number(e.data.post_reactions_sorry_total) +
+						Number(e.data.post_reactions_anger_total),
 				})
-			} else if (elem[0].socialNetwork == 'YouTube') {
+			} else if (e?.socialNetwork == 'YouTube') {
 				isOnYt(true)
 				setYtStats({
-					view_count: elem[0].data.viewCount,
-					like_count: elem[0].data.likeCount,
-					dislike_count: elem[0].data.dislikeCount,
-					favorite_count: elem[0].data.favoriteCount,
-					comment_count: elem[0].data.commentCount,
+					view_count: e.data.viewCount,
+					like_count: e.data.likeCount,
+					dislike_count: e.data.dislikeCount,
+					favorite_count: e.data.favoriteCount,
+					comment_count: e.data.commentCount,
 				})
-			} else if (elem[0].socialNetwork == 'Twitter') {
+			} else if (e.socialNetwork == 'Twitter') {
 				isOnTw(true)
 				setTwStats({
-					quote_count: elem[0].data.quote_count,
-					reply_count: elem[0].data.reply_count,
-					retweet_count: elem[0].data.retweet_count,
-					favorite_count: elem[0].data.favorite_count,
+					quote_count: e.data.quote_count,
+					reply_count: e.data.reply_count,
+					retweet_count: e.data.retweet_count,
+					favorite_count: e.data.favorite_count,
 				})
-			} else if (elem[0].socialNetwork == 'Compound') {
+			} else if (e.socialNetwork == 'Compound') {
 				console.log('received compound')
-				console.log(elem[0])
-				setCompound(elem[0].data)
+				console.log(e)
+				setCompound(e.data)
 			}
 		})
 	}
